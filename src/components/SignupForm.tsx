@@ -30,7 +30,6 @@ export default function SignupForm() {
 
   //Handle Signup API Integration
   const createAccount = async () => {
-    console.log("here");
     console.log(signupData);
     try {
       const response = await api.post("/auth/signup", signupData);
