@@ -1,18 +1,22 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { signupFields } from "../constants/formFields";
 import Input from "./Input";
 import { FieldsState } from "../types/common";
 import FormAction from "./FormAction";
 import api from "../api";
+import { AppContext } from "../context/AppContext";
 
 const fields = signupFields;
 let fieldsState: FieldsState = {};
 fields.forEach((field) => (fieldsState[field.id] = ""));
 
 export default function SignupForm() {
+  const appContext = useContext(AppContext);
   const [signupState, setSignupState] = useState(fieldsState);
+  const navigate = useNavigate();
   const signupData = {
-    name: signupState.name,
+    username: signupState.username,
     email: signupState.email,
     address: signupState.address,
     password: signupState.password,
@@ -34,6 +38,10 @@ export default function SignupForm() {
     try {
       const response = await api.post("/auth/signup", signupData);
       console.log(response.data);
+      if (response.status === 200) {
+        appContext.setUsermail?.(signupData.email);
+        navigate("/verifyemail");
+      }
     } catch (error) {
       console.error(error);
     }

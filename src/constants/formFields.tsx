@@ -1,13 +1,13 @@
 export const signupFields = [
   {
-    labelText: "Name",
-    labelFor: "name",
-    id: "name",
-    name: "name",
+    labelText: "Username",
+    labelFor: "username",
+    id: "username",
+    name: "username",
     type: "text",
-    autoComplete: "name",
+    autoComplete: "username",
     isRequired: true,
-    placeholder: "name",
+    placeholder: "Username",
   },
   {
     labelText: "Email",

@@ -27,7 +27,7 @@ export default function LoginForm() {
 
   //Handle Login API Integration here
   const authenticateUser = async () => {
-    console.log();
+    console.log(loginData);
     try {
       const response = await api.post("/auth/login", loginData);
       console.log(response.data);
