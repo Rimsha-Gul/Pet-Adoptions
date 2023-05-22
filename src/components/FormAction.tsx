@@ -7,12 +7,12 @@ interface FormActionProps {
   text: string;
 }
 
-export default function FormAction({
+const FormAction = ({
   handleSubmit,
   type = "Button",
   action = "submit",
   text,
-}: FormActionProps) {
+}: FormActionProps) => {
   return (
     <>
       {type === "Button" ? (
@@ -28,4 +28,6 @@ export default function FormAction({
       )}
     </>
   );
-}
+};
+
+export default FormAction;

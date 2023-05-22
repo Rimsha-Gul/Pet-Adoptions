@@ -8,12 +8,7 @@ interface HeaderProps {
   linkUrl: string;
 }
 
-export default function Header({
-  heading,
-  paragraph,
-  linkName,
-  linkUrl,
-}: HeaderProps) {
+const Header = ({ heading, paragraph, linkName, linkUrl }: HeaderProps) => {
   return (
     <div className="mb-10">
       <div className="mb-10 h-full flex flex-row items-center justify-center space-x-4">
@@ -42,4 +37,6 @@ export default function Header({
       </p>
     </div>
   );
-}
+};
+
+export default Header;

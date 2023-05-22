@@ -11,7 +11,7 @@ const fields = signupFields;
 let fieldsState: FieldsState = {};
 fields.forEach((field) => (fieldsState[field.id] = ""));
 
-export default function SignupForm() {
+const SignupForm = () => {
   const appContext = useContext(AppContext);
   const [signupState, setSignupState] = useState(fieldsState);
   const navigate = useNavigate();
@@ -69,4 +69,6 @@ export default function SignupForm() {
       <FormAction handleSubmit={handleSubmit} text="Signup" />
     </form>
   );
-}
+};
+
+export default SignupForm;

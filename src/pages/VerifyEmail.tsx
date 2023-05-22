@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import api from "../api";
 import { AppContext } from "../context/AppContext";
+import ResendCode from "../components/ResendCode";
 
 function VerifyEmail() {
   const [verificationCode, setVerificationCode] = useState("");
@@ -8,15 +9,12 @@ function VerifyEmail() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    // Send the verification code to the server for validation
-    // You can add your API integration logic here
-    console.log(verificationCode);
+    // VerifyEmail API integration
     const verificationData = {
       email: appContext.usermail,
       verificationCode: verificationCode,
     };
     try {
-      console.log(verificationData);
       const response = await api.post("/auth/verifyEmail", verificationData);
       console.log(response.data);
     } catch (error) {
@@ -49,6 +47,7 @@ function VerifyEmail() {
           Verify
         </button>
       </form>
+      <ResendCode />
     </div>
   );
 }

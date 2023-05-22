@@ -4,12 +4,14 @@ import Input from "./Input";
 import { FieldsState } from "../types/common";
 import FormAction from "./FormAction";
 import api from "../api";
+import { useNavigate } from "react-router-dom";
 
 const fields = loginFields;
 let fieldsState: FieldsState = {};
 fields.forEach((field) => (fieldsState[field.id] = ""));
 
-export default function LoginForm() {
+const LoginForm = () => {
+  const navigate = useNavigate();
   const [loginState, setLoginState] = useState(fieldsState);
   const loginData = {
     email: loginState.email,
@@ -25,14 +27,19 @@ export default function LoginForm() {
     authenticateUser();
   };
 
-  //Handle Login API Integration here
+  //Handle Login API Integration
   const authenticateUser = async () => {
     console.log(loginData);
     try {
       const response = await api.post("/auth/login", loginData);
       console.log(response.data);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        if (error.response.data === "User not verified") {
+          // Handle user not verified error
+          navigate("/verifyemail");
+        }
+      }
     }
   };
 
@@ -58,4 +65,6 @@ export default function LoginForm() {
       <FormAction handleSubmit={handleSubmit} text="Login" />
     </form>
   );
-}
+};
+
+export default LoginForm;
