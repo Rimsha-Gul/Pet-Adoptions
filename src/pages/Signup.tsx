@@ -1,7 +1,11 @@
+import { useEffect } from "react";
 import Header from "../components/Header";
 import SignuppForm from "../components/SignupForm";
 
 function Signup() {
+  useEffect(() => {
+    console.log("useEffect called");
+  }, []);
   return (
     <>
       <Header

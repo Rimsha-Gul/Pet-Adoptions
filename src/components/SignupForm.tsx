@@ -14,9 +14,10 @@ fields.forEach((field) => (fieldsState[field.id] = ""));
 const SignupForm = () => {
   const appContext = useContext(AppContext);
   const [signupState, setSignupState] = useState(fieldsState);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const signupData = {
-    username: signupState.username,
+    name: signupState.name,
     email: signupState.email,
     address: signupState.address,
     password: signupState.password,
@@ -34,8 +35,8 @@ const SignupForm = () => {
 
   //Handle Signup API Integration
   const createAccount = async () => {
-    console.log(signupData);
     try {
+      setIsLoading(true);
       const response = await api.post("/auth/signup", signupData);
       console.log(response.data);
       if (response.status === 200) {
@@ -44,11 +45,13 @@ const SignupForm = () => {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <form className="mx-auto md:w-2/3 mt-8 space-y-6">
+    <form className="mx-auto md:w-1/4 mt-8 space-y-6">
       <div className="">
         {fields.map((field) => (
           <Input
@@ -66,7 +69,11 @@ const SignupForm = () => {
           />
         ))}
       </div>
-      <FormAction handleSubmit={handleSubmit} text="Signup" />
+      <FormAction
+        handleSubmit={handleSubmit}
+        text="Signup"
+        isLoading={isLoading}
+      />
     </form>
   );
 };

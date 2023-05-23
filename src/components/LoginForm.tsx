@@ -1,10 +1,11 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useContext, useState } from "react";
 import { loginFields } from "../constants/formFields";
 import Input from "./Input";
 import { FieldsState } from "../types/common";
 import FormAction from "./FormAction";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 const fields = loginFields;
 let fieldsState: FieldsState = {};
@@ -12,7 +13,9 @@ fields.forEach((field) => (fieldsState[field.id] = ""));
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const appContext = useContext(AppContext);
   const [loginState, setLoginState] = useState(fieldsState);
+  const [isLoading, setIsLoading] = useState(false);
   const loginData = {
     email: loginState.email,
     password: loginState.password,
@@ -31,20 +34,29 @@ const LoginForm = () => {
   const authenticateUser = async () => {
     console.log(loginData);
     try {
+      setIsLoading(true);
       const response = await api.post("/auth/login", loginData);
-      console.log(response.data);
-    } catch (error: any) {
-      if (error.response.status === 401) {
-        if (error.response.data === "User not verified") {
-          // Handle user not verified error
-          navigate("/verifyemail");
-        }
+      if (response.status === 200) {
+        const { isVerified, tokens } = response.data;
+        console.log(tokens.accessToken);
+        localStorage.setItem("accessToken", tokens.accessToken);
+        console.log("Isverified: ", isVerified);
+        navigate("/homepage");
       }
+    } catch (error: any) {
+      if (error.response.status === 403) {
+        // Handle user not verified error
+        appContext.setUsermail?.(loginData.email);
+        console.log(appContext.usermail);
+        navigate("/verifyemail");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <form className="mx-auto md:w-2/3 space-y-8mt-8 space-y-6">
+    <form className="mx-auto md:w-1/4 space-y-8mt-8 space-y-6">
       <div className="-space-y-px">
         {fields.map((field) => (
           <Input
@@ -62,7 +74,11 @@ const LoginForm = () => {
           />
         ))}
       </div>
-      <FormAction handleSubmit={handleSubmit} text="Login" />
+      <FormAction
+        handleSubmit={handleSubmit}
+        text="Login"
+        isLoading={isLoading}
+      />
     </form>
   );
 };

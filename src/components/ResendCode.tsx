@@ -14,7 +14,10 @@ const ResendCode = () => {
     };
     try {
       console.log(userEmail);
-      const response = await api.post("/auth/resendCode", resendCodeData);
+      const response = await api.post(
+        "/auth/sendVerificationCode",
+        resendCodeData
+      );
       if (response.status === 200) {
         setTimer(60); // After a successful response, you can start the timer for 60 seconds
       }
@@ -35,9 +38,12 @@ const ResendCode = () => {
   }, [timer]);
 
   return (
-    <div className="mt-4">
+    <div>
       {timer === 0 ? (
-        <button className="text-primary" onClick={handleResendClick}>
+        <button
+          className="px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer"
+          onClick={handleResendClick}
+        >
           Resend Code
         </button>
       ) : (
