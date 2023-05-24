@@ -37,10 +37,10 @@ const LoginForm = () => {
       setIsLoading(true);
       const response = await api.post("/auth/login", loginData);
       if (response.status === 200) {
-        const { isVerified, tokens } = response.data;
-        console.log(tokens.accessToken);
+        const { tokens } = response.data;
+        appContext.setUsermail?.(loginData.email);
+        appContext.setLoggedIn?.(true);
         localStorage.setItem("accessToken", tokens.accessToken);
-        console.log("Isverified: ", isVerified);
         navigate("/homepage");
       }
     } catch (error: any) {

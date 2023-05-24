@@ -11,6 +11,8 @@ import api from "../api";
 interface AppContextProps {
   usermail: string;
   setUsermail: Dispatch<SetStateAction<string>> | null;
+  displayName: string;
+  setDisplayName: Dispatch<SetStateAction<string>> | null;
   loggedIn: boolean;
   setLoggedIn: Dispatch<SetStateAction<boolean>> | null;
 }
@@ -18,6 +20,8 @@ interface AppContextProps {
 export const AppContext = createContext<AppContextProps>({
   usermail: "",
   setUsermail: null,
+  displayName: "",
+  setDisplayName: null,
   loggedIn: false,
   setLoggedIn: null,
 });
@@ -25,6 +29,7 @@ export const AppContext = createContext<AppContextProps>({
 const AppContextProvider = (props: { children: ReactNode }) => {
   const { children } = props;
   const [usermail, setUsermail] = useState<string>("");
+  const [displayName, setDisplayName] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -33,7 +38,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
       .then((res) => res.data)
       .then((data: any) => {
         setUsermail(data.email);
-
+        setDisplayName(data.name);
         setLoggedIn(true);
       })
       .catch(() => {
@@ -43,7 +48,14 @@ const AppContextProvider = (props: { children: ReactNode }) => {
 
   return (
     <AppContext.Provider
-      value={{ usermail, setUsermail, loggedIn, setLoggedIn }}
+      value={{
+        usermail,
+        setUsermail,
+        displayName,
+        setDisplayName,
+        loggedIn,
+        setLoggedIn,
+      }}
     >
       {children}
     </AppContext.Provider>

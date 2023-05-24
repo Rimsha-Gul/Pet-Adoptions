@@ -48,6 +48,7 @@ const VerifyEmail = () => {
         console.log(tokens.accessToken);
         localStorage.setItem("accessToken", tokens.accessToken);
         console.log("Isverified: ", isVerified);
+        appContext.setLoggedIn?.(true);
         navigate("/homepage");
       }
     } catch (error) {
