@@ -3,10 +3,8 @@ import {
   ReactNode,
   SetStateAction,
   createContext,
-  useEffect,
   useState,
 } from "react";
-import api from "../api";
 
 interface AppContextProps {
   usermail: string;
@@ -32,19 +30,19 @@ const AppContextProvider = (props: { children: ReactNode }) => {
   const [displayName, setDisplayName] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
 
-  useEffect(() => {
-    api
-      .get("/session")
-      .then((res) => res.data)
-      .then((data: any) => {
-        setUsermail(data.email);
-        setDisplayName(data.name);
-        setLoggedIn(true);
-      })
-      .catch(() => {
-        setLoggedIn(false);
-      });
-  });
+  // useEffect(() => {
+  //   api
+  //     .get("/session")
+  //     .then((res) => res.data)
+  //     .then((data: any) => {
+  //       setUsermail(data.email);
+  //       setDisplayName(data.name);
+  //       setLoggedIn(true);
+  //     })
+  //     .catch(() => {
+  //       setLoggedIn(false);
+  //     });
+  // });
 
   return (
     <AppContext.Provider
