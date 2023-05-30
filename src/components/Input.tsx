@@ -30,8 +30,8 @@ const Input = ({
   customClass,
   validationError,
 }: InputProps) => {
-  const [isTouched, setIsTouched] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [isTouched, setIsTouched] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);

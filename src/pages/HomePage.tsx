@@ -18,12 +18,12 @@ interface Pet {
 const HomePage = () => {
   const appContext = useContext(AppContext);
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pets, setPets] = useState<Pet[]>([]);
-  const [petsLoadingError, setPetsLoadingError] = useState("");
+  const [petsLoadingError, setPetsLoadingError] = useState<string>("");
 
-  if (!appContext.usermail) {
-    console.log(appContext.usermail);
+  if (!appContext.userEmail) {
+    console.log(appContext.userEmail);
     return <Navigate to={"/"} />;
   }
 
@@ -38,7 +38,7 @@ const HomePage = () => {
         appContext.setDisplayName?.(response.data.name);
         console.log(response.data);
         console.log(appContext.loggedIn);
-        console.log(appContext.usermail);
+        console.log(appContext.userEmail);
         console.log(appContext.displayName);
       } catch (error) {
         console.error(error);
@@ -77,7 +77,7 @@ const HomePage = () => {
     try {
       const response = await api.delete("/logout");
       localStorage.removeItem("accessToken");
-      appContext.setUsermail?.("");
+      appContext.setUserEmail?.("");
       appContext.setLoggedIn?.(false);
       appContext.setDisplayName?.("");
       navigate("/");

@@ -14,15 +14,15 @@ fields.forEach((field) => (fieldsState[field.id] = ""));
 
 const SignupForm = () => {
   const appContext = useContext(AppContext);
-  const [signupState, setSignupState] = useState(fieldsState);
+  const [signupState, setSignupState] = useState<FieldsState>(fieldsState);
   const [errors, setErrors] = useState<FieldsState>({
     name: "Name is required",
     email: "Email is required",
     password: "Password is required",
     confirmPassword: "Confirm password is required",
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const navigate = useNavigate();
   const signupData = {
     name: signupState.name,
@@ -78,7 +78,7 @@ const SignupForm = () => {
   //Handle Signup API Integration
   const createAccount = async () => {
     try {
-      appContext.setUsermail?.(signupData.email);
+      appContext.setUserEmail?.(signupData.email);
       setIsLoading(true);
       const response = await api.post("/auth/signup", signupData);
       console.log(response.data);

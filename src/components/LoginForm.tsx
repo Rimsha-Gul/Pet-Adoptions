@@ -15,13 +15,13 @@ fields.forEach((field) => (fieldsState[field.id] = ""));
 const LoginForm = () => {
   const navigate = useNavigate();
   const appContext = useContext(AppContext);
-  const [loginState, setLoginState] = useState(fieldsState);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [loginState, setLoginState] = useState<FieldsState>(fieldsState);
   const [errors, setErrors] = useState<FieldsState>({
     email: "Email is required",
     password: "Password is required",
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFormValid, setIsFormValid] = useState(false);
   const loginData = {
     email: loginState.email,
     password: loginState.password,
@@ -63,12 +63,12 @@ const LoginForm = () => {
   const authenticateUser = async () => {
     console.log(loginData);
     try {
-      appContext.setUsermail?.(loginData.email);
+      appContext.setUserEmail?.(loginData.email);
       setIsLoading(true);
       const response = await api.post("/auth/login", loginData);
       if (response.status === 200) {
         const { tokens } = response.data;
-        appContext.setUsermail?.(loginData.email);
+        appContext.setUserEmail?.(loginData.email);
         appContext.setLoggedIn?.(true);
         localStorage.setItem("accessToken", tokens.accessToken);
         navigate("/homepage");
@@ -87,7 +87,7 @@ const LoginForm = () => {
         }));
       } else if (error.response.status === 403) {
         // Handle user not verified error
-        console.log(appContext.usermail);
+        console.log(appContext.userEmail);
         navigate("/verifyemail");
       }
     } finally {

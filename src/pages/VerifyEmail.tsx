@@ -7,20 +7,21 @@ import { errorMessages } from "../constants/errorMessages";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
-  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationCode, setVerificationCode] = useState<string>("");
   const appContext = useContext(AppContext);
-  const [timer, setTimer] = useState(60);
-  const [resendDisabled, setResendDisabled] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isResending, setIsResending] = useState(false);
-  const [verificationCodeError, setVerificationCodeError] = useState("");
+  const [timer, setTimer] = useState<number>(60);
+  const [resendDisabled, setResendDisabled] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isResending, setIsResending] = useState<boolean>(false);
+  const [verificationCodeError, setVerificationCodeError] =
+    useState<string>("");
   const sendCodeData = {
-    email: appContext.usermail,
+    email: appContext.userEmail,
   };
 
   useEffect(() => {
     const sendVerificationCode = async () => {
-      if (appContext.usermail) {
+      if (appContext.userEmail) {
         // Check if usermail is not null
         try {
           const response = await api.post(
@@ -48,13 +49,13 @@ const VerifyEmail = () => {
     };
 
     sendVerificationCode();
-  }, [appContext.usermail]);
+  }, [appContext.userEmail]);
 
   const handleClick = async (e: any) => {
     e.preventDefault();
     // VerifyEmail API integration
     const verificationData = {
-      email: appContext.usermail,
+      email: appContext.userEmail,
       verificationCode: verificationCode,
     };
     try {
@@ -88,7 +89,7 @@ const VerifyEmail = () => {
   const handleResendClick = async () => {
     // Resend code api integration
     const resendCodeData = {
-      email: appContext.usermail,
+      email: appContext.userEmail,
     };
     setVerificationCodeError("");
     try {
