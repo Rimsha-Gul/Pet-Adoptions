@@ -3,41 +3,59 @@ import api from "../api";
 import { AppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import loadingIcon from "../assets/loading.gif";
+import { errorMessages } from "../constants/errorMessages";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
-  const [verificationCode, setVerificationCode] = useState("");
+  const [verificationCode, setVerificationCode] = useState<string>("");
   const appContext = useContext(AppContext);
-  const [timer, setTimer] = useState(60);
-  const [resendDisabled, setResendDisabled] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isResending, setIsResending] = useState(false);
+  const [timer, setTimer] = useState<number>(60);
+  const [resendDisabled, setResendDisabled] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isResending, setIsResending] = useState<boolean>(false);
+  const [verificationCodeError, setVerificationCodeError] =
+    useState<string>("");
   const sendCodeData = {
-    email: appContext.usermail,
+    email: appContext.userEmail,
   };
 
   useEffect(() => {
     const sendVerificationCode = async () => {
-      try {
-        const response = await api.post(
-          "/auth/sendVerificationCode",
-          sendCodeData
-        );
-        if (response.status === 200) {
-          console.log("Email sent");
+      if (appContext.userEmail) {
+        // Check if usermail is not null
+        try {
+          const response = await api.post(
+            "/auth/sendVerificationCode",
+            sendCodeData
+          );
+          if (response.status === 200) {
+            console.log("Email sent");
+          }
+        } catch (error: any) {
+          console.error(error);
+          if (error.response.status === 404) {
+            navigate("/pagenotfound", {
+              state: errorMessages.pageNotFound,
+            });
+          } else if (error.response.status === 500) {
+            navigate("/pagenotfound", {
+              state: errorMessages.emailSendingError,
+            });
+          }
         }
-      } catch (error) {
-        console.error(error);
+      } else {
+        navigate("/pagenotfound");
       }
     };
+
     sendVerificationCode();
-  }, []);
+  }, [appContext.userEmail]);
 
   const handleClick = async (e: any) => {
     e.preventDefault();
     // VerifyEmail API integration
     const verificationData = {
-      email: appContext.usermail,
+      email: appContext.userEmail,
       verificationCode: verificationCode,
     };
     try {
@@ -51,8 +69,19 @@ const VerifyEmail = () => {
         appContext.setLoggedIn?.(true);
         navigate("/homepage");
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.log(error);
+      if (error.response.status === 404) {
+        navigate("/pagenotfound", {
+          state: errorMessages.pageNotFound,
+        });
+      } else if (error.response.status === 401) {
+        setVerificationCodeError(
+          "Verification code expired. Please request a new code."
+        );
+      } else if (error.response.status === 400) {
+        setVerificationCodeError("Incorrect verification code");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -60,8 +89,9 @@ const VerifyEmail = () => {
   const handleResendClick = async () => {
     // Resend code api integration
     const resendCodeData = {
-      email: appContext.usermail,
+      email: appContext.userEmail,
     };
+    setVerificationCodeError("");
     try {
       setIsResending(true);
       const response = await api.post(
@@ -95,62 +125,73 @@ const VerifyEmail = () => {
   const isCodeValid = verificationCode.length === 6;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-3xl text-primary font-bold mb-4">
-        Verify Your Email Account
-      </h1>
-      <p className="text-lg mb-8">
-        Please enter the 6-digit code sent to your email.
-      </p>
-      <div className="flex flex-row mt-2 items-center justify-center">
-        <input
-          type="text"
-          value={verificationCode}
-          onChange={(e) => setVerificationCode(e.target.value)}
-          pattern="\d{6}"
-          maxLength={6}
-          required
-          className="w-1/2 px-4 py-2 border border-primary focus:border-primary rounded mb-4"
-        />
-      </div>
-      <div className="flex flex-row gap-4 mt-2 items-center">
-        <button
-          className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer ${
-            !isCodeValid ? "opacity-50 cursor-not-allowed" : ""
-          } ${
-            isLoading
-              ? "bg-primary text-white opacity-50 cursor-not-allowed"
-              : ""
-          } `}
-          onClick={handleClick}
-          disabled={!isCodeValid}
-        >
-          {isLoading && (
-            <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
-          )}
-          Verify
-        </button>
-        <div>
-          {timer === 0 ? (
-            <button
-              className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer 
+    <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
+      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md p-12">
+        <h1 className="text-3xl text-primary font-bold mb-4">
+          Verify Your Email Account
+        </h1>
+        <p className="text-lg mb-8">
+          Please enter the 6-digit code sent to your email.
+        </p>
+        <div className="flex flex-row mt-2 items-center justify-center">
+          <input
+            type="text"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            pattern="\d{6}"
+            maxLength={6}
+            required
+            className="w-1/2 px-4 py-2 border border-primary focus:border-primary rounded mb-4"
+          />
+        </div>
+        <div className="flex flex-row gap-4 mt-2 items-center justify-center">
+          <button
+            className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer ${
+              !isCodeValid ? "opacity-50 cursor-not-allowed" : ""
+            } ${
+              isLoading
+                ? "bg-primary text-white opacity-50 cursor-not-allowed"
+                : ""
+            } `}
+            onClick={handleClick}
+            disabled={!isCodeValid}
+          >
+            {isLoading && (
+              <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
+            )}
+            Verify
+          </button>
+          <div>
+            {timer === 0 ? (
+              <button
+                className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer 
               ${
                 isResending
                   ? "bg-primary text-white opacity-50 cursor-not-allowed"
                   : ""
               } `}
-              onClick={handleResendClick}
-              disabled={resendDisabled}
-            >
-              {isResending && (
-                <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
-              )}
-              Resend Code
-            </button>
-          ) : (
-            <div>Code will expire in {timer} seconds</div>
-          )}
+                onClick={handleResendClick}
+                disabled={resendDisabled}
+              >
+                {isResending && (
+                  <img
+                    src={loadingIcon}
+                    alt="Loading"
+                    className="mr-2 h-4 w-4"
+                  />
+                )}
+                Resend Code
+              </button>
+            ) : (
+              <div>Code will expire in {timer} seconds</div>
+            )}
+          </div>
         </div>
+        {verificationCodeError && (
+          <p className="flex items-center justify-center mt-4 text-sm text-red-500">
+            {verificationCodeError}
+          </p>
+        )}
       </div>
     </div>
   );

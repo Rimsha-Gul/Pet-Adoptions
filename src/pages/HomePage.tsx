@@ -1,14 +1,29 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import api from "../api";
 import PrimaryLogo from "../icons/PrimaryLogo";
 import { useNavigate, Navigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+import { errorMessages } from "../constants/errorMessages";
+import loadingIcon from "../assets/loading.gif";
+
+interface Pet {
+  shelterId: number;
+  name: string;
+  age: number;
+  color: string;
+  bio: string;
+  image: string;
+}
 
 const HomePage = () => {
   const appContext = useContext(AppContext);
   const navigate = useNavigate();
-  if (!appContext.usermail) {
-    console.log(appContext.usermail);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [petsLoadingError, setPetsLoadingError] = useState<string>("");
+
+  if (!appContext.userEmail) {
+    console.log(appContext.userEmail);
     return <Navigate to={"/"} />;
   }
 
@@ -20,8 +35,11 @@ const HomePage = () => {
     const fetchSession = async () => {
       try {
         const response = await api.get("/session");
-
+        appContext.setDisplayName?.(response.data.name);
         console.log(response.data);
+        console.log(appContext.loggedIn);
+        console.log(appContext.userEmail);
+        console.log(appContext.displayName);
       } catch (error) {
         console.error(error);
       }
@@ -30,14 +48,48 @@ const HomePage = () => {
     fetchSession();
   }, []);
 
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.get("/pet");
+        const petsData: Pet[] = response.data;
+        setPets(petsData);
+      } catch (error: any) {
+        console.error(error);
+        if (error.response.status === 500) {
+          setPetsLoadingError("Failed to fetch pets");
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPets();
+  }, []);
+
   if (!appContext.loggedIn) {
     // Redirect to a login page
     return <Navigate to={"/"} />;
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      const response = await api.delete("/logout");
+      localStorage.removeItem("accessToken");
+      appContext.setUserEmail?.("");
+      appContext.setLoggedIn?.(false);
+      appContext.setDisplayName?.("");
+      navigate("/");
+      console.log(response.status);
+    } catch (error: any) {
+      console.error(error);
+      if (error.response.status === 404) {
+        navigate("/pagenotfound", {
+          state: errorMessages.pageNotFound,
+        });
+      }
+    }
   };
 
   return (
@@ -58,12 +110,34 @@ const HomePage = () => {
         <div className="mt-12 text-4xl text-primary font-bold">
           Pets Available for Adoption
         </div>
-        {/* <div className="bg-white rounded-lg shadow-md p-4">
-          <img alt="Card Image" className="w-full" />
-          <div className="text-center mt-2">
-            <h3 className="text-lg font-bold"></h3>
+        {isLoading && (
+          <img src={loadingIcon} alt="Loading" className="h-10 w-10 mt-8" />
+        )}
+        {!petsLoadingError && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-12 m-12">
+            {pets.map((pet) => (
+              <div
+                key={pet.name}
+                className="bg-gray-100 rounded-lg shadow-lg flex flex-col gap-4 justify-center items-center"
+              >
+                <img
+                  src={pet.image}
+                  alt="Pet Image"
+                  className="w-full h-80 object-cover"
+                />
+                <div className="mt-2 flex flex-col gap-4 p-4">
+                  <h3 className="text-2xl text-primary font-bold text-center">
+                    {pet.name}
+                  </h3>
+                  <p className="text-md text-gray-500 line-clamp-2">
+                    {pet.bio}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-        </div> */}
+        )}
+        {petsLoadingError && <p>{petsLoadingError}</p>}
       </div>
     </>
   );
