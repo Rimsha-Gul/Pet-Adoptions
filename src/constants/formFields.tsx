@@ -7,7 +7,7 @@ export const signupFields = [
     type: "text",
     autoComplete: "name",
     isRequired: true,
-    placeholder: "name",
+    placeholder: "Name",
   },
   {
     labelText: "Email",
@@ -20,24 +20,23 @@ export const signupFields = [
     placeholder: "Email",
   },
   {
-    labelText: "Address",
-    labelFor: "address",
-    id: "address",
-    name: "address",
-    type: "text",
-    autoComplete: "address",
-    isRequired: true,
-    placeholder: "Address",
-  },
-  {
     labelText: "Password",
     labelFor: "password",
     id: "password",
     name: "password",
     type: "password",
-    autoComplete: "current-password",
+    autoComplete: "new-password",
     isRequired: true,
     placeholder: "Password",
+  },
+  {
+    labelText: "ConfirmPassword",
+    labelFor: "confirmPassword",
+    id: "confirmPassword",
+    name: "confirmPassword",
+    type: "password",
+    isRequired: true,
+    placeholder: "Confirm Password",
   },
 ];
 
