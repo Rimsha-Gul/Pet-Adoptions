@@ -1,19 +1,17 @@
 import { useContext, useEffect, useState } from "react";
 import api from "../api";
-import PrimaryLogo from "../icons/PrimaryLogo";
 import { useNavigate, Navigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
-import { errorMessages } from "../constants/errorMessages";
 import loadingIcon from "../assets/loading.gif";
 import Select from "react-select";
 
 interface Pet {
   shelterId: number;
   name: string;
-  age: number;
+  age: string;
   color: string;
   bio: string;
-  image: string;
+  images: string[];
 }
 
 const HomePage = () => {
@@ -147,11 +145,6 @@ const HomePage = () => {
     }
   };
 
-  if (!appContext.loggedIn) {
-    // Redirect to login page
-    return <Navigate to={"/"} />;
-  }
-
   const handleOptionChange = (selectedOption: any) => {
     if (selectedOption) {
       setFilterOption(selectedOption.value);
@@ -160,46 +153,10 @@ const HomePage = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      const response = await api.delete("/logout");
-      localStorage.removeItem("accessToken");
-      appContext.setUserEmail?.("");
-      appContext.setLoggedIn?.(false);
-      appContext.setDisplayName?.("");
-      navigate("/");
-      console.log(response.status);
-    } catch (error: any) {
-      console.error(error);
-      if (error.response.status === 404) {
-        navigate("/pagenotfound", {
-          state: errorMessages.pageNotFound,
-        });
-      }
-    }
-  };
-
   return (
     <>
-      <div className="fixed top-0 w-full flex items-center justify-between p-4 shadow-md mb-12 z-10 bg-white">
-        <PrimaryLogo />
-        <div className="flex flex-row gap-8 items-center">
-          <p className="text-xl">{appContext.displayName}</p>
-          <button
-            className="px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </div>
-      </div>
-
       <div className="flex flex-col justify-center p-8 mt-28">
-        <div className="mt-12 text-4xl text-center text-primary font-bold sticky top-0">
-          Pets Available for Adoption
-        </div>
-
-        <div className="flex flex-row gap-6 justify-center mt-16">
+        <div className="flex flex-row gap-6 justify-end mt-16 me-24">
           <input
             type="text"
             placeholder="Search pets..."
@@ -241,7 +198,7 @@ const HomePage = () => {
                   }
                 >
                   <img
-                    src={pet.image}
+                    src={pet.images[0]}
                     alt="Pet Image"
                     className="w-full h-80 object-cover"
                   />
