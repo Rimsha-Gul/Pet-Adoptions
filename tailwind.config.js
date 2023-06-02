@@ -15,6 +15,9 @@ export default {
         primary: "#ff5363",
         secondary: "#fb7a75",
       },
+      backgroundColor: {
+        primary: "#ff5363",
+      },
       borderColor: {
         primary: "#ff5363",
       },
