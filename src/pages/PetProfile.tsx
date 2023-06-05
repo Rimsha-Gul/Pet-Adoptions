@@ -2,6 +2,8 @@ import { useLocation } from "react-router-dom";
 import PetImagesCarousel from "../components/PetComponents/PetImagesCarousel";
 import PetBasicInfo from "../components/PetComponents/PetBasicInfo";
 import PetAdditionalInfo from "../components/PetComponents/PetAdditionalInfo";
+import PetTraits from "../components/PetComponents/PetTraits";
+import PetAdoptionApply from "../components/PetComponents/PetAdoptionApply";
 
 const PetProfile = () => {
   const location = useLocation();
@@ -10,26 +12,33 @@ const PetProfile = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 flex flex-col justify-center items-center mt-24 mb-8">
+      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 flex flex-col justify-center items-center mt-24">
         <PetImagesCarousel petImages={pet.images} />
-        <div className="flex flex-row justify-center items-start gap-12">
-          <PetBasicInfo
-            petBio={petBio}
-            petCategory={pet.category}
-            petTraits={pet.traits}
-          />
-          <PetAdditionalInfo
-            petName={pet.name}
-            petAge={pet.age}
-            petColor={pet.color}
-            petGender={pet.gender}
-            petBreed={pet.breed}
-            petActivityNeeds={pet.activityNeeds}
-            petLevelOfGrooming={pet.levelOfGrooming}
-            petIsHouseTrained={pet.isHouseTrained}
-            petHealthInfo={pet.healthInfo}
-            petAdoptionFee={pet.adoptionFee}
-          />
+        <div className="flex flex-col md:flex-row justify-center w-full px-8 space-y-8 md:space-y-0 md:space-x-8">
+          <div className="w-full md:w-3/4">
+            <PetBasicInfo petBio={petBio} />
+          </div>
+          <div className="w-full md:w-1/4">
+            <PetAdditionalInfo
+              petName={pet.name}
+              petAge={pet.age}
+              petColor={pet.color}
+              petGender={pet.gender}
+              petBreed={pet.breed}
+              petActivityNeeds={pet.activityNeeds}
+              petLevelOfGrooming={pet.levelOfGrooming}
+              petIsHouseTrained={pet.isHouseTrained}
+              petHealthInfo={pet.healthInfo}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col md:flex-row justify-center w-full px-8 space-y-8 md:space-y-0 md:space-x-8 bg-white">
+          <div className="w-full md:w-3/4">
+            <PetTraits petCategory={pet.category} petTraits={pet.traits} />
+          </div>
+          <div className="w-full md:w-1/4">
+            <PetAdoptionApply petAdoptionFee={pet.adoptionFee} />
+          </div>
         </div>
       </div>
     </>

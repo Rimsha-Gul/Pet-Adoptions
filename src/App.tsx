@@ -12,11 +12,9 @@ import api from "./api";
 import { errorMessages } from "./constants/errorMessages";
 import PrimaryHeader from "./layouts/PrimaryHeader";
 
-// import PrimaryHeader from "./layouts/PrimaryHeader";
-
 function App() {
   const appContext = useContext(AppContext);
-  const isAuthenticated = appContext.loggedIn; // Replace with your actual authentication state
+  const isAuthenticated = appContext.loggedIn;
 
   const handleLogout = async () => {
     try {
