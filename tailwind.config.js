@@ -16,7 +16,7 @@ export default {
         secondary: {
           DEFAULT: "#fb7a75",
           50: "#fed8d3",
-          10: "#fee2dd",
+          10: "#fef0e8",
         },
       },
       backgroundColor: {

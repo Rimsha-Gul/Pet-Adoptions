@@ -14,12 +14,14 @@ import PrimaryHeader from "./layouts/PrimaryHeader";
 
 function App() {
   const appContext = useContext(AppContext);
-  const isAuthenticated = appContext.loggedIn;
+  const isAuthenticated = localStorage.getItem("userEmail");
 
   const handleLogout = async () => {
     try {
       const response = await api.delete("/logout");
       localStorage.removeItem("accessToken");
+      localStorage.removeItem("userEmail");
+      localStorage.removeItem("userName");
       appContext.setUserEmail?.("");
       appContext.setLoggedIn?.(false);
       appContext.setDisplayName?.("");

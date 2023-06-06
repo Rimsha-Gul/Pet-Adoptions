@@ -15,7 +15,7 @@ const PetProfile = () => {
       <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 flex flex-col justify-center items-center mt-24">
         <PetImagesCarousel petImages={pet.images} />
         <div className="flex flex-col md:flex-row justify-center w-full px-8 space-y-8 md:space-y-0 md:space-x-8">
-          <div className="w-full md:w-3/4">
+          <div className="w-full md:w-3/4 mx-auto max-w-6xl">
             <PetBasicInfo petBio={petBio} />
           </div>
           <div className="w-full md:w-1/4">
@@ -32,8 +32,8 @@ const PetProfile = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col md:flex-row justify-center w-full px-8 space-y-8 md:space-y-0 md:space-x-8 bg-white">
-          <div className="w-full md:w-3/4">
+        <div className="md:bg-white flex flex-col md:flex-row justify-start w-full px-8 space-y-8 md:space-y-0 md:space-x-8">
+          <div className="w-full md:w-3/4 mx-auto max-w-6xl">
             <PetTraits petCategory={pet.category} petTraits={pet.traits} />
           </div>
           <div className="w-full md:w-1/4">

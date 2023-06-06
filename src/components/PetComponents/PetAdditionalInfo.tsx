@@ -32,7 +32,7 @@ const PetAdditionalInfo = ({
   petHealthInfo,
 }: PetAdditionalInfoProps) => {
   return (
-    <div className="flex flex-col gap-2 bg-white rounded p-12">
+    <div className="flex flex-col gap-2 bg-white rounded p-12 h-full">
       <p className="text-primary font-bold text-xl uppercase mb-3">
         {petName}'s Stats
       </p>
