@@ -13,7 +13,11 @@ export default {
       },
       colors: {
         primary: "#ff5363",
-        secondary: "#fb7a75",
+        secondary: {
+          DEFAULT: "#fb7a75",
+          50: "#fed8d3",
+          10: "#fef0e8",
+        },
       },
       backgroundColor: {
         primary: "#ff5363",

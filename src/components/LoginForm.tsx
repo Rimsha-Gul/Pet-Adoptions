@@ -63,13 +63,13 @@ const LoginForm = () => {
   const authenticateUser = async () => {
     console.log(loginData);
     try {
-      appContext.setUserEmail?.(loginData.email);
       setIsLoading(true);
       const response = await api.post("/auth/login", loginData);
       if (response.status === 200) {
-        const { tokens } = response.data;
-        appContext.setUserEmail?.(loginData.email);
         appContext.setLoggedIn?.(true);
+        appContext.setUserEmail?.(loginData.email);
+        localStorage.setItem("userEmail", loginData.email);
+        const { tokens } = response.data;
         localStorage.setItem("accessToken", tokens.accessToken);
         navigate("/homepage");
       }

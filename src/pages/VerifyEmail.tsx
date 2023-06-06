@@ -62,11 +62,12 @@ const VerifyEmail = () => {
       setIsLoading(true);
       const response = await api.post("/auth/verifyEmail", verificationData);
       if (response.status === 200) {
-        const { isVerified, tokens } = response.data;
-        console.log(tokens.accessToken);
-        localStorage.setItem("accessToken", tokens.accessToken);
-        console.log("Isverified: ", isVerified);
         appContext.setLoggedIn?.(true);
+        const { isVerified, tokens } = response.data;
+        localStorage.setItem("accessToken", tokens.accessToken);
+        localStorage.setItem("userEmail", appContext.userEmail);
+        console.log(tokens.accessToken);
+        console.log("Isverified: ", isVerified);
         navigate("/homepage");
       }
     } catch (error: any) {
