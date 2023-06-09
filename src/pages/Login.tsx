@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import Header from "../components/Header";
-import LoginForm from "../components/LoginForm";
+import Header from "../components/AuthComponents/Header";
+import LoginForm from "../components/AuthComponents/LoginForm";
 import { AppContext } from "../context/AppContext";
 
 function Login() {

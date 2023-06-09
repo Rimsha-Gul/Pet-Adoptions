@@ -1,12 +1,12 @@
 import { FormEvent, useContext, useEffect, useState } from "react";
-import { loginFields } from "../constants/formFields";
+import { loginFields } from "../../constants/formFields";
 import Input from "./Input";
-import { FieldsState } from "../types/common";
+import { FieldsState } from "../../types/common";
 import FormAction from "./FormAction";
-import api from "../api";
+import api from "../../api";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
-import { validateField } from "../utils/formValidation";
+import { AppContext } from "../../context/AppContext";
+import { validateField } from "../../utils/formValidation";
 
 const fields = loginFields;
 let fieldsState: FieldsState = {};

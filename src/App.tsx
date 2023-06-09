@@ -5,6 +5,8 @@ import VerifyEmail from "./pages/VerifyEmail";
 import HomePage from "./pages/HomePage";
 import PetProfile from "./pages/PetProfile";
 import NotFoundPage from "./pages/PageNotFound";
+import Dashboard from "./pages/Dashboard";
+import AddPet from "./pages/AddPet";
 import { useContext } from "react";
 import { AppContext } from "./context/AppContext";
 import { Navigate } from "react-router-dom";
@@ -36,9 +38,7 @@ function App() {
       }
     }
   };
-  // Function to render protected routes
   const renderProtectedRoute = (Component: any) => {
-    // If user is authenticated, render the component
     if (isAuthenticated) {
       return (
         <>
@@ -47,12 +47,10 @@ function App() {
         </>
       );
     }
-    // If user is not authenticated, redirect to login page
     return <Navigate to="/" />;
   };
   return (
     <BrowserRouter>
-      {/* <PrimaryHeader /> */}
       <div className="flex-grow">
         <Routes>
           <Route path="/" element={<LoginPage />} />
@@ -61,6 +59,8 @@ function App() {
           <Route path="/verifyemail" element={<VerifyEmail />} />
           <Route path="/homepage" element={renderProtectedRoute(HomePage)} />
           <Route path="/pet/:name" element={renderProtectedRoute(PetProfile)} />
+          <Route path="/dashboard" element={renderProtectedRoute(Dashboard)} />
+          <Route path="/addpet" element={renderProtectedRoute(AddPet)} />
         </Routes>
       </div>
     </BrowserRouter>

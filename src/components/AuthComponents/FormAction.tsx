@@ -1,5 +1,5 @@
 import { FormEvent } from "react";
-import loadingIcon from "../assets/loading.gif";
+import loadingIcon from "../../assets/loading.gif";
 
 interface FormActionProps {
   handleSubmit: (e: FormEvent) => void;

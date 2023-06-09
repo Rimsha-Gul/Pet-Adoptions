@@ -9,6 +9,7 @@ import PetCard from "../components/PetComponents/PetCard";
 
 interface Pet {
   shelterId: number;
+  microchipID: string;
   name: string;
   age: string;
   color: string;
@@ -101,6 +102,7 @@ const HomePage = () => {
   const [ageFilter, setAgeFilter] = useState<string>("");
   const [breedFilter, setBreedFilter] = useState<string>("");
   const [genderFilter, setGenderFilter] = useState<string>("");
+  const [noPetsFound, setNoPetsFound] = useState<boolean>(false);
 
   const [isPrevButtonDisabled, setIsPrevButtonDisabled] =
     useState<boolean>(true);
@@ -120,13 +122,17 @@ const HomePage = () => {
     const fetchSession = async () => {
       try {
         const response = await api.get("/session");
-        appContext.setDisplayName?.(response.data.name);
-        localStorage.setItem("userEmail", response.data.email);
-        localStorage.setItem("userName", response.data.name);
-        console.log(response.data);
-        console.log(appContext.loggedIn);
-        console.log(appContext.userEmail);
-        console.log(appContext.displayName);
+
+        if (response.status === 200) {
+          appContext.setDisplayName?.(response.data.name);
+          localStorage.setItem("userEmail", response.data.email);
+          localStorage.setItem("userName", response.data.name);
+          localStorage.setItem("userRole", response.data.role);
+          console.log(response.data);
+          console.log(appContext.loggedIn);
+          console.log(appContext.userEmail);
+          console.log(appContext.displayName);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -171,7 +177,7 @@ const HomePage = () => {
       const response = await api.get("/pet", {
         params: {
           page,
-          limit: 3,
+          limit: 10,
           searchQuery,
           filterOption,
           colorFilter,
@@ -186,7 +192,9 @@ const HomePage = () => {
       let ageRanges: string[] = Array.from(
         new Set(ages.map((age: string) => ageRange(ageToMonths(age))))
       );
-
+      setPetsLoadingError("");
+      setNoPetsFound(false);
+      if (totalPages === 0) setNoPetsFound(true);
       setPets(pets);
       setTotalPages(totalPages);
       setColors(colors);
@@ -248,7 +256,7 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-center p-8 mt-4">
+      <div className="flex flex-col justify-center p-8 mt-4 sm:mt-14">
         <div className="flex flex-row gap-6 justify-end mt-16 me-0 md:me-24 items-end">
           <div className="flex items-center justify-between w-64 pr-4 border border-gray-400 rounded focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
             <input
@@ -340,7 +348,7 @@ const HomePage = () => {
         {petsLoadingError && <p>{petsLoadingError}</p>}
         {!petsLoadingError && (
           <>
-            {pets.length === 0 ? (
+            {noPetsFound ? (
               <div className="flex items-center justify-center h-full">
                 <p>No pets found with the selected criteria.</p>
               </div>
@@ -351,7 +359,7 @@ const HomePage = () => {
                 }`}
               >
                 {pets.map((pet) => (
-                  <PetCard key={pet.name} pet={pet} />
+                  <PetCard key={pet.microchipID} pet={pet} />
                 ))}
               </div>
             )}
