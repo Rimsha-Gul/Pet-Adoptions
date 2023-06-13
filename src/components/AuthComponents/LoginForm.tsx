@@ -96,7 +96,7 @@ const LoginForm = () => {
   };
 
   return (
-    <form className="mx-auto md:w-1/2 space-y-8mt-8 space-y-6">
+    <form className="mx-auto md:w-1/2 space-y-8 mt-8">
       <div className="-space-y-px">
         {fields.map((field) => (
           <Input
@@ -120,6 +120,7 @@ const LoginForm = () => {
         text="Login"
         isLoading={isLoading}
         disabled={!isFormValid}
+        customClass="w-full"
       />
     </form>
   );

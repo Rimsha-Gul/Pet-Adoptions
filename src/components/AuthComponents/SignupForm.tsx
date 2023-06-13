@@ -123,6 +123,7 @@ const SignupForm = () => {
         text="Signup"
         isLoading={isLoading}
         disabled={!isFormValid}
+        customClass="w-full"
       />
     </form>
   );

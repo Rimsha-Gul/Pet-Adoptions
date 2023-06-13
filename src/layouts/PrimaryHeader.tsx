@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+//import { useEffect, useState } from "react";
 import PrimaryLogo from "../icons/PrimaryLogo";
 import { useNavigate } from "react-router-dom";
 
@@ -7,12 +7,13 @@ interface HeaderProps {
 }
 
 const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
+  const role = localStorage.getItem("userRole") || "";
+
   const navigate = useNavigate();
-  const [userRole, setUserRole] = useState<string>("");
-  useEffect(() => {
-    const role = localStorage.getItem("userRole") || "";
-    setUserRole(role);
-  }, []);
+  //  const [userRole, setUserRole] = useState<string>("");
+  //   useEffect(() => {
+  //     setUserRole(role);
+  //   }, []);
 
   const handleLogoutClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     handleLogout(event);
@@ -23,11 +24,11 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
   };
 
   return (
-    <div className="fixed top-0 w-full flex items-center justify-between p-4 shadow-md mb-12 z-10 bg-white">
+    <div className="fixed top-0 w-full flex items-center justify-between p-4 shadow-md mb-12 z-20 bg-white">
       <PrimaryLogo />
       <div className="flex flex-row gap-8 items-center">
         <p className="text-xl">{localStorage.getItem("userName")}</p>
-        {userRole === "ADMIN" ? (
+        {role === "ADMIN" ? (
           <button
             className="px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer"
             onClick={handleDashboardClick}

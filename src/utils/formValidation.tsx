@@ -43,14 +43,11 @@ export const validateField = (
       }
       return "";
     },
-    shelterID: (value) => {
+    shelter: (value) => {
       if (!value) {
-        return "Shelter ID is required";
+        return "Shelter is required";
       }
-      const objectIdRegExp = /^[0-9a-fA-F]{24}$/;
-      if (!objectIdRegExp.test(value)) {
-        return "Shelter ID should be a valid MongoDB ObjectID";
-      }
+
       return "";
     },
     category: (value) => {
@@ -144,48 +141,6 @@ export const validateField = (
       }
       return "";
     },
-    isHouseTrained: (value) => {
-      if (value === undefined || value === null) {
-        return "House trained status is required";
-      }
-      return "";
-    },
-    healthCheck: (value) => {
-      if (value === undefined || value === null) {
-        return "Health check status is required";
-      }
-      return "";
-    },
-    allergiesTreated: (value) => {
-      if (value === undefined || value === null) {
-        return "Allergies treated status is required";
-      }
-      return "";
-    },
-    wormed: (value) => {
-      if (value === undefined || value === null) {
-        return "Wormed status is required";
-      }
-      return "";
-    },
-    heartwormTreated: (value) => {
-      if (value === undefined || value === null) {
-        return "Heartworm treated status is required";
-      }
-      return "";
-    },
-    vaccinated: (value) => {
-      if (value === undefined || value === null) {
-        return "Vaccination status is required";
-      }
-      return "";
-    },
-    deSexed: (value) => {
-      if (value === undefined || value === null) {
-        return "Desexed status is required";
-      }
-      return "";
-    },
     bio: (value) => {
       if (!value) {
         return "Bio is required";
@@ -204,6 +159,12 @@ export const validateField = (
     currency: (value) => {
       if (!value) {
         return "Currency is required";
+      }
+      return "";
+    },
+    images: (value) => {
+      if (!value || value.length === 0) {
+        return "Choose at least one image";
       }
       return "";
     },

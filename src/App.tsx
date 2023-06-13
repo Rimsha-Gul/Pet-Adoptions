@@ -36,6 +36,9 @@ function App() {
           <Navigate to="/pagenotfound" state={errorMessages.pageNotFound} />
         );
       }
+      if (error.response.status === 401) {
+        return <Navigate to="/" />;
+      }
     }
   };
   const renderProtectedRoute = (Component: any) => {

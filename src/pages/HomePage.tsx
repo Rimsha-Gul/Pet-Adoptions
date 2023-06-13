@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import api from "../api";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import loadingIcon from "../assets/loading.gif";
 import Select from "react-select";
@@ -35,7 +35,7 @@ const ageToMonths = (age: string): number => {
 };
 
 const ageRange = (ageInMonths: number): string => {
-  if (ageInMonths <= 12) {
+  if (ageInMonths < 12) {
     return "Less than a year";
   } else if (ageInMonths <= 24) {
     return "1-2 years";
@@ -117,6 +117,7 @@ const HomePage = () => {
   const accessToken = localStorage.getItem("accessToken");
   console.log(accessToken);
   api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -133,8 +134,11 @@ const HomePage = () => {
           console.log(appContext.userEmail);
           console.log(appContext.displayName);
         }
-      } catch (error) {
-        console.error(error);
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          console.error(error.response.status);
+          navigate("/");
+        }
       }
     };
 
@@ -177,7 +181,7 @@ const HomePage = () => {
       const response = await api.get("/pet", {
         params: {
           page,
-          limit: 10,
+          limit: 9,
           searchQuery,
           filterOption,
           colorFilter,
@@ -258,13 +262,13 @@ const HomePage = () => {
     <>
       <div className="flex flex-col justify-center p-8 mt-4 sm:mt-14">
         <div className="flex flex-row gap-6 justify-end mt-16 me-0 md:me-24 items-end">
-          <div className="flex items-center justify-between w-64 pr-4 border border-gray-400 rounded focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
+          <div className="flex items-center justify-between w-64 pr-4 border border-gray-400 rounded-md focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
             <input
               type="text"
               placeholder="Search pets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 w-full focus:outline-none"
+              className="px-4 py-2 w-full focus:outline-none rounded-md"
             />
             <FaSearch className="text-gray-500 hover:cursor-pointer" />
           </div>
