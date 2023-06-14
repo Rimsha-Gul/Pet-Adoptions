@@ -12,7 +12,7 @@ interface PetAdditionalInfoProps {
   petIsHouseTrained: string;
   petHealthInfo: {
     healthCheck: boolean;
-    microchip: boolean;
+    allergiesTreated: boolean;
     wormed: boolean;
     heartwormTreated: boolean;
     vaccinated: boolean;

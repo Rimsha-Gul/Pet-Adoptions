@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Input from "../components/AuthComponents/Input";
 import { addPetFields } from "../constants/formFields";
 import { FieldsState } from "../types/common";
@@ -6,6 +6,31 @@ import FormAction from "../components/AuthComponents/FormAction";
 import { validateField } from "../utils/formValidation";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
+import { showErrorAlert, showSuccessAlert } from "../utils/alert";
+
+interface Pet {
+  name: string;
+  gender: string;
+  age: string;
+  color: string;
+  breed: string;
+  category: string;
+  activityNeeds: string;
+  levelOfGrooming: string;
+  isHouseTrained: boolean;
+  healthInfo: {
+    healthCheck: boolean;
+    allergiesTreated: boolean;
+    wormed: boolean;
+    heartwormTreated: boolean;
+    vaccinated: boolean;
+    deSexed: boolean;
+  };
+  bio: string;
+  traits: string[];
+  adoptionFee: string;
+  images: string[];
+}
 
 const groups = [
   {
@@ -120,6 +145,9 @@ const AddPet = () => {
           setServerError(
             "An error occurred on the server. Please try again later."
           );
+          showErrorAlert(
+            "An error occurred on the server. Please try again later."
+          );
         }
       }
     };
@@ -159,26 +187,66 @@ const AddPet = () => {
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    setSelectedFiles(files);
+  const FileInput = () => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Convert the files to a string representation
-    const filesString = files
-      ? Array.from(files)
-          .map((file) => file.name)
-          .join(", ")
-      : "";
+    const handleBrowseClick = () => {
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    };
 
-    // Validate the files string
-    const fieldError = validateField("images", filesString, addPetState);
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      setSelectedFiles(files);
 
-    // Update the errors state
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      images: fieldError,
-    }));
+      // Convert the files to a string representation
+      const filesString = files
+        ? Array.from(files)
+            .map((file) => file.name)
+            .join(", ")
+        : "";
+
+      // Validate the files string
+      const fieldError = validateField("images", filesString, addPetState);
+
+      // Update the errors state
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        images: fieldError,
+      }));
+    };
+
+    return (
+      <div key="images" className="col-span-1 my-5">
+        <label htmlFor="images">Choose Files</label>
+        <input
+          type="file"
+          id="images"
+          name="images"
+          onChange={handleFileChange}
+          multiple
+          className="hidden"
+          ref={fileInputRef}
+        />
+        <div className="bg-white border border-gray-300 rounded-md px-3 py-2 flex items-center">
+          <span className="text-gray-500 mr-2">
+            {selectedFiles && selectedFiles.length > 0
+              ? `${selectedFiles.length} files selected`
+              : "No files chosen"}
+          </span>
+          <button
+            type="button"
+            className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark"
+            onClick={handleBrowseClick}
+          >
+            Browse
+          </button>
+        </div>
+      </div>
+    );
   };
+
   useEffect(() => {
     // Check if all fields are valid
     const isAllFieldsValid = Object.values(errors).every(
@@ -221,11 +289,20 @@ const AddPet = () => {
       });
       if (response.status === 200) {
         setServerError("");
-        console.log(response.data);
+        console.log("Response data: ", response.data);
+        const pet: Pet = response.data;
+        console.log("Pet: ", pet);
+        showSuccessAlert("The pet has been added successfully.", () =>
+          navigate(`/pet/${encodeURIComponent(pet.name)}`, {
+            state: pet,
+          })
+        );
       }
     } catch (error: any) {
       if (error.response.status === 400) {
         console.log(error.response);
+        showErrorAlert(error.response.data);
+
         if (error.response.data === "Invalid shelter ID.") {
           setErrors((prevErrors) => ({
             ...prevErrors,
@@ -246,6 +323,9 @@ const AddPet = () => {
       } else if (error.response.status === 500) {
         console.error("Server error:", error.response.data);
         setServerError(
+          "An error occurred on the server. Please try again later."
+        );
+        showErrorAlert(
           "An error occurred on the server. Please try again later."
         );
       }
@@ -303,19 +383,7 @@ const AddPet = () => {
                         );
                       }
                       if (field.id === "images") {
-                        return (
-                          <div key={field.id} className="col-span-1 my-5">
-                            <label htmlFor={field.id}>{field.labelText}</label>
-                            <input
-                              type={field.type}
-                              id={field.id}
-                              name={field.name}
-                              onChange={handleFileChange}
-                              multiple={field.multiple}
-                              className="mt-2 block w-full shadow-sm sm:text-sm rounded-sm"
-                            />
-                          </div>
-                        );
+                        return <FileInput key={field.id} />;
                       }
                       return (
                         <Input

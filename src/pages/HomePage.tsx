@@ -6,6 +6,7 @@ import loadingIcon from "../assets/loading.gif";
 import Select from "react-select";
 import { FaSearch } from "react-icons/fa";
 import PetCard from "../components/PetComponents/PetCard";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface Pet {
   shelterId: number;
@@ -104,11 +105,6 @@ const HomePage = () => {
   const [genderFilter, setGenderFilter] = useState<string>("");
   const [noPetsFound, setNoPetsFound] = useState<boolean>(false);
 
-  const [isPrevButtonDisabled, setIsPrevButtonDisabled] =
-    useState<boolean>(true);
-  const [isNextButtonDisabled, setIsNextButtonDisabled] =
-    useState<boolean>(false);
-
   if (!localStorage.getItem("userEmail")) {
     console.log(localStorage.getItem("userEmail"));
     return <Navigate to={"/"} />;
@@ -130,9 +126,6 @@ const HomePage = () => {
           localStorage.setItem("userName", response.data.name);
           localStorage.setItem("userRole", response.data.role);
           console.log(response.data);
-          console.log(appContext.loggedIn);
-          console.log(appContext.userEmail);
-          console.log(appContext.displayName);
         }
       } catch (error: any) {
         if (error.response.status === 401) {
@@ -156,9 +149,9 @@ const HomePage = () => {
   }, [filterOption]);
 
   useEffect(() => {
+    console.log("useEffect called");
     fetchPets(currentPage);
   }, [
-    currentPage,
     filterOption,
     searchQuery,
     colorFilter,
@@ -169,6 +162,7 @@ const HomePage = () => {
 
   const fetchPets = async (page: number) => {
     try {
+      console.log("In fetch pets");
       setIsLoading(true);
       if (
         prevFilterOption !== filterOption ||
@@ -181,7 +175,7 @@ const HomePage = () => {
       const response = await api.get("/pet", {
         params: {
           page,
-          limit: 9,
+          limit: 6,
           searchQuery,
           filterOption,
           colorFilter,
@@ -205,12 +199,7 @@ const HomePage = () => {
       setAges(ageRanges);
       setBreeds(breeds);
       setGenders(genders);
-      setIsPrevButtonDisabled(
-        isLoading || currentPage === 1 || totalPages === 0
-      );
-      setIsNextButtonDisabled(
-        isLoading || currentPage === totalPages || totalPages === 0
-      );
+      console.log("Total P: ", totalPages);
     } catch (error: any) {
       console.error(error);
       if (error.response.status === 500) {
@@ -221,18 +210,6 @@ const HomePage = () => {
     }
   };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
   const handleOptionChange = (selectedOption: any) => {
     if (selectedOption) {
       setFilterOption(selectedOption.value);
@@ -240,6 +217,52 @@ const HomePage = () => {
     } else {
       setFilterOption("");
       setShowExtraFilters(false);
+    }
+  };
+
+  const loadMoreData = async () => {
+    if (currentPage < totalPages) {
+      try {
+        setIsLoading(true);
+        const nextPage = currentPage + 1;
+
+        // Fetch the next page of data
+        const response = await api.get("/pet", {
+          params: {
+            page: nextPage,
+            limit: 6,
+            searchQuery,
+            filterOption,
+            colorFilter,
+            ageFilter,
+            breedFilter,
+            genderFilter,
+          },
+        });
+
+        const {
+          pets: newPets,
+          totalPages,
+          colors,
+          ages,
+          breeds,
+          genders,
+        } = response.data;
+
+        // Append the new pets to the existing pets
+        setPets((prevPets) => [...prevPets, ...newPets]);
+        setCurrentPage(nextPage);
+        setTotalPages(totalPages);
+        setColors(colors);
+        setAges(ages);
+        setBreeds(breeds);
+        setGenders(genders);
+        console.log("Updated pets:", pets);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -357,37 +380,28 @@ const HomePage = () => {
                 <p>No pets found with the selected criteria.</p>
               </div>
             ) : (
-              <div
-                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-16 m-0 md:m-12 ${
-                  isLoading ? "opacity-50" : ""
-                }`}
+              <InfiniteScroll
+                dataLength={pets.length}
+                next={loadMoreData}
+                hasMore={currentPage < totalPages}
+                loader={
+                  <div className="flex items-center justify-center" key={0}>
+                    <img
+                      src={loadingIcon}
+                      alt="Loading"
+                      className="h-10 w-10"
+                    />
+                  </div>
+                }
               >
-                {pets.map((pet) => (
-                  <PetCard key={pet.microchipID} pet={pet} />
-                ))}
-              </div>
-            )}
-            {totalPages && (
-              <div className="flex justify-center mt-4">
-                <button
-                  onClick={handlePreviousPage}
-                  disabled={isPrevButtonDisabled}
-                  className={`px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded mr-2 ${
-                    isPrevButtonDisabled ? "opacity-50" : ""
-                  }`}
+                <div
+                  className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-16 m-0 md:m-12`}
                 >
-                  Previous Page
-                </button>
-                <button
-                  onClick={handleNextPage}
-                  disabled={isNextButtonDisabled}
-                  className={`px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded ${
-                    isNextButtonDisabled ? "opacity-50" : ""
-                  }`}
-                >
-                  Next Page
-                </button>
-              </div>
+                  {pets.map((pet) => (
+                    <PetCard key={pet.microchipID} pet={pet} />
+                  ))}
+                </div>
+              </InfiniteScroll>
             )}
           </>
         )}
