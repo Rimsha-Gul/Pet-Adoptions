@@ -20,7 +20,12 @@ export const showSuccessAlert = (
     icon: "success",
     confirmButtonText: '<p class="px-8"></p> OK',
     confirmButtonColor: "#ff5363",
-    footer: '<a href id="navigatePet">View the pet\'s profile page</a>',
+    footer: `
+    <a href id="navigatePet">View the pet\'s profile page</a>
+    <style>
+        #navigatePet:hover { text-decoration: underline; }
+    </style>
+    `,
     didOpen: () => {
       const link = document.getElementById("navigatePet");
       if (link) {

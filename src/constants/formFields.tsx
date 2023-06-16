@@ -300,7 +300,7 @@ export const addPetFields = [
     autoComplete: "off",
     isRequired: true,
     placeholder: "Pet's bio",
-    rows: 5,
+    rows: 10,
   },
   {
     labelText: "Images",

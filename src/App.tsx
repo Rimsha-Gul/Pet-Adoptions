@@ -13,6 +13,7 @@ import { Navigate } from "react-router-dom";
 import api from "./api";
 import { errorMessages } from "./constants/errorMessages";
 import PrimaryHeader from "./layouts/PrimaryHeader";
+import Sidebar from "./layouts/Sidebar";
 
 function App() {
   const appContext = useContext(AppContext);
@@ -42,13 +43,27 @@ function App() {
     }
   };
   const renderProtectedRoute = (Component: any) => {
+    const AdminRoutes = [Dashboard, AddPet];
     if (isAuthenticated) {
-      return (
-        <>
-          <PrimaryHeader handleLogout={handleLogout} />
-          <Component />
-        </>
-      );
+      if (AdminRoutes.includes(Component)) {
+        return (
+          <div className="flex flex-row">
+            <Sidebar />
+            <div className="">
+              <Component />
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <>
+            <PrimaryHeader handleLogout={handleLogout} />
+            <div className="mt-20">
+              <Component />
+            </div>
+          </>
+        );
+      }
     }
     return <Navigate to="/" />;
   };

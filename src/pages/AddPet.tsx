@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Input from "../components/AuthComponents/Input";
 import { addPetFields } from "../constants/formFields";
 import { FieldsState } from "../types/common";
@@ -7,6 +7,7 @@ import { validateField } from "../utils/formValidation";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { showErrorAlert, showSuccessAlert } from "../utils/alert";
+import { FileInput } from "../components/PetComponents/PetImageUpload";
 
 interface Pet {
   name: string;
@@ -68,7 +69,8 @@ api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 const AddPet = () => {
   const [addPetState, setAddPetState] = useState<FieldsState>(fieldsState);
-  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [serverErrorMessage, setServerError] = useState<string>("");
@@ -95,7 +97,7 @@ const AddPet = () => {
     adoptionFee: "adoptionFee is required",
     currency: "currency is required",
     bio: "bio is required",
-    images: "choose at least one image",
+    images: "",
   });
 
   const addPetData = {
@@ -187,66 +189,6 @@ const AddPet = () => {
     }));
   };
 
-  const FileInput = () => {
-    const fileInputRef = useRef<HTMLInputElement>(null);
-
-    const handleBrowseClick = () => {
-      if (fileInputRef.current) {
-        fileInputRef.current.click();
-      }
-    };
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      setSelectedFiles(files);
-
-      // Convert the files to a string representation
-      const filesString = files
-        ? Array.from(files)
-            .map((file) => file.name)
-            .join(", ")
-        : "";
-
-      // Validate the files string
-      const fieldError = validateField("images", filesString, addPetState);
-
-      // Update the errors state
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        images: fieldError,
-      }));
-    };
-
-    return (
-      <div key="images" className="col-span-1 my-5">
-        <label htmlFor="images">Choose Files</label>
-        <input
-          type="file"
-          id="images"
-          name="images"
-          onChange={handleFileChange}
-          multiple
-          className="hidden"
-          ref={fileInputRef}
-        />
-        <div className="bg-white border border-gray-300 rounded-md px-3 py-2 flex items-center">
-          <span className="text-gray-500 mr-2">
-            {selectedFiles && selectedFiles.length > 0
-              ? `${selectedFiles.length} files selected`
-              : "No files chosen"}
-          </span>
-          <button
-            type="button"
-            className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-dark"
-            onClick={handleBrowseClick}
-          >
-            Browse
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   useEffect(() => {
     // Check if all fields are valid
     const isAllFieldsValid = Object.values(errors).every(
@@ -284,7 +226,7 @@ const AddPet = () => {
 
       const response = await api.post("/pet", formData, {
         headers: {
-          "Content-Type": "multipart/form-data", // Make sure to set the correct content type for FormData
+          "Content-Type": "multipart/form-data", // Set the correct content type for FormData
         },
       });
       if (response.status === 200) {
@@ -333,6 +275,7 @@ const AddPet = () => {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="bg-white mx-24 my-40 md:mx-24 md:my-32 2xl:mx-64">
       <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-12">
@@ -383,7 +326,18 @@ const AddPet = () => {
                         );
                       }
                       if (field.id === "images") {
-                        return <FileInput key={field.id} />;
+                        return (
+                          <FileInput
+                            selectedFiles={selectedFiles}
+                            setSelectedFiles={setSelectedFiles}
+                            previews={previews}
+                            setPreviews={setPreviews}
+                            errors={errors}
+                            setErrors={setErrors}
+                            addPetState={addPetState}
+                            validateField={validateField}
+                          />
+                        );
                       }
                       return (
                         <Input

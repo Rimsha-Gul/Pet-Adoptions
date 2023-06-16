@@ -162,19 +162,23 @@ const HomePage = () => {
 
   const fetchPets = async (page: number) => {
     try {
+      let apiPage = page;
       console.log("In fetch pets");
       setIsLoading(true);
       if (
         prevFilterOption !== filterOption ||
         prevSearchQuery !== searchQuery
       ) {
+        apiPage = 1;
+        console.log("Current page: ", currentPage);
         setCurrentPage(1);
+        console.log("api page: ", apiPage);
         setPrevFilterOption(filterOption);
         setPrevSearchQuery(searchQuery);
       }
       const response = await api.get("/pet", {
         params: {
-          page,
+          apiPage,
           limit: 6,
           searchQuery,
           filterOption,
@@ -283,9 +287,9 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-center p-8 mt-4 sm:mt-14">
-        <div className="flex flex-row gap-6 justify-end mt-16 me-0 md:me-24 items-end">
-          <div className="flex items-center justify-between w-64 pr-4 border border-gray-400 rounded-md focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
+      <div className="flex flex-col justify-center p-8 sm:mt-14">
+        <div className="flex flex-row gap-6 justify-end me-0 md:me-24 items-end">
+          <div className="flex items-center justify-between w-64 h-12 pr-4 border border-gray-400 rounded-md focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
             <input
               type="text"
               placeholder="Search pets..."
@@ -395,7 +399,9 @@ const HomePage = () => {
                 }
               >
                 <div
-                  className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-16 m-0 md:m-12`}
+                  className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-16 m-0 md:m-12 ${
+                    isLoading ? "opacity-50" : ""
+                  }`}
                 >
                   {pets.map((pet) => (
                     <PetCard key={pet.microchipID} pet={pet} />

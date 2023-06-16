@@ -163,8 +163,12 @@ export const validateField = (
       return "";
     },
     images: (value) => {
-      if (!value || value.length === 0) {
+      if (!value || parseInt(value) === 0) {
         return "Choose at least one image";
+      }
+      if (parseInt(value) > 10) {
+        console.log(value);
+        return "You can add a maximum of 10 files";
       }
       return "";
     },
