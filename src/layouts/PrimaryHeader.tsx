@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import PrimaryLogo from "../icons/PrimaryLogo";
 import { useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext";
 
 interface HeaderProps {
   handleLogout: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
-  const role = localStorage.getItem("userRole") || "";
-  const userName = localStorage.getItem("userName") || "";
+  //const role = localStorage.getItem("userRole") || "";
+  //const userName = localStorage.getItem("userName") || "";
+  const appContext = useContext(AppContext);
+  const role = appContext.userRole;
+  const userName = appContext.displayName;
 
   const navigate = useNavigate();
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState(false);

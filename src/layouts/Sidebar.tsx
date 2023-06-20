@@ -3,9 +3,12 @@ import { Link } from "react-router-dom";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { sidebarLinks } from "../constants/MenuOptions";
 import { SidebarContext } from "../context/SidebarContext";
+import { AppContext } from "../context/AppContext";
 
 const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
-  const userName = localStorage.getItem("userName") || "";
+  //const userName = localStorage.getItem("userName") || "";
+  const appContext = useContext(AppContext);
+  const userName = appContext.displayName;
   const [selectedOption, setSelectedOption] = useState("");
 
   const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);

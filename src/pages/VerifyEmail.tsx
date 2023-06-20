@@ -65,7 +65,8 @@ const VerifyEmail = () => {
         appContext.setLoggedIn?.(true);
         const { isVerified, tokens } = response.data;
         localStorage.setItem("accessToken", tokens.accessToken);
-        localStorage.setItem("userEmail", appContext.userEmail);
+        localStorage.setItem("refreshToken", tokens.refreshToken);
+        appContext.setLoggedIn?.(true);
         console.log(tokens.accessToken);
         console.log("Isverified: ", isVerified);
         navigate("/homepage");

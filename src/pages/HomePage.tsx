@@ -90,8 +90,8 @@ const HomePage = () => {
   const [genderFilter, setGenderFilter] = useState<string>("");
   const [noPetsFound, setNoPetsFound] = useState<boolean>(false);
 
-  if (!localStorage.getItem("userEmail")) {
-    console.log(localStorage.getItem("userEmail"));
+  if (!appContext.loggedIn) {
+    //console.log(localStorage.getItem("userEmail"));
     return <Navigate to={"/"} />;
   }
 
@@ -107,9 +107,11 @@ const HomePage = () => {
 
         if (response.status === 200) {
           appContext.setDisplayName?.(response.data.name);
-          localStorage.setItem("userEmail", response.data.email);
-          localStorage.setItem("userName", response.data.name);
-          localStorage.setItem("userRole", response.data.role);
+          appContext.setUserEmail?.(response.data.email);
+          appContext.setUserRole?.(response.data.role);
+          //localStorage.setItem("userEmail", response.data.email);
+          //localStorage.setItem("userName", response.data.name);
+          //localStorage.setItem("userRole", response.data.role);
           console.log(response.data);
         }
       } catch (error: any) {

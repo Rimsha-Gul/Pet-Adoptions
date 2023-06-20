@@ -1,26 +1,23 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import SignupPage from "./pages/Signup";
-import LoginPage from "./pages/Login";
-import VerifyEmail from "./pages/VerifyEmail";
-import HomePage from "./pages/HomePage";
-import PetProfile from "./pages/PetProfile";
-import NotFoundPage from "./pages/PageNotFound";
-import Dashboard from "./pages/Dashboard";
-import AddPet from "./pages/AddPet";
-import { useContext } from "react";
+import { BrowserRouter as Router, useRoutes } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "./context/AppContext";
 import { Navigate } from "react-router-dom";
 import api from "./api";
 import { errorMessages } from "./constants/errorMessages";
-import PrimaryHeader from "./layouts/PrimaryHeader";
-import Sidebar from "./layouts/Sidebar";
 import { SidebarContext } from "./context/SidebarContext";
+import { getRoutes } from "./routes/Routes";
 
 function App() {
   const appContext = useContext(AppContext);
+  const [authStatusChecked, setAuthStatusChecked] = useState(false);
   const { isSidebarOpen } = useContext(SidebarContext);
+  useEffect(() => {
+    if (appContext.loggedIn === true) {
+      setAuthStatusChecked(true);
+    }
+  }, [appContext.loggedIn]);
 
-  const isAuthenticated = localStorage.getItem("userEmail");
+  const isAuthenticated = appContext.loggedIn;
 
   const handleLogout = async () => {
     try {
@@ -45,47 +42,18 @@ function App() {
       }
     }
   };
-  const renderProtectedRoute = (Component: any) => {
-    const AdminRoutes = [Dashboard, AddPet];
-    if (isAuthenticated) {
-      if (AdminRoutes.includes(Component)) {
-        return (
-          <div className="flex">
-            <Sidebar handleLogout={handleLogout} />
-            <div className={`flex-grow ${isSidebarOpen ? "ml-64" : ""}`}>
-              <Component />
-            </div>
-          </div>
-        );
-      } else {
-        return (
-          <>
-            <PrimaryHeader handleLogout={handleLogout} />
-            <div className="mt-20">
-              <Component />
-            </div>
-          </>
-        );
-      }
-    }
-    return <Navigate to="/" />;
-  };
-  return (
-    <BrowserRouter>
-      <div className="flex-grow">
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/pagenotfound" element={<NotFoundPage />} />
-          <Route path="/verifyemail" element={<VerifyEmail />} />
-          <Route path="/homepage" element={renderProtectedRoute(HomePage)} />
-          <Route path="/pet/:name" element={renderProtectedRoute(PetProfile)} />
-          <Route path="/dashboard" element={renderProtectedRoute(Dashboard)} />
-          <Route path="/addpet" element={renderProtectedRoute(AddPet)} />
-        </Routes>
-      </div>
-    </BrowserRouter>
-  );
+
+  return authStatusChecked
+    ? useRoutes(getRoutes(isAuthenticated, handleLogout, isSidebarOpen))
+    : null;
 }
 
-export default App;
+const AppWrapper = () => {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+};
+
+export default AppWrapper;
