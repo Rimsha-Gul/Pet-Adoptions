@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes } from "react-router-dom";
+import { BrowserRouter as Router, useRoutes } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "./context/AppContext";
 import { Navigate } from "react-router-dom";
@@ -43,17 +43,17 @@ function App() {
     }
   };
 
-  return (
-    <BrowserRouter>
-      <div className="flex-grow">
-        {authStatusChecked && (
-          <Routes>
-            {getRoutes(isAuthenticated, handleLogout, isSidebarOpen)}
-          </Routes>
-        )}
-      </div>
-    </BrowserRouter>
-  );
+  return authStatusChecked
+    ? useRoutes(getRoutes(isAuthenticated, handleLogout, isSidebarOpen))
+    : null;
 }
 
-export default App;
+const AppWrapper = () => {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+};
+
+export default AppWrapper;

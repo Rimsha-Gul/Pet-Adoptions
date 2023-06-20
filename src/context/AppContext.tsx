@@ -67,6 +67,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
             try {
               const res = await api.post("/refresh", { refreshToken });
               localStorage.setItem("accessToken", res.data.accessToken);
+              localStorage.setItem("refreshToken", res.data.refreshToken);
               axios.defaults.headers.common[
                 "Authorization"
               ] = `Bearer ${res.data.accessToken}`;
