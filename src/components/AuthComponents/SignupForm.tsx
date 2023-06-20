@@ -1,12 +1,12 @@
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signupFields } from "../constants/formFields";
+import { signupFields } from "../../constants/formFields";
 import Input from "./Input";
-import { FieldsState } from "../types/common";
+import { FieldsState } from "../../types/common";
 import FormAction from "./FormAction";
-import api from "../api";
-import { AppContext } from "../context/AppContext";
-import { validateField } from "../utils/formValidation";
+import api from "../../api";
+import { AppContext } from "../../context/AppContext";
+import { validateField } from "../../utils/formValidation";
 
 const fields = signupFields;
 let fieldsState: FieldsState = {};
@@ -123,6 +123,7 @@ const SignupForm = () => {
         text="Signup"
         isLoading={isLoading}
         disabled={!isFormValid}
+        customClass="w-full"
       />
     </form>
   );

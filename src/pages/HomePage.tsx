@@ -1,50 +1,37 @@
 import { useContext, useEffect, useState } from "react";
 import api from "../api";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import loadingIcon from "../assets/loading.gif";
 import Select from "react-select";
 import { FaSearch } from "react-icons/fa";
 import PetCard from "../components/PetComponents/PetCard";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 interface Pet {
   shelterId: number;
+  microchipID: string;
   name: string;
-  age: string;
+  birthDate: string;
   color: string;
   bio: string;
   images: string[];
 }
 
-const ageToMonths = (age: string): number => {
-  const parts = age.split(" ");
+const ageRange = (ages: number[]): string[] => {
+  const minAge = Math.min(...ages);
+  const maxAge = Math.max(...ages);
+  const rangeSize = Math.ceil((maxAge - minAge) / 5); // define the increment for age ranges
 
-  let totalMonths = 0;
-  for (let part of parts) {
-    if (part.endsWith("yr")) {
-      const years = parseInt(part.slice(0, -2));
-      totalMonths += years * 12;
-    } else if (part.endsWith("m")) {
-      const months = parseInt(part.slice(0, -1));
-      totalMonths += months;
-    }
+  const ageRanges = [];
+  for (let i = minAge; i < maxAge; i += rangeSize) {
+    const next = i + rangeSize;
+    ageRanges.push(
+      next < maxAge ? `${i}-${next} years` : `${i} years and above`
+    );
   }
 
-  return totalMonths;
-};
-
-const ageRange = (ageInMonths: number): string => {
-  if (ageInMonths <= 12) {
-    return "Less than a year";
-  } else if (ageInMonths <= 24) {
-    return "1-2 years";
-  } else if (ageInMonths <= 36) {
-    return "2-3 years";
-  } else if (ageInMonths <= 48) {
-    return "3-4 years";
-  } else {
-    return "4+ years";
-  }
+  return ageRanges;
 };
 
 const HomePage = () => {
@@ -101,11 +88,7 @@ const HomePage = () => {
   const [ageFilter, setAgeFilter] = useState<string>("");
   const [breedFilter, setBreedFilter] = useState<string>("");
   const [genderFilter, setGenderFilter] = useState<string>("");
-
-  const [isPrevButtonDisabled, setIsPrevButtonDisabled] =
-    useState<boolean>(true);
-  const [isNextButtonDisabled, setIsNextButtonDisabled] =
-    useState<boolean>(false);
+  const [noPetsFound, setNoPetsFound] = useState<boolean>(false);
 
   if (!localStorage.getItem("userEmail")) {
     console.log(localStorage.getItem("userEmail"));
@@ -115,20 +98,25 @@ const HomePage = () => {
   const accessToken = localStorage.getItem("accessToken");
   console.log(accessToken);
   api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSession = async () => {
       try {
         const response = await api.get("/session");
-        appContext.setDisplayName?.(response.data.name);
-        localStorage.setItem("userEmail", response.data.email);
-        localStorage.setItem("userName", response.data.name);
-        console.log(response.data);
-        console.log(appContext.loggedIn);
-        console.log(appContext.userEmail);
-        console.log(appContext.displayName);
-      } catch (error) {
-        console.error(error);
+
+        if (response.status === 200) {
+          appContext.setDisplayName?.(response.data.name);
+          localStorage.setItem("userEmail", response.data.email);
+          localStorage.setItem("userName", response.data.name);
+          localStorage.setItem("userRole", response.data.role);
+          console.log(response.data);
+        }
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          console.error(error.response.status);
+          navigate("/");
+        }
       }
     };
 
@@ -146,9 +134,9 @@ const HomePage = () => {
   }, [filterOption]);
 
   useEffect(() => {
+    console.log("useEffect called");
     fetchPets(currentPage);
   }, [
-    currentPage,
     filterOption,
     searchQuery,
     colorFilter,
@@ -159,19 +147,25 @@ const HomePage = () => {
 
   const fetchPets = async (page: number) => {
     try {
+      let apiPage = page;
+      console.log("In fetch pets");
+      setPetsLoadingError("");
       setIsLoading(true);
       if (
         prevFilterOption !== filterOption ||
         prevSearchQuery !== searchQuery
       ) {
+        apiPage = 1;
+        console.log("Current page: ", currentPage);
         setCurrentPage(1);
+        console.log("api page: ", apiPage);
         setPrevFilterOption(filterOption);
         setPrevSearchQuery(searchQuery);
       }
       const response = await api.get("/pet", {
         params: {
-          page,
-          limit: 3,
+          apiPage,
+          limit: 6,
           searchQuery,
           filterOption,
           colorFilter,
@@ -183,41 +177,27 @@ const HomePage = () => {
       const { pets, totalPages, colors, ages, breeds, genders } = response.data;
       console.log(totalPages);
       console.log(colors);
-      let ageRanges: string[] = Array.from(
-        new Set(ages.map((age: string) => ageRange(ageToMonths(age))))
-      );
-
+      const ageRanges = ageRange(ages);
+      setNoPetsFound(false);
+      if (totalPages === 0) setNoPetsFound(true);
       setPets(pets);
       setTotalPages(totalPages);
       setColors(colors);
       setAges(ageRanges);
       setBreeds(breeds);
       setGenders(genders);
-      setIsPrevButtonDisabled(
-        isLoading || currentPage === 1 || totalPages === 0
-      );
-      setIsNextButtonDisabled(
-        isLoading || currentPage === totalPages || totalPages === 0
-      );
+      console.log("Total P: ", totalPages);
     } catch (error: any) {
       console.error(error);
+      if (error.response.status === 401) {
+        console.error(error.response.status);
+        navigate("/");
+      }
       if (error.response.status === 500) {
         setPetsLoadingError("Failed to fetch pets");
       }
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
     }
   };
 
@@ -228,6 +208,59 @@ const HomePage = () => {
     } else {
       setFilterOption("");
       setShowExtraFilters(false);
+    }
+  };
+
+  const loadMoreData = async () => {
+    if (currentPage < totalPages) {
+      try {
+        setIsLoading(true);
+        const nextPage = currentPage + 1;
+
+        // Fetch the next page of data
+        const response = await api.get("/pet", {
+          params: {
+            page: nextPage,
+            limit: 6,
+            searchQuery,
+            filterOption,
+            colorFilter,
+            ageFilter,
+            breedFilter,
+            genderFilter,
+          },
+        });
+
+        const {
+          pets: newPets,
+          totalPages,
+          colors,
+          ages,
+          breeds,
+          genders,
+        } = response.data;
+
+        // Append the new pets to the existing pets
+        setPets((prevPets) => [...prevPets, ...newPets]);
+        setCurrentPage(nextPage);
+        setTotalPages(totalPages);
+        setColors(colors);
+        setAges(ages);
+        setBreeds(breeds);
+        setGenders(genders);
+        console.log("Updated pets:", pets);
+      } catch (error: any) {
+        console.error(error);
+        if (error.response.status === 401) {
+          console.error(error.response.status);
+          navigate("/");
+        }
+        if (error.response.status === 500) {
+          setPetsLoadingError("Failed to fetch pets");
+        }
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -248,15 +281,15 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-center p-8 mt-4">
-        <div className="flex flex-row gap-6 justify-end mt-16 me-0 md:me-24 items-end">
-          <div className="flex items-center justify-between w-64 pr-4 border border-gray-400 rounded focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
+      <div className="flex flex-col justify-center p-8 sm:mt-14">
+        <div className="flex flex-row gap-6 justify-end me-0 md:me-24 items-end">
+          <div className="flex items-center justify-between w-64 h-12 pr-4 border border-gray-400 rounded-md focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
             <input
               type="text"
               placeholder="Search pets..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 w-full focus:outline-none"
+              className="px-4 py-2 w-full focus:outline-none rounded-md"
             />
             <FaSearch className="text-gray-500 hover:cursor-pointer" />
           </div>
@@ -340,42 +373,35 @@ const HomePage = () => {
         {petsLoadingError && <p>{petsLoadingError}</p>}
         {!petsLoadingError && (
           <>
-            {pets.length === 0 ? (
+            {noPetsFound ? (
               <div className="flex items-center justify-center h-full">
                 <p>No pets found with the selected criteria.</p>
               </div>
             ) : (
-              <div
-                className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-16 m-0 md:m-12 ${
-                  isLoading ? "opacity-50" : ""
-                }`}
+              <InfiniteScroll
+                dataLength={pets.length}
+                next={loadMoreData}
+                hasMore={currentPage < totalPages}
+                loader={
+                  <div className="flex items-center justify-center" key={0}>
+                    <img
+                      src={loadingIcon}
+                      alt="Loading"
+                      className="h-10 w-10"
+                    />
+                  </div>
+                }
               >
-                {pets.map((pet) => (
-                  <PetCard key={pet.name} pet={pet} />
-                ))}
-              </div>
-            )}
-            {totalPages && (
-              <div className="flex justify-center mt-4">
-                <button
-                  onClick={handlePreviousPage}
-                  disabled={isPrevButtonDisabled}
-                  className={`px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded mr-2 ${
-                    isPrevButtonDisabled ? "opacity-50" : ""
+                <div
+                  className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-16 m-0 md:m-12 ${
+                    isLoading ? "opacity-50" : ""
                   }`}
                 >
-                  Previous Page
-                </button>
-                <button
-                  onClick={handleNextPage}
-                  disabled={isNextButtonDisabled}
-                  className={`px-4 py-2 border border-primary text-primary hover:bg-primary hover:text-white rounded ${
-                    isNextButtonDisabled ? "opacity-50" : ""
-                  }`}
-                >
-                  Next Page
-                </button>
-              </div>
+                  {pets.map((pet) => (
+                    <PetCard key={pet.microchipID} pet={pet} />
+                  ))}
+                </div>
+              </InfiniteScroll>
             )}
           </>
         )}

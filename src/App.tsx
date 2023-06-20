@@ -5,15 +5,21 @@ import VerifyEmail from "./pages/VerifyEmail";
 import HomePage from "./pages/HomePage";
 import PetProfile from "./pages/PetProfile";
 import NotFoundPage from "./pages/PageNotFound";
+import Dashboard from "./pages/Dashboard";
+import AddPet from "./pages/AddPet";
 import { useContext } from "react";
 import { AppContext } from "./context/AppContext";
 import { Navigate } from "react-router-dom";
 import api from "./api";
 import { errorMessages } from "./constants/errorMessages";
 import PrimaryHeader from "./layouts/PrimaryHeader";
+import Sidebar from "./layouts/Sidebar";
+import { SidebarContext } from "./context/SidebarContext";
 
 function App() {
   const appContext = useContext(AppContext);
+  const { isSidebarOpen } = useContext(SidebarContext);
+
   const isAuthenticated = localStorage.getItem("userEmail");
 
   const handleLogout = async () => {
@@ -34,25 +40,38 @@ function App() {
           <Navigate to="/pagenotfound" state={errorMessages.pageNotFound} />
         );
       }
+      if (error.response.status === 401) {
+        return <Navigate to="/" />;
+      }
     }
   };
-  // Function to render protected routes
   const renderProtectedRoute = (Component: any) => {
-    // If user is authenticated, render the component
+    const AdminRoutes = [Dashboard, AddPet];
     if (isAuthenticated) {
-      return (
-        <>
-          <PrimaryHeader handleLogout={handleLogout} />
-          <Component />
-        </>
-      );
+      if (AdminRoutes.includes(Component)) {
+        return (
+          <div className="flex">
+            <Sidebar handleLogout={handleLogout} />
+            <div className={`flex-grow ${isSidebarOpen ? "ml-64" : ""}`}>
+              <Component />
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <>
+            <PrimaryHeader handleLogout={handleLogout} />
+            <div className="mt-20">
+              <Component />
+            </div>
+          </>
+        );
+      }
     }
-    // If user is not authenticated, redirect to login page
     return <Navigate to="/" />;
   };
   return (
     <BrowserRouter>
-      {/* <PrimaryHeader /> */}
       <div className="flex-grow">
         <Routes>
           <Route path="/" element={<LoginPage />} />
@@ -61,6 +80,8 @@ function App() {
           <Route path="/verifyemail" element={<VerifyEmail />} />
           <Route path="/homepage" element={renderProtectedRoute(HomePage)} />
           <Route path="/pet/:name" element={renderProtectedRoute(PetProfile)} />
+          <Route path="/dashboard" element={renderProtectedRoute(Dashboard)} />
+          <Route path="/addpet" element={renderProtectedRoute(AddPet)} />
         </Routes>
       </div>
     </BrowserRouter>

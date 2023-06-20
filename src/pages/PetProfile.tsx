@@ -21,7 +21,7 @@ const PetProfile = () => {
           <div className="w-full md:w-1/4">
             <PetAdditionalInfo
               petName={pet.name}
-              petAge={pet.age}
+              petBirthDate={pet.birthDate}
               petColor={pet.color}
               petGender={pet.gender}
               petBreed={pet.breed}

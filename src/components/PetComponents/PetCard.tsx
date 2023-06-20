@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 interface Pet {
   shelterId: number;
   name: string;
-  age: string;
+  birthDate: string;
   color: string;
   bio: string;
   images: string[];

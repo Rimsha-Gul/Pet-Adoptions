@@ -22,9 +22,6 @@ export const validateField = (
       if (value.length < 6) {
         return "Password should be at least 6 characters long";
       }
-      // if (value != fieldsState.confirmPassword) {
-      //   return "Passwords do not match";
-      // }
       return "";
     },
     confirmPassword: (value) => {
@@ -43,6 +40,135 @@ export const validateField = (
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(value)) {
         return "Invalid email format";
+      }
+      return "";
+    },
+    shelter: (value) => {
+      if (!value) {
+        return "Shelter is required";
+      }
+
+      return "";
+    },
+    category: (value) => {
+      if (!value) {
+        return "Category is required";
+      }
+      return "";
+    },
+    microchipID: (value) => {
+      if (!value) {
+        return "Microchip ID is required";
+      }
+      if (value.length !== 10) {
+        return "Microchip ID should be 10 characters long";
+      }
+      return "";
+    },
+    petName: (value) => {
+      if (!value) {
+        return "Name is required";
+      }
+      if (value.length < 3) {
+        return "Name should be at least 3 characters long";
+      }
+      return "";
+    },
+    gender: (value) => {
+      if (!value) {
+        return "Gender is required";
+      }
+      return "";
+    },
+    age: (value) => {
+      if (!value) {
+        return "Age is required";
+      }
+
+      // Check if the age format is valid (expecting "Xyr Xmo", "Xyr", or "Xmo")
+      const ageRegex = /^((?<years>\d+)yr\s*)?((?<months>\d+)m)?$/;
+      const matchResult = ageRegex.exec(value.trim());
+      if (!matchResult) {
+        return "Invalid age format. Please use 'Xyr Xm', 'Xyr', or 'Xm'. For example, '2yr 2m', '2yr', or '2m'.";
+      }
+
+      // Extract years and months from the match result
+      const years =
+        matchResult.groups && matchResult.groups.years
+          ? parseInt(matchResult.groups.years)
+          : 0;
+      const months =
+        matchResult.groups && matchResult.groups.months
+          ? parseInt(matchResult.groups.months)
+          : 0;
+
+      // Check if years and months are within valid range
+      if (years < 0 || years > 100) {
+        return "Years should be between 0 and 100";
+      }
+      if (months < 0 || months > 12) {
+        return "Months should be between 0 and 12";
+      }
+
+      // If both years and months are defined, make sure they are not both 0
+      if (years === 0 && months === 0) {
+        return "Age should be more than 0";
+      }
+
+      return "";
+    },
+    breed: (value) => {
+      if (!value) {
+        return "Breed is required";
+      }
+      return "";
+    },
+    color: (value) => {
+      if (!value) {
+        return "Color is required";
+      }
+      return "";
+    },
+    activityNeeds: (value) => {
+      if (!value) {
+        return "Activity needs is required";
+      }
+      return "";
+    },
+    levelOfGrooming: (value) => {
+      if (!value) {
+        return "Level of grooming is required";
+      }
+      return "";
+    },
+    bio: (value) => {
+      if (!value) {
+        return "Bio is required";
+      }
+      return "";
+    },
+    adoptionFee: (value) => {
+      if (!value) {
+        return "Adoption fee is required";
+      }
+      if (isNaN(Number(value))) {
+        return "Adoption fee should be a valid number";
+      }
+      return "";
+    },
+    currency: (value) => {
+      if (!value) {
+        return "Currency is required";
+      }
+      return "";
+    },
+    images: (value) => {
+      if (!value || parseInt(value) === 0) {
+        return "Choose at least one image";
+      }
+      if (parseInt(value) > 10) {
+        console.log(value);
+        return "You can add a maximum of 10 files";
       }
       return "";
     },

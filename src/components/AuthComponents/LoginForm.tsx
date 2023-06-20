@@ -1,12 +1,12 @@
 import { FormEvent, useContext, useEffect, useState } from "react";
-import { loginFields } from "../constants/formFields";
+import { loginFields } from "../../constants/formFields";
 import Input from "./Input";
-import { FieldsState } from "../types/common";
+import { FieldsState } from "../../types/common";
 import FormAction from "./FormAction";
-import api from "../api";
+import api from "../../api";
 import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
-import { validateField } from "../utils/formValidation";
+import { AppContext } from "../../context/AppContext";
+import { validateField } from "../../utils/formValidation";
 
 const fields = loginFields;
 let fieldsState: FieldsState = {};
@@ -96,7 +96,7 @@ const LoginForm = () => {
   };
 
   return (
-    <form className="mx-auto md:w-1/2 space-y-8mt-8 space-y-6">
+    <form className="mx-auto md:w-1/2 space-y-8 mt-8">
       <div className="-space-y-px">
         {fields.map((field) => (
           <Input
@@ -120,6 +120,7 @@ const LoginForm = () => {
         text="Login"
         isLoading={isLoading}
         disabled={!isFormValid}
+        customClass="w-full"
       />
     </form>
   );

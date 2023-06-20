@@ -11,7 +11,7 @@ import {
 interface petHealthInfoProps {
   petHealthInfo: {
     healthCheck: boolean;
-    microchip: boolean;
+    allergiesTreated: boolean;
     wormed: boolean;
     heartwormTreated: boolean;
     vaccinated: boolean;
@@ -29,9 +29,9 @@ const PetHealthInfo = ({ petHealthInfo }: petHealthInfoProps) => {
           value: petHealthInfo.healthCheck,
         },
         {
-          name: "Microchip",
+          name: "Allergies Treated",
           icon: FaMicrochip,
-          value: petHealthInfo.microchip,
+          value: petHealthInfo.allergiesTreated,
         },
         { name: "Wormed", icon: FaBug, value: petHealthInfo.wormed },
         {

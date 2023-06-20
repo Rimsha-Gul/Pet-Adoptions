@@ -15,6 +15,7 @@ export default {
         primary: "#ff5363",
         secondary: {
           DEFAULT: "#fb7a75",
+          100: "#fcd7c9",
           50: "#fed8d3",
           10: "#fef0e8",
         },
