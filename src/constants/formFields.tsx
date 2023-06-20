@@ -125,16 +125,15 @@ export const addPetFields = [
     ],
   },
   {
-    labelText: "Age",
-    labelFor: "age",
-    id: "age",
-    name: "age",
-    type: "text",
-    autoComplete: "age",
+    labelText: "Birth Date",
+    labelFor: "birthDate",
+    id: "birthDate",
+    name: "birthDate",
+    type: "date",
+    autoComplete: "bday",
     isRequired: true,
-    placeholder: "'Xyr Xm', 'Xyr', or 'Xm'",
+    placeholder: "YYYY/MM/DD",
   },
-
   {
     labelText: "Breed",
     labelFor: "breed",

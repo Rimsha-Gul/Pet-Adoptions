@@ -14,9 +14,12 @@ import api from "./api";
 import { errorMessages } from "./constants/errorMessages";
 import PrimaryHeader from "./layouts/PrimaryHeader";
 import Sidebar from "./layouts/Sidebar";
+import { SidebarContext } from "./context/SidebarContext";
 
 function App() {
   const appContext = useContext(AppContext);
+  const { isSidebarOpen } = useContext(SidebarContext);
+
   const isAuthenticated = localStorage.getItem("userEmail");
 
   const handleLogout = async () => {
@@ -47,9 +50,9 @@ function App() {
     if (isAuthenticated) {
       if (AdminRoutes.includes(Component)) {
         return (
-          <div className="flex flex-row">
-            <Sidebar />
-            <div className="">
+          <div className="flex">
+            <Sidebar handleLogout={handleLogout} />
+            <div className={`flex-grow ${isSidebarOpen ? "ml-64" : ""}`}>
               <Component />
             </div>
           </div>

@@ -124,7 +124,7 @@ export const FileInput = ({
         {isDragActive ? (
           <p>Drop the files here ...</p>
         ) : (
-          <p className="cursor-pointer">
+          <p className="p-4 text-center cursor-pointer">
             Drag 'n' drop files here, or click to select files
           </p>
         )}

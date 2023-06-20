@@ -1,4 +1,7 @@
+import moment from "moment";
 import { useState } from "react";
+import Datetime from "react-datetime";
+import "react-datetime/css/react-datetime.css";
 import Select from "react-select";
 import Switch from "react-switch";
 
@@ -86,6 +89,42 @@ const Input = ({
   const handleBlur = () => {
     setIsTouched(true);
   };
+
+  if (type === "date") {
+    let inputProps = {
+      placeholder: "Birth date",
+    };
+    return (
+      <div className="my-5">
+        <label htmlFor={labelFor} className="not-sr-only">
+          {labelText}
+        </label>
+        <Datetime
+          value={value}
+          onChange={(date) =>
+            handleChange({
+              target: {
+                id: id,
+                value: (date as moment.Moment).toDate().toISOString(),
+              },
+            })
+          }
+          timeFormat={false} // don't need time selection
+          closeOnSelect
+          inputProps={inputProps}
+          isValidDate={(current) => {
+            return current.isBefore(moment());
+          }}
+          className={`${fixedInputClass} cursor-pointer bg-white ${customClass} ${
+            validationError && isTouched ? "border-red-500" : ""
+          }`}
+        />
+        {validationError && isTouched && (
+          <p className="text-red-500 text-xs mt-1">{validationError}</p>
+        )}
+      </div>
+    );
+  }
 
   if (type === "radio") {
     const radioOptions = options as string[];

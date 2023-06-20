@@ -12,7 +12,7 @@ import { FileInput } from "../components/PetComponents/PetImageUpload";
 interface Pet {
   name: string;
   gender: string;
-  age: string;
+  birthDate: string;
   color: string;
   breed: string;
   category: string;
@@ -36,7 +36,14 @@ interface Pet {
 const groups = [
   {
     label: "Basic Information",
-    fields: ["shelter", "category", "microchipID", "petName", "gender", "age"],
+    fields: [
+      "shelter",
+      "category",
+      "microchipID",
+      "petName",
+      "gender",
+      "birthDate",
+    ],
   },
   {
     label: "Physical Characteristics",
@@ -81,7 +88,7 @@ const AddPet = () => {
     microchipID: "microchipID is required",
     petName: "name is required",
     gender: "gender is required",
-    age: "age is required",
+    birthDate: "date of birth is required",
     breed: "breed is required",
     color: "color is required",
     activityNeeds: "activityNeeds is required",
@@ -106,7 +113,7 @@ const AddPet = () => {
     microchipID: addPetState.microchipID,
     name: addPetState.petName,
     gender: addPetState.gender,
-    age: addPetState.age,
+    birthDate: addPetState.birthDate,
     breed: addPetState.breed,
     color: addPetState.color,
     activityNeeds: addPetState.activityNeeds,
@@ -277,12 +284,12 @@ const AddPet = () => {
   };
 
   return (
-    <div className="bg-white mx-24 my-40 md:mx-24 md:my-32 2xl:mx-64">
-      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-12">
+    <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12">
+      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12">
         {serverErrorMessage && (
           <p className="text-red-500">{serverErrorMessage}</p>
         )}
-        <div className="flex flex-col sm:p-8 justify-center">
+        <div className="flex flex-col justify-center">
           <form className="flex flex-col mx-auto w-full space-y-8 mt-8 mb-8 g-12">
             {groups.map((group) => (
               <div key={group.label}>

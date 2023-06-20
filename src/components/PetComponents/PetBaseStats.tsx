@@ -1,5 +1,6 @@
+import { formatAge } from "../../utils/formatAge";
 interface PetBaseStatProps {
-  petAge: string;
+  petBirthDate: string;
   petColor: string;
   petGender: string;
   petBreed: string;
@@ -9,7 +10,7 @@ interface PetBaseStatProps {
 }
 
 const PetBaseStats = ({
-  petAge,
+  petBirthDate,
   petColor,
   petGender,
   petBreed,
@@ -20,7 +21,7 @@ const PetBaseStats = ({
   return (
     <div className="flex flex-col gap-4 p-4 w-full">
       {[
-        { name: "Age", value: petAge },
+        { name: "Age", value: formatAge(petBirthDate) },
         { name: "Color", value: petColor },
         { name: "Gender", value: petGender, isLowercase: true },
         { name: "Breed", value: petBreed },

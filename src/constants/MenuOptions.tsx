@@ -1,5 +1,23 @@
 export const sidebarLinks = [
   {
+    to: "/dashboard",
+    label: "Dashboard",
+  },
+  {
+    to: "/homepage",
+    label: "Homepage",
+  },
+  {
+    to: "/addpet",
+    label: "Edit Profile",
+  },
+  {
+    divider: true,
+  },
+  {
+    heading: "Admin Tasks",
+  },
+  {
     to: "/addpet",
     label: "Add a pet",
   },
@@ -8,16 +26,17 @@ export const sidebarLinks = [
     label: "Invite a shelter",
   },
   {
-    to: "/addpet",
-    label: "Edit Profile",
+    divider: true,
   },
   {
-    to: "/dashboard",
-    label: "Dashboard",
+    heading: "Settings & Privacy",
   },
   {
     to: "/addpet",
     label: "Settings",
+  },
+  {
+    divider: true,
   },
   {
     to: "/",

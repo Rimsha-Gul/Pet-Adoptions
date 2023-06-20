@@ -12,41 +12,26 @@ interface Pet {
   shelterId: number;
   microchipID: string;
   name: string;
-  age: string;
+  birthDate: string;
   color: string;
   bio: string;
   images: string[];
 }
 
-const ageToMonths = (age: string): number => {
-  const parts = age.split(" ");
+const ageRange = (ages: number[]): string[] => {
+  const minAge = Math.min(...ages);
+  const maxAge = Math.max(...ages);
+  const rangeSize = Math.ceil((maxAge - minAge) / 5); // define the increment for age ranges
 
-  let totalMonths = 0;
-  for (let part of parts) {
-    if (part.endsWith("yr")) {
-      const years = parseInt(part.slice(0, -2));
-      totalMonths += years * 12;
-    } else if (part.endsWith("m")) {
-      const months = parseInt(part.slice(0, -1));
-      totalMonths += months;
-    }
+  const ageRanges = [];
+  for (let i = minAge; i < maxAge; i += rangeSize) {
+    const next = i + rangeSize;
+    ageRanges.push(
+      next < maxAge ? `${i}-${next} years` : `${i} years and above`
+    );
   }
 
-  return totalMonths;
-};
-
-const ageRange = (ageInMonths: number): string => {
-  if (ageInMonths < 12) {
-    return "Less than a year";
-  } else if (ageInMonths <= 24) {
-    return "1-2 years";
-  } else if (ageInMonths <= 36) {
-    return "2-3 years";
-  } else if (ageInMonths <= 48) {
-    return "3-4 years";
-  } else {
-    return "4+ years";
-  }
+  return ageRanges;
 };
 
 const HomePage = () => {
@@ -164,6 +149,7 @@ const HomePage = () => {
     try {
       let apiPage = page;
       console.log("In fetch pets");
+      setPetsLoadingError("");
       setIsLoading(true);
       if (
         prevFilterOption !== filterOption ||
@@ -191,10 +177,7 @@ const HomePage = () => {
       const { pets, totalPages, colors, ages, breeds, genders } = response.data;
       console.log(totalPages);
       console.log(colors);
-      let ageRanges: string[] = Array.from(
-        new Set(ages.map((age: string) => ageRange(ageToMonths(age))))
-      );
-      setPetsLoadingError("");
+      const ageRanges = ageRange(ages);
       setNoPetsFound(false);
       if (totalPages === 0) setNoPetsFound(true);
       setPets(pets);
@@ -206,6 +189,10 @@ const HomePage = () => {
       console.log("Total P: ", totalPages);
     } catch (error: any) {
       console.error(error);
+      if (error.response.status === 401) {
+        console.error(error.response.status);
+        navigate("/");
+      }
       if (error.response.status === 500) {
         setPetsLoadingError("Failed to fetch pets");
       }
@@ -262,8 +249,15 @@ const HomePage = () => {
         setBreeds(breeds);
         setGenders(genders);
         console.log("Updated pets:", pets);
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
+        if (error.response.status === 401) {
+          console.error(error.response.status);
+          navigate("/");
+        }
+        if (error.response.status === 500) {
+          setPetsLoadingError("Failed to fetch pets");
+        }
       } finally {
         setIsLoading(false);
       }

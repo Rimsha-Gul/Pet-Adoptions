@@ -3,7 +3,7 @@ import PetHealthInfo from "./PetHealthInfo";
 
 interface PetAdditionalInfoProps {
   petName: string;
-  petAge: string;
+  petBirthDate: string;
   petColor: string;
   petGender: string;
   petBreed: string;
@@ -22,7 +22,7 @@ interface PetAdditionalInfoProps {
 
 const PetAdditionalInfo = ({
   petName,
-  petAge,
+  petBirthDate,
   petColor,
   petGender,
   petBreed,
@@ -38,7 +38,7 @@ const PetAdditionalInfo = ({
       </p>
       <div className="border border-gray-200"></div>
       <PetBaseStats
-        petAge={petAge}
+        petBirthDate={petBirthDate}
         petColor={petColor}
         petGender={petGender}
         petBreed={petBreed}
