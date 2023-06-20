@@ -1,13 +1,31 @@
 export function formatAge(birthDate: string) {
-  const updatedbirthDate = new Date(birthDate);
-  const ageInMilliseconds = Date.now() - updatedbirthDate.getTime();
-  const ageDate = new Date(ageInMilliseconds);
-  const ageInYears = Math.abs(ageDate.getUTCFullYear() - 1970);
-  const ageInMonths = Math.floor(
-    ageInMilliseconds / (1000 * 60 * 60 * 24 * 30.44)
-  );
+  const updatedBirthDate = new Date(birthDate);
+  const now = new Date();
 
-  if (ageInYears > 1) {
+  let years = now.getFullYear() - updatedBirthDate.getFullYear();
+  let months = now.getMonth() - updatedBirthDate.getMonth();
+  let days = now.getDate() - updatedBirthDate.getDate();
+
+  // Normalize year and month
+  if (days < 0) {
+    months--;
+    days += new Date(
+      updatedBirthDate.getFullYear(),
+      updatedBirthDate.getMonth() + 1,
+      0
+    ).getDate();
+  }
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  const ageInYears = years;
+  const ageInMonths = years * 12 + months;
+
+  if (ageInYears == 1) {
+    return `${ageInYears} year old`;
+  } else if (ageInYears > 1) {
     return `${ageInYears} years old`;
   } else if (ageInMonths > 1) {
     return `${ageInMonths} months old`;

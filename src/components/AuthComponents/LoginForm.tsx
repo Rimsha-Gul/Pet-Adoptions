@@ -68,9 +68,9 @@ const LoginForm = () => {
       if (response.status === 200) {
         appContext.setLoggedIn?.(true);
         appContext.setUserEmail?.(loginData.email);
-        localStorage.setItem("userEmail", loginData.email);
         const { tokens } = response.data;
         localStorage.setItem("accessToken", tokens.accessToken);
+        localStorage.setItem("refreshToken", tokens.refreshToken);
         navigate("/homepage");
       }
     } catch (error: any) {

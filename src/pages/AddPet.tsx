@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import Input from "../components/AuthComponents/Input";
 import { addPetFields } from "../constants/formFields";
 import { FieldsState } from "../types/common";
@@ -8,6 +8,7 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { showErrorAlert, showSuccessAlert } from "../utils/alert";
 import { FileInput } from "../components/PetComponents/PetImageUpload";
+import { AppContext } from "../context/AppContext";
 
 interface Pet {
   name: string;
@@ -75,6 +76,7 @@ const accessToken = localStorage.getItem("accessToken");
 api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 const AddPet = () => {
+  const appContext = useContext(AppContext);
   const [addPetState, setAddPetState] = useState<FieldsState>(fieldsState);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -325,9 +327,7 @@ const AddPet = () => {
                                   : field.options
                               }
                               validationError={errors[field.id]}
-                              showShelterID={
-                                localStorage.getItem("userRole") === "ADMIN"
-                              }
+                              showShelterID={appContext.userRole === "ADMIN"}
                             />
                           </div>
                         );
@@ -364,9 +364,7 @@ const AddPet = () => {
                             field.name === "shelter" ? shelters : field.options
                           }
                           validationError={errors[field.id]}
-                          showShelterID={
-                            localStorage.getItem("userRole") === "ADMIN"
-                          }
+                          showShelterID={appContext.userRole === "ADMIN"}
                         />
                       );
                     })}
