@@ -18,18 +18,22 @@ const VerifyEmail = () => {
   const sendCodeData = {
     email: appContext.userEmail,
   };
+  const accessToken = localStorage.getItem("accessToken");
+  console.log(accessToken);
+  api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
   useEffect(() => {
     const sendVerificationCode = async () => {
       if (appContext.userEmail) {
         // Check if usermail is not null
         try {
-          const response = await api.post(
-            "/auth/sendVerificationCode",
-            sendCodeData
-          );
-          if (response.status === 200) {
-            console.log("Email sent");
+          if (appContext.verificationOperation === "changedEmail") {
+            await api.post("/auth/sendVerificationCode", {
+              email: appContext.newEmail,
+              emailChangeRequest: true,
+            });
+          } else {
+            await api.post("/auth/sendVerificationCode", sendCodeData);
           }
         } catch (error: any) {
           console.error(error);
@@ -61,6 +65,9 @@ const VerifyEmail = () => {
     try {
       setIsLoading(true);
       const response = await api.post("/auth/verifyEmail", verificationData);
+      console.log(appContext.verificationOperation);
+
+      console.log(response);
       if (response.status === 200) {
         appContext.setLoggedIn?.(true);
         const { isVerified, tokens } = response.data;
@@ -69,7 +76,22 @@ const VerifyEmail = () => {
         appContext.setLoggedIn?.(true);
         console.log(tokens.accessToken);
         console.log("Isverified: ", isVerified);
-        navigate("/homepage");
+        if (appContext.verificationOperation === "changeEmail") {
+          console.log("isnt it true");
+          navigate("/changeEmail");
+        } else if (appContext.verificationOperation === "changedEmail") {
+          const accessToken = localStorage.getItem("accessToken");
+          console.log(accessToken);
+          api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${accessToken}`;
+          const response = await api.put("/auth/changeEmail", {
+            email: appContext.newEmail,
+          });
+          // to do: show alert
+        } else {
+          navigate("/homepage");
+        }
       }
     } catch (error: any) {
       console.log(error);
@@ -88,6 +110,7 @@ const VerifyEmail = () => {
       setIsLoading(false);
     }
   };
+
   const handleResendClick = async () => {
     // Resend code api integration
     const resendCodeData = {

@@ -32,7 +32,7 @@ export const sidebarLinks = [
     heading: "Settings & Privacy",
   },
   {
-    to: "/addpet",
+    to: "/settings",
     label: "Settings",
   },
   {

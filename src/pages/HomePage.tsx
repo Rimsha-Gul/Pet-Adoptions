@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import api from "../api";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import loadingIcon from "../assets/loading.gif";
 import Select from "react-select";
@@ -98,7 +98,7 @@ const HomePage = () => {
   const accessToken = localStorage.getItem("accessToken");
   console.log(accessToken);
   api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -115,10 +115,10 @@ const HomePage = () => {
           console.log(response.data);
         }
       } catch (error: any) {
-        if (error.response.status === 401) {
-          console.error(error.response.status);
-          navigate("/");
-        }
+        // if (error.response.status === 401) {
+        //   console.error(error.response.status);
+        //   navigate("/");
+        // }
       }
     };
 
@@ -179,6 +179,7 @@ const HomePage = () => {
       const { pets, totalPages, colors, ages, breeds, genders } = response.data;
       console.log(totalPages);
       console.log(colors);
+      appContext.setLoggedIn?.(true);
       const ageRanges = ageRange(ages);
       setNoPetsFound(false);
       if (totalPages === 0) setNoPetsFound(true);
@@ -191,10 +192,11 @@ const HomePage = () => {
       console.log("Total P: ", totalPages);
     } catch (error: any) {
       console.error(error);
-      if (error.response.status === 401) {
-        console.error(error.response.status);
-        navigate("/");
-      }
+      appContext.setLoggedIn?.(false);
+      // if (error.response.status === 401) {
+      //   console.error(error.response.status);
+      //   navigate("/");
+      // }
       if (error.response.status === 500) {
         setPetsLoadingError("Failed to fetch pets");
       }
@@ -253,10 +255,10 @@ const HomePage = () => {
         console.log("Updated pets:", pets);
       } catch (error: any) {
         console.error(error);
-        if (error.response.status === 401) {
-          console.error(error.response.status);
-          navigate("/");
-        }
+        // if (error.response.status === 401) {
+        //   console.error(error.response.status);
+        //   navigate("/");
+        // }
         if (error.response.status === 500) {
           setPetsLoadingError("Failed to fetch pets");
         }

@@ -147,10 +147,10 @@ const AddPet = () => {
           );
         }
       } catch (error: any) {
-        if (error.response.status === 401) {
-          console.error(error.response.status);
-          navigate("/");
-        }
+        // if (error.response.status === 401) {
+        //   console.error(error.response.status);
+        //   navigate("/");
+        // }
         if (error.response.status === 500) {
           console.error("Server error:", error.response.data.message);
           setServerError(

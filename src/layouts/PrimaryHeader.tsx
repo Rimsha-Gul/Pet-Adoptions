@@ -25,6 +25,10 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
     navigate("/dashboard");
   };
 
+  const handleSettingsClick = () => {
+    navigate("/settings");
+  };
+
   const handleLogoutClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     handleLogout(event);
   };
@@ -59,7 +63,10 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
                     Dashboard
                   </button>
                 )}
-                <button className="mb-2 text-md text-gray-600 hover:text-primary text-left">
+                <button
+                  className="mb-2 text-md text-gray-600 hover:text-primary text-left"
+                  onClick={handleSettingsClick}
+                >
                   Settings
                 </button>
                 <button

@@ -10,6 +10,8 @@ import Dashboard from "../pages/Dashboard";
 import AddPet from "../pages/AddPet";
 import PrimaryHeader from "../layouts/PrimaryHeader";
 import Sidebar from "../layouts/Sidebar";
+import Settings from "../pages/Settings";
+import ChangeEmail from "../pages/ChangeEmail";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -17,6 +19,7 @@ export const getRoutes = (
   isSidebarOpen: boolean
 ): RouteObject[] => {
   console.log("authenticated: ", isAuthenticated);
+
   const renderProtectedRoute = (Component: any) => {
     const AdminRoutes = [Dashboard, AddPet];
     if (isAuthenticated) {
@@ -52,5 +55,7 @@ export const getRoutes = (
     { path: "/pet/:name", element: renderProtectedRoute(PetProfile) },
     { path: "/dashboard", element: renderProtectedRoute(Dashboard) },
     { path: "/addpet", element: renderProtectedRoute(AddPet) },
+    { path: "/settings", element: renderProtectedRoute(Settings) },
+    { path: "/changeEmail", element: renderProtectedRoute(ChangeEmail) },
   ];
 };

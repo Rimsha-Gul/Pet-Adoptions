@@ -12,12 +12,11 @@ function App() {
   const [authStatusChecked, setAuthStatusChecked] = useState(false);
   const { isSidebarOpen } = useContext(SidebarContext);
   useEffect(() => {
-    if (appContext.loggedIn === true) {
-      setAuthStatusChecked(true);
-    }
+    setAuthStatusChecked(true);
   }, [appContext.loggedIn]);
 
   const isAuthenticated = appContext.loggedIn;
+  console.log(isAuthenticated);
 
   const handleLogout = async () => {
     try {
