@@ -42,9 +42,11 @@ function App() {
     }
   };
 
-  return authStatusChecked
-    ? useRoutes(getRoutes(isAuthenticated, handleLogout, isSidebarOpen))
-    : null;
+  const routes = useRoutes(
+    getRoutes(isAuthenticated, handleLogout, isSidebarOpen)
+  );
+
+  return authStatusChecked ? routes : null;
 }
 
 const AppWrapper = () => {

@@ -1,3 +1,10 @@
+export const headerLinks = [
+  { to: "/editProfile", label: "Edit Profile" },
+  { to: "/dashboard", label: "Dashboard", admin: true },
+  { to: "/settings", label: "Settings" },
+  { to: "/", label: "Logout" },
+];
+
 export const sidebarLinks = [
   {
     to: "/dashboard",

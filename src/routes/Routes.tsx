@@ -12,6 +12,8 @@ import PrimaryHeader from "../layouts/PrimaryHeader";
 import Sidebar from "../layouts/Sidebar";
 import Settings from "../pages/Settings";
 import ChangeEmail from "../pages/ChangeEmail";
+import Loading from "../pages/Loading";
+import ChangePassword from "../pages/ChangePassword";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -49,6 +51,7 @@ export const getRoutes = (
   return [
     { path: "/", element: <LoginPage /> },
     { path: "/signup", element: <SignupPage /> },
+    { path: "/loading", element: <Loading /> },
     { path: "/pagenotfound", element: <NotFoundPage /> },
     { path: "/verifyemail", element: <VerifyEmail /> },
     { path: "/homepage", element: renderProtectedRoute(HomePage) },
@@ -57,5 +60,6 @@ export const getRoutes = (
     { path: "/addpet", element: renderProtectedRoute(AddPet) },
     { path: "/settings", element: renderProtectedRoute(Settings) },
     { path: "/changeEmail", element: renderProtectedRoute(ChangeEmail) },
+    { path: "/changePassword", element: renderProtectedRoute(ChangePassword) },
   ];
 };

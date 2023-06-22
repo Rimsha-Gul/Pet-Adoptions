@@ -63,6 +63,28 @@ export const loginFields = [
   },
 ];
 
+export const changePasswordFields = [
+  {
+    labelText: "Password",
+    labelFor: "password",
+    id: "password",
+    name: "password",
+    type: "password",
+    autoComplete: "new-password",
+    isRequired: true,
+    placeholder: "Password",
+  },
+  {
+    labelText: "ConfirmPassword",
+    labelFor: "confirmPassword",
+    id: "confirmPassword",
+    name: "confirmPassword",
+    type: "password",
+    isRequired: true,
+    placeholder: "Confirm Password",
+  },
+];
+
 export const addPetFields = [
   {
     labelText: "Shelter",

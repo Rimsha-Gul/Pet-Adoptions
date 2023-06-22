@@ -192,7 +192,7 @@ const HomePage = () => {
       console.log("Total P: ", totalPages);
     } catch (error: any) {
       console.error(error);
-      appContext.setLoggedIn?.(false);
+      //appContext.setLoggedIn?.(false);
       // if (error.response.status === 401) {
       //   console.error(error.response.status);
       //   navigate("/");

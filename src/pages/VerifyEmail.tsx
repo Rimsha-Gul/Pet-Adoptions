@@ -4,6 +4,8 @@ import { AppContext } from "../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import loadingIcon from "../assets/loading.gif";
 import { errorMessages } from "../constants/errorMessages";
+import { showSuccessAlert } from "../utils/alert";
+import Loading from "./Loading";
 
 const VerifyEmail = () => {
   const navigate = useNavigate();
@@ -15,16 +17,22 @@ const VerifyEmail = () => {
   const [isResending, setIsResending] = useState<boolean>(false);
   const [verificationCodeError, setVerificationCodeError] =
     useState<string>("");
-  const sendCodeData = {
-    email: appContext.userEmail,
-  };
+  const [showBlankScreen, setShowBlankScreen] = useState(false);
+  const [emailForVerification, setEmailForVerification] = useState<string>(
+    appContext.userEmail
+  );
+
   const accessToken = localStorage.getItem("accessToken");
   console.log(accessToken);
   api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
+  const sendCodeData = {
+    email: emailForVerification,
+  };
+
   useEffect(() => {
     const sendVerificationCode = async () => {
-      if (appContext.userEmail) {
+      if (emailForVerification) {
         // Check if usermail is not null
         try {
           if (appContext.verificationOperation === "changedEmail") {
@@ -53,13 +61,13 @@ const VerifyEmail = () => {
     };
 
     sendVerificationCode();
-  }, [appContext.userEmail]);
+  }, [emailForVerification]);
 
   const handleClick = async (e: any) => {
     e.preventDefault();
     // VerifyEmail API integration
     const verificationData = {
-      email: appContext.userEmail,
+      email: emailForVerification,
       verificationCode: verificationCode,
     };
     try {
@@ -73,22 +81,30 @@ const VerifyEmail = () => {
         const { isVerified, tokens } = response.data;
         localStorage.setItem("accessToken", tokens.accessToken);
         localStorage.setItem("refreshToken", tokens.refreshToken);
-        appContext.setLoggedIn?.(true);
+
         console.log(tokens.accessToken);
         console.log("Isverified: ", isVerified);
+
         if (appContext.verificationOperation === "changeEmail") {
           console.log("isnt it true");
           navigate("/changeEmail");
         } else if (appContext.verificationOperation === "changedEmail") {
           const accessToken = localStorage.getItem("accessToken");
           console.log(accessToken);
+
           api.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
           const response = await api.put("/auth/changeEmail", {
             email: appContext.newEmail,
           });
-          // to do: show alert
+
+          appContext.setUserEmail?.(appContext.newEmail);
+          setShowBlankScreen(true);
+          // show success alert
+          showSuccessAlert(response.data.message, undefined, () =>
+            navigate("/settings")
+          );
         } else {
           navigate("/homepage");
         }
@@ -105,6 +121,8 @@ const VerifyEmail = () => {
         );
       } else if (error.response.status === 400) {
         setVerificationCodeError("Incorrect verification code");
+      } else if (error.response.status === 409) {
+        setVerificationCodeError(error.response.data);
       }
     } finally {
       setIsLoading(false);
@@ -119,10 +137,16 @@ const VerifyEmail = () => {
     setVerificationCodeError("");
     try {
       setIsResending(true);
-      const response = await api.post(
-        "/auth/sendVerificationCode",
-        resendCodeData
-      );
+      let response;
+      if (appContext.verificationOperation === "changedEmail") {
+        response = await api.post("/auth/sendVerificationCode", {
+          email: appContext.newEmail,
+          emailChangeRequest: true,
+        });
+      } else {
+        response = await api.post("/auth/sendVerificationCode", resendCodeData);
+      }
+
       if (response.status === 200) {
         setTimer(60); // After a successful response, start the timer for 60 seconds
         setResendDisabled(true);
@@ -149,7 +173,9 @@ const VerifyEmail = () => {
 
   const isCodeValid = verificationCode.length === 6;
 
-  return (
+  return showBlankScreen ? (
+    <Loading />
+  ) : (
     <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
       <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md p-12">
         <h1 className="text-3xl text-primary font-bold mb-4">
