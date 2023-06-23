@@ -90,7 +90,7 @@ const NewPassword = ({ verificationCodeError }: PasswordComponentProps) => {
       setShowBlankScreen(true);
       // show success alert
       showSuccessAlert(response.data.message, undefined, () =>
-        navigate("/settings")
+        navigate("/userProfile")
       );
     } catch (error: any) {
       setErrors((prevErrors) => ({

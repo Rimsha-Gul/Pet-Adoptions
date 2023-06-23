@@ -12,7 +12,6 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
   //const role = localStorage.getItem("userRole") || "";
   //const userName = localStorage.getItem("userName") || "";
   const appContext = useContext(AppContext);
-  const role = appContext.userRole;
   const userName = appContext.displayName;
 
   const navigate = useNavigate();
@@ -49,17 +48,15 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
                 <p className="text-md font-medium">{userName}</p>
               </div>
               <div className="flex flex-col px-4 py-2">
-                {headerLinks.map((link, index) =>
-                  !link.admin || role === "ADMIN" ? (
-                    <button
-                      key={index}
-                      className="mb-2 text-md text-gray-600 hover:text-primary text-left"
-                      onClick={() => handleLinkClick(link.to)}
-                    >
-                      {link.label}
-                    </button>
-                  ) : null
-                )}
+                {headerLinks.map((link, index) => (
+                  <button
+                    key={index}
+                    className="mb-2 text-md text-gray-600 hover:text-primary text-left"
+                    onClick={() => handleLinkClick(link.to)}
+                  >
+                    {link.label}
+                  </button>
+                ))}
               </div>
             </div>
           )}

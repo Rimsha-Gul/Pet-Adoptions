@@ -26,6 +26,9 @@ export default {
       borderColor: {
         primary: "#ff5363",
       },
+      backgroundImage: {
+        "radial-gradient": "radial-gradient(circle at center, white, #fcd7c9)",
+      },
     },
   },
   plugins: [],

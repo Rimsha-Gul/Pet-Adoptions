@@ -19,6 +19,8 @@ interface AppContextProps {
   setLoggedIn: Dispatch<SetStateAction<boolean>> | null;
   verificationOperation: string;
   setVerificationOperation: Dispatch<SetStateAction<string>> | null;
+  isEmailVerified: boolean;
+  setIsEmailVerified: Dispatch<SetStateAction<boolean>> | null;
   newEmail: string;
   setNewEmail: Dispatch<SetStateAction<string>> | null;
 }
@@ -34,6 +36,8 @@ export const AppContext = createContext<AppContextProps>({
   setLoggedIn: null,
   verificationOperation: "",
   setVerificationOperation: null,
+  isEmailVerified: false,
+  setIsEmailVerified: null,
   newEmail: "",
   setNewEmail: null,
 });
@@ -46,6 +50,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [verificationOperation, setVerificationOperation] =
     useState<string>("");
+  const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
   const [newEmail, setNewEmail] = useState<string>("");
 
   useEffect(() => {
@@ -150,6 +155,8 @@ const AppContextProvider = (props: { children: ReactNode }) => {
         setLoggedIn,
         verificationOperation,
         setVerificationOperation,
+        isEmailVerified,
+        setIsEmailVerified,
         newEmail,
         setNewEmail,
       }}

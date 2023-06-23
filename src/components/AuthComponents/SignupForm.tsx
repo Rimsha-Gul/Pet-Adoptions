@@ -99,7 +99,7 @@ const SignupForm = () => {
   };
 
   return (
-    <form className="mx-auto md:w-1/2 mt-8 space-y-6">
+    <form className="mx-auto md:w-full px-8 lg:px-16 xl:px-4 xl:w-2/3 space-y-8 mt-8">
       <div className="">
         {fields.map((field) => (
           <Input

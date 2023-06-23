@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import Header from "../components/AuthComponents/Header";
 import LoginForm from "../components/AuthComponents/LoginForm";
 import { AppContext } from "../context/AppContext";
+import LogoSection from "../components/AuthComponents/LogoSection";
 
 function Login() {
   const appContext = useContext(AppContext);
@@ -9,15 +9,19 @@ function Login() {
   console.log(appContext.userEmail);
   console.log(appContext.displayName);
   return (
-    <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
-      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md p-12">
-        <Header
-          heading="Login to your account"
+    <div className="bg-radial-gradient min-h-screen flex flex-col justify-center items-center p-16 lg:px-18 xl:px-32 2xl:px-72">
+      <div className="grid md:grid-cols-2 w-full">
+        <LogoSection
           paragraph="Don't have an account yet? "
           linkName="Signup"
           linkUrl="/signup"
         />
-        <LoginForm />
+        <div className="bg-white rounded-lg shadow-md px-12 pb-12 md:py-12 md:px-4 md:rounded-l-none">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-700">
+            Login to your account
+          </h2>
+          <LoginForm />
+        </div>
       </div>
     </div>
   );

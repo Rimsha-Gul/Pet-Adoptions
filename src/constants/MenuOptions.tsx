@@ -1,36 +1,34 @@
 export const headerLinks = [
-  { to: "/editProfile", label: "Edit Profile" },
-  { to: "/dashboard", label: "Dashboard", admin: true },
-  { to: "/settings", label: "Settings" },
+  { to: "/dashboard", label: "Profile & Settings" },
   { to: "/", label: "Logout" },
 ];
 
 export const sidebarLinks = [
   {
-    to: "/dashboard",
-    label: "Dashboard",
-  },
-  {
     to: "/homepage",
     label: "Homepage",
   },
   {
-    to: "/addpet",
-    label: "Edit Profile",
+    to: "/userprofile",
+    label: "Profile",
   },
   {
     divider: true,
+    admin: true,
   },
   {
     heading: "Admin Tasks",
+    admin: true,
   },
   {
     to: "/addpet",
     label: "Add a pet",
+    admin: true,
   },
   {
     to: "/addpet",
     label: "Invite a shelter",
+    admin: true,
   },
   {
     divider: true,
@@ -39,8 +37,17 @@ export const sidebarLinks = [
     heading: "Settings & Privacy",
   },
   {
-    to: "/settings",
     label: "Settings",
+    options: [
+      {
+        to: "/changeEmail",
+        label: "Change Email",
+      },
+      {
+        to: "/changePassword",
+        label: "Change Password",
+      },
+    ],
   },
   {
     divider: true,
