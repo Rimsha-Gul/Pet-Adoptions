@@ -98,8 +98,10 @@ const VerifyEmail = () => {
           const response = await api.put("/auth/changeEmail", {
             email: appContext.newEmail,
           });
-
+          const { tokens } = response.data;
           appContext.setUserEmail?.(appContext.newEmail);
+          localStorage.setItem("accessToken", tokens.accessToken);
+          localStorage.setItem("refreshToken", tokens.refreshToken);
           setShowBlankScreen(true);
           // show success alert
           showSuccessAlert(response.data.message, undefined, () =>
