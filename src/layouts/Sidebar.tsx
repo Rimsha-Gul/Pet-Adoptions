@@ -1,17 +1,40 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import {
+  FiArrowLeft,
+  FiChevronDown,
+  FiChevronLeft,
+  FiChevronRight,
+  FiChevronUp,
+} from "react-icons/fi";
 import { sidebarLinks } from "../constants/MenuOptions";
 import { SidebarContext } from "../context/SidebarContext";
 import { AppContext } from "../context/AppContext";
+import { useTransition, animated } from "@react-spring/web";
 
 const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
   //const userName = localStorage.getItem("userName") || "";
   const appContext = useContext(AppContext);
   const userName = appContext.displayName;
-  const [selectedOption, setSelectedOption] = useState("");
-
+  const userRole = appContext.userRole;
+  const [selectedOption, setSelectedOption] = useState<string>("");
   const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+
+  // Filter out admin links if user is not an admin
+  const filteredSidebarLinks = sidebarLinks.filter(
+    (link) => !link.admin || userRole === "ADMIN"
+  );
+
+  // Transition config for the settings dropdown
+  const transitions = useTransition(isSettingsOpen, {
+    from: { maxHeight: "0px" },
+    enter: { maxHeight: "500px" },
+    leave: { maxHeight: "0px" },
+    config: {
+      duration: 300,
+    },
+  });
 
   const toggleSidebar = () => {
     setIsSidebarOpen?.(!isSidebarOpen);
@@ -31,6 +54,12 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
       }`}
     >
       <div className="flex flex-col gap-2 items-center justify-center">
+        <Link
+          to="/homepage"
+          className="absolute top-0 left-0 p-3 my-2 mx-3 text-gray-700 rounded-full hover:bg-secondary-100"
+        >
+          <FiArrowLeft className="text-lg" />
+        </Link>
         <button className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200">
           <span className="text-gray-500 text-lg font-medium">
             {userName.charAt(0)}
@@ -42,7 +71,7 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
       </div>
 
       <div className="py-4">
-        {sidebarLinks.map((link, index) => (
+        {filteredSidebarLinks.map((link, index) => (
           <>
             {link.divider && (
               <div className="my-2 border-t border-gray-300"></div>
@@ -52,19 +81,64 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                 {link.heading}
               </p>
             )}
-            {link.to && (
-              <Link
-                key={index}
-                to={link.to}
-                className={`block px-6 py-3 text-md font-medium ${
-                  selectedOption === link.label
-                    ? "text-white bg-secondary"
-                    : "text-gray-500 hover:bg-secondary-100 transition-colors"
-                } ${isSidebarOpen ? "" : ""}`}
-                onClick={() => handleOptionClick(link.label)}
-              >
-                {link.label}
-              </Link>
+            {link.options ? (
+              <div>
+                <div className="flex flex-row items-center">
+                  <p
+                    className={`flex block px-6 py-3 text-md font-medium cursor-pointer w-full ${
+                      selectedOption === link.label
+                        ? "text-white bg-secondary"
+                        : "text-gray-500 hover:bg-secondary-100 transition-colors"
+                    } ${isSidebarOpen ? "" : ""}`}
+                    onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                  >
+                    {link.label}
+                    <div className="flex items-center ml-2">
+                      {isSettingsOpen ? <FiChevronUp /> : <FiChevronDown />}
+                    </div>
+                  </p>
+                </div>
+                {isSettingsOpen && (
+                  <div>
+                    {transitions(
+                      (style, item) =>
+                        item && (
+                          <animated.div style={style}>
+                            {link.options.map((option) => (
+                              <Link
+                                key={option.to}
+                                to={option.to}
+                                className={`block px-6 py-3 text-md font-medium ${
+                                  selectedOption === option.label
+                                    ? "text-white bg-secondary"
+                                    : "text-gray-500 hover:bg-secondary-100 transition-colors"
+                                } ${isSidebarOpen ? "" : ""}`}
+                                onClick={() => handleOptionClick(option.label)}
+                              >
+                                {option.label}
+                              </Link>
+                            ))}
+                          </animated.div>
+                        )
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : (
+              link.to && (
+                <Link
+                  key={index}
+                  to={link.to}
+                  className={`block px-6 py-3 text-md font-medium ${
+                    selectedOption === link.label
+                      ? "text-white bg-secondary"
+                      : "text-gray-500 hover:bg-secondary-100 transition-colors"
+                  } ${isSidebarOpen ? "" : ""}`}
+                  onClick={() => handleOptionClick(link.label)}
+                >
+                  {link.label}
+                </Link>
+              )
             )}
           </>
         ))}

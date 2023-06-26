@@ -10,6 +10,13 @@ import Dashboard from "../pages/Dashboard";
 import AddPet from "../pages/AddPet";
 import PrimaryHeader from "../layouts/PrimaryHeader";
 import Sidebar from "../layouts/Sidebar";
+import Settings from "../pages/Settings";
+import ChangeEmail from "../pages/ChangeEmail";
+import Loading from "../pages/Loading";
+import ChangePassword from "../pages/ChangePassword";
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
+import UserProfile from "../pages/UserProfile";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -17,14 +24,32 @@ export const getRoutes = (
   isSidebarOpen: boolean
 ): RouteObject[] => {
   console.log("authenticated: ", isAuthenticated);
+  const appContext = useContext(AppContext);
+  const userRole = appContext.userRole;
+  const existingUser = appContext.loggedIn;
+  const AdminRoutes = [AddPet];
+  const sidebarRoutes = [
+    Dashboard,
+    AddPet,
+    Settings,
+    ChangeEmail,
+    ChangePassword,
+  ];
+
   const renderProtectedRoute = (Component: any) => {
-    const AdminRoutes = [Dashboard, AddPet];
     if (isAuthenticated) {
-      if (AdminRoutes.includes(Component)) {
+      if (sidebarRoutes.includes(Component)) {
+        if (AdminRoutes.includes(Component) && userRole !== "ADMIN") {
+          return <NotFoundPage />;
+        }
         return (
           <div className="flex">
             <Sidebar handleLogout={handleLogout} />
-            <div className={`flex-grow ${isSidebarOpen ? "ml-64" : ""}`}>
+            <div
+              className={`flex-grow items-center ${
+                isSidebarOpen ? "ml-64" : ""
+              }`}
+            >
               <Component />
             </div>
           </div>
@@ -43,14 +68,34 @@ export const getRoutes = (
     return <Navigate to="/" />;
   };
 
+  const renderVerifyEmail = () => {
+    if (existingUser) {
+      return (
+        <div className="flex">
+          <Sidebar handleLogout={handleLogout} />
+          <div className={`flex-grow ${isSidebarOpen ? "ml-64" : ""}`}>
+            <VerifyEmail />
+          </div>
+        </div>
+      );
+    } else {
+      return <VerifyEmail />;
+    }
+  };
+
   return [
     { path: "/", element: <LoginPage /> },
     { path: "/signup", element: <SignupPage /> },
+    { path: "/loading", element: <Loading /> },
     { path: "/pagenotfound", element: <NotFoundPage /> },
-    { path: "/verifyemail", element: <VerifyEmail /> },
+    { path: "/verifyemail", element: renderVerifyEmail() },
     { path: "/homepage", element: renderProtectedRoute(HomePage) },
     { path: "/pet/:name", element: renderProtectedRoute(PetProfile) },
     { path: "/dashboard", element: renderProtectedRoute(Dashboard) },
     { path: "/addpet", element: renderProtectedRoute(AddPet) },
+    { path: "/settings", element: renderProtectedRoute(Settings) },
+    { path: "/changeEmail", element: renderProtectedRoute(ChangeEmail) },
+    { path: "/changePassword", element: renderProtectedRoute(ChangePassword) },
+    { path: "/userProfile", element: renderProtectedRoute(UserProfile) },
   ];
 };

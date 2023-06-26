@@ -12,12 +12,11 @@ function App() {
   const [authStatusChecked, setAuthStatusChecked] = useState(false);
   const { isSidebarOpen } = useContext(SidebarContext);
   useEffect(() => {
-    if (appContext.loggedIn === true) {
-      setAuthStatusChecked(true);
-    }
+    setAuthStatusChecked(true);
   }, [appContext.loggedIn]);
 
   const isAuthenticated = appContext.loggedIn;
+  console.log(isAuthenticated);
 
   const handleLogout = async () => {
     try {
@@ -43,9 +42,11 @@ function App() {
     }
   };
 
-  return authStatusChecked
-    ? useRoutes(getRoutes(isAuthenticated, handleLogout, isSidebarOpen))
-    : null;
+  const routes = useRoutes(
+    getRoutes(isAuthenticated, handleLogout, isSidebarOpen)
+  );
+
+  return authStatusChecked ? routes : null;
 }
 
 const AppWrapper = () => {

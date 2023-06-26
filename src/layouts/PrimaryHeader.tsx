@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import PrimaryLogo from "../icons/PrimaryLogo";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+import { headerLinks } from "../constants/MenuOptions";
 
 interface HeaderProps {
   handleLogout: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -11,7 +12,6 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
   //const role = localStorage.getItem("userRole") || "";
   //const userName = localStorage.getItem("userName") || "";
   const appContext = useContext(AppContext);
-  const role = appContext.userRole;
   const userName = appContext.displayName;
 
   const navigate = useNavigate();
@@ -21,14 +21,14 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
     setIsUserOptionsOpen(!isUserOptionsOpen);
   };
 
-  const handleDashboardClick = () => {
-    navigate("/dashboard");
+  const handleLinkClick = (path: string) => {
+    setIsUserOptionsOpen(false);
+    if (path === "/") {
+      handleLogout({} as React.MouseEvent<HTMLButtonElement>);
+    } else {
+      navigate(path);
+    }
   };
-
-  const handleLogoutClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    handleLogout(event);
-  };
-
   return (
     <div className="fixed top-0 w-full flex items-center justify-between p-4 shadow-md mb-12 z-20 bg-white">
       <PrimaryLogo />
@@ -48,26 +48,15 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
                 <p className="text-md font-medium">{userName}</p>
               </div>
               <div className="flex flex-col px-4 py-2">
-                <button className="mb-2 text-md text-gray-600 hover:text-primary text-left">
-                  Edit Profile
-                </button>
-                {role === "ADMIN" && (
+                {headerLinks.map((link, index) => (
                   <button
+                    key={index}
                     className="mb-2 text-md text-gray-600 hover:text-primary text-left"
-                    onClick={handleDashboardClick}
+                    onClick={() => handleLinkClick(link.to)}
                   >
-                    Dashboard
+                    {link.label}
                   </button>
-                )}
-                <button className="mb-2 text-md text-gray-600 hover:text-primary text-left">
-                  Settings
-                </button>
-                <button
-                  className="text-md text-gray-600 hover:text-primary text-left"
-                  onClick={handleLogoutClick}
-                >
-                  Logout
-                </button>
+                ))}
               </div>
             </div>
           )}

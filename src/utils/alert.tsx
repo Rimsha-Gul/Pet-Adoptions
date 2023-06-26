@@ -12,7 +12,10 @@ export const showErrorAlert = (message: string) => {
 
 export const showSuccessAlert = (
   message: string,
-  navigateToPet: () => void
+  navigateToPage?: () => void,
+  onConfirm?: () => void,
+  footerHtml?: string,
+  footerLinkId: string = "footerLink"
 ) => {
   Swal.fire({
     title: "Success!",
@@ -20,20 +23,20 @@ export const showSuccessAlert = (
     icon: "success",
     confirmButtonText: '<p class="px-8"></p> OK',
     confirmButtonColor: "#ff5363",
-    footer: `
-    <a href id="navigatePet">View the pet\'s profile page</a>
-    <style>
-        #navigatePet:hover { text-decoration: underline; }
-    </style>
-    `,
+    footer: footerHtml || "",
     didOpen: () => {
-      const link = document.getElementById("navigatePet");
-      if (link) {
+      const link = document.getElementById(footerLinkId);
+      if (link && navigateToPage) {
         link.addEventListener("click", (e) => {
           e.preventDefault();
           Swal.close();
-          navigateToPet();
+          navigateToPage();
         });
+      }
+    },
+    didClose: () => {
+      if (onConfirm) {
+        onConfirm();
       }
     },
   });

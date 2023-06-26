@@ -147,10 +147,10 @@ const AddPet = () => {
           );
         }
       } catch (error: any) {
-        if (error.response.status === 401) {
-          console.error(error.response.status);
-          navigate("/");
-        }
+        // if (error.response.status === 401) {
+        //   console.error(error.response.status);
+        //   navigate("/");
+        // }
         if (error.response.status === 500) {
           console.error("Server error:", error.response.data.message);
           setServerError(
@@ -243,10 +243,13 @@ const AddPet = () => {
         console.log("Response data: ", response.data);
         const pet: Pet = response.data;
         console.log("Pet: ", pet);
-        showSuccessAlert("The pet has been added successfully.", () =>
-          navigate(`/pet/${encodeURIComponent(pet.name)}`, {
-            state: pet,
-          })
+        showSuccessAlert(
+          "The pet has been added successfully.",
+          () =>
+            navigate(`/pet/${encodeURIComponent(pet.name)}`, { state: pet }),
+          () => navigate("/addpet"),
+          '<a href id="navigatePet">View the pet\'s profile page</a><style>#navigatePet:hover { text-decoration: underline; }</style>',
+          "navigatePet"
         );
       }
     } catch (error: any) {

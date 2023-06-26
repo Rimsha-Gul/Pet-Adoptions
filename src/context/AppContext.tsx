@@ -6,7 +6,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import axios from "axios";
 import api from "../api";
 
 interface AppContextProps {
@@ -18,6 +17,12 @@ interface AppContextProps {
   setDisplayName: Dispatch<SetStateAction<string>> | null;
   loggedIn: boolean;
   setLoggedIn: Dispatch<SetStateAction<boolean>> | null;
+  verificationOperation: string;
+  setVerificationOperation: Dispatch<SetStateAction<string>> | null;
+  isEmailVerified: boolean;
+  setIsEmailVerified: Dispatch<SetStateAction<boolean>> | null;
+  newEmail: string;
+  setNewEmail: Dispatch<SetStateAction<string>> | null;
 }
 
 export const AppContext = createContext<AppContextProps>({
@@ -29,6 +34,12 @@ export const AppContext = createContext<AppContextProps>({
   setDisplayName: null,
   loggedIn: false,
   setLoggedIn: null,
+  verificationOperation: "",
+  setVerificationOperation: null,
+  isEmailVerified: false,
+  setIsEmailVerified: null,
+  newEmail: "",
+  setNewEmail: null,
 });
 
 const AppContextProvider = (props: { children: ReactNode }) => {
@@ -37,16 +48,21 @@ const AppContextProvider = (props: { children: ReactNode }) => {
   const [userRole, setUserRole] = useState<string>("");
   const [displayName, setDisplayName] = useState<string>("");
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [verificationOperation, setVerificationOperation] =
+    useState<string>("");
+  const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
+  const [newEmail, setNewEmail] = useState<string>("");
 
   useEffect(() => {
     console.log("this one called");
     const accessToken = localStorage.getItem("accessToken");
 
     if (accessToken) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
       setLoggedIn(true);
+      console.log(loggedIn);
 
-      axios.interceptors.request.use(
+      api.interceptors.request.use(
         function (config) {
           return config;
         },
@@ -55,23 +71,44 @@ const AppContextProvider = (props: { children: ReactNode }) => {
         }
       );
 
-      axios.interceptors.response.use(
+      api.interceptors.response.use(
         function (response) {
           return response;
         },
         async function (error) {
-          const originalRequest = error.config;
-          if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+          const originalConfig = error.config;
+          console.log("Try to refresh");
+          if (error.response?.status === 401 && !originalConfig._retry) {
+            originalConfig._retry = true;
             const refreshToken = localStorage.getItem("refreshToken");
+
+            api.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${refreshToken}`;
             try {
-              const res = await api.post("/refresh", { refreshToken });
-              localStorage.setItem("accessToken", res.data.accessToken);
-              localStorage.setItem("refreshToken", res.data.refreshToken);
-              axios.defaults.headers.common[
+              console.log("Refresh the tokens");
+              console.log(refreshToken);
+              console.log(api);
+              const res = await api.post("/auth/refresh");
+              console.log("Refresh response: ", res);
+              setLoggedIn(true);
+              localStorage.setItem("accessToken", res.data.tokens.accessToken);
+              localStorage.setItem(
+                "refreshToken",
+                res.data.tokens.refreshToken
+              );
+              originalConfig.headers.Authorization =
+                "Bearer " + res.data.tokens.accessToken;
+
+              api.defaults.headers.common[
                 "Authorization"
-              ] = `Bearer ${res.data.accessToken}`;
-              return axios(originalRequest);
+              ] = `Bearer ${res.data.tokens.accessToken}`;
+              return api.request({
+                ...originalConfig,
+                ...{
+                  headers: originalConfig.headers.toJSON(),
+                },
+              });
             } catch (err) {
               setLoggedIn(false);
               localStorage.removeItem("accessToken");
@@ -82,6 +119,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
         }
       );
     } else {
+      console.log(accessToken);
       setLoggedIn(false);
     }
   }, []);
@@ -115,6 +153,12 @@ const AppContextProvider = (props: { children: ReactNode }) => {
         setDisplayName,
         loggedIn,
         setLoggedIn,
+        verificationOperation,
+        setVerificationOperation,
+        isEmailVerified,
+        setIsEmailVerified,
+        newEmail,
+        setNewEmail,
       }}
     >
       {children}
