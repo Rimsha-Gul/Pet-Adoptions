@@ -18,6 +18,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [loginState, setLoginState] = useState<FieldsState>(fieldsState);
+  const [credentialsError, setCredentialsError] = useState<string>("");
   const [errors, setErrors] = useState<FieldsState>({
     email: "Email is required",
     password: "Password is required",
@@ -37,7 +38,7 @@ const LoginForm = () => {
       ...prevLoginState,
       [id]: value,
     }));
-
+    setCredentialsError("");
     setErrors((prevErrors) => ({
       ...prevErrors,
       [id]: fieldError,
@@ -46,13 +47,13 @@ const LoginForm = () => {
 
   useEffect(() => {
     // Check if all fields are valid
-    const isAllFieldsValid = Object.values(errors).every(
-      (error) => error === ""
-    );
+    const isAllFieldsValid =
+      credentialsError === "" &&
+      Object.values(errors).every((error) => error === "");
 
     // Update the form validity state
     setIsFormValid(isAllFieldsValid);
-  }, [errors]);
+  }, [errors, credentialsError]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -63,6 +64,7 @@ const LoginForm = () => {
   const authenticateUser = async () => {
     console.log(loginData);
     try {
+      setCredentialsError("");
       setIsLoading(true);
       const response = await api.post("/auth/login", loginData);
       if (response.status === 200) {
@@ -80,11 +82,7 @@ const LoginForm = () => {
           email: "User not found.",
         }));
       } else if (error.response.status === 401) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          email: "Invalid credentials.",
-          password: "Invalid credentials.",
-        }));
+        setCredentialsError("Invalid credentials!");
       } else if (error.response.status === 403) {
         // Handle user not verified error
         console.log(appContext.userEmail);
@@ -122,6 +120,7 @@ const LoginForm = () => {
         disabled={!isFormValid}
         customClass="w-full"
       />
+      <p className="text-center text-red-500 text-xs">{credentialsError}</p>
     </form>
   );
 };

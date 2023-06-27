@@ -298,9 +298,10 @@ const AddPet = () => {
           <form className="flex flex-col mx-auto w-full space-y-8 mt-8 mb-8 g-12">
             {groups.map((group) => (
               <div key={group.label}>
-                <h2 className="text-2xl text-primary font-bold mb-4">
+                <h2 className="text-2xl text-primary font-bold mb-4 ">
                   {group.label}
                 </h2>
+                <div className="border-b-2 border-gray-200 my-2"></div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1 md:gap-12">
                   {addPetFields
                     .filter((field) => group.fields.includes(field.id))
@@ -323,6 +324,7 @@ const AddPet = () => {
                               isRequired={field.isRequired}
                               placeholder={field.placeholder}
                               rows={field.rows}
+                              labelClassName="text-gray-700 font-medium text-lg"
                               customClass=""
                               options={
                                 field.name === "shelter"
@@ -362,6 +364,7 @@ const AddPet = () => {
                           isRequired={field.isRequired}
                           placeholder={field.placeholder}
                           rows={field.rows}
+                          labelClassName="text-gray-700 font-medium text-lg"
                           customClass=""
                           options={
                             field.name === "shelter" ? shelters : field.options

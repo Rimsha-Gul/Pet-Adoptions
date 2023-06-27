@@ -15,6 +15,8 @@ interface AppContextProps {
   setUserEmail: Dispatch<SetStateAction<string>> | null;
   displayName: string;
   setDisplayName: Dispatch<SetStateAction<string>> | null;
+  profilePhoto: string;
+  setProfilePhoto: Dispatch<SetStateAction<string>> | null;
   loggedIn: boolean;
   setLoggedIn: Dispatch<SetStateAction<boolean>> | null;
   verificationOperation: string;
@@ -32,6 +34,8 @@ export const AppContext = createContext<AppContextProps>({
   setUserEmail: null,
   displayName: "",
   setDisplayName: null,
+  profilePhoto: "",
+  setProfilePhoto: null,
   loggedIn: false,
   setLoggedIn: null,
   verificationOperation: "",
@@ -47,6 +51,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
   const [userEmail, setUserEmail] = useState<string>("");
   const [userRole, setUserRole] = useState<string>("");
   const [displayName, setDisplayName] = useState<string>("");
+  const [profilePhoto, setProfilePhoto] = useState<string>("");
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [verificationOperation, setVerificationOperation] =
     useState<string>("");
@@ -134,6 +139,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
           setUserEmail(data.email);
           setDisplayName(data.name);
           setUserRole(data.role);
+          setProfilePhoto(data.profilePhoto);
         })
         .catch((error) => {
           setLoggedIn(false);
@@ -151,6 +157,8 @@ const AppContextProvider = (props: { children: ReactNode }) => {
         setUserEmail,
         displayName,
         setDisplayName,
+        profilePhoto,
+        setProfilePhoto,
         loggedIn,
         setLoggedIn,
         verificationOperation,

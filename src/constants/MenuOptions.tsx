@@ -1,13 +1,9 @@
 export const headerLinks = [
-  { to: "/dashboard", label: "Profile & Settings" },
+  { to: "/userprofile", label: "Profile & Settings" },
   { to: "/", label: "Logout" },
 ];
 
 export const sidebarLinks = [
-  {
-    to: "/homepage",
-    label: "Homepage",
-  },
   {
     to: "/userprofile",
     label: "Profile",
@@ -26,7 +22,7 @@ export const sidebarLinks = [
     admin: true,
   },
   {
-    to: "/addpet",
+    to: "/inviteshelter",
     label: "Invite a shelter",
     admin: true,
   },

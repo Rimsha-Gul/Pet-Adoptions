@@ -12,7 +12,7 @@ const PetProfile = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 flex flex-col justify-center items-center mt-24">
+      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 flex flex-col justify-center items-center">
         <PetImagesCarousel petImages={pet.images} />
         <div className="flex flex-col md:flex-row justify-center w-full px-8 space-y-8 md:space-y-0 md:space-x-8">
           <div className="w-full md:w-3/4 mx-auto max-w-6xl">
