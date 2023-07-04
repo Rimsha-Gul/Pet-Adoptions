@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
   FiArrowLeft,
   FiChevronDown,
@@ -17,9 +17,13 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
   const appContext = useContext(AppContext);
   const userName = appContext.displayName;
   const userRole = appContext.userRole;
+  const [userProfilePhoto, setUserProfilePhoto] = useState(
+    appContext.profilePhoto
+  );
   const [selectedOption, setSelectedOption] = useState<string>("");
   const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const location = useLocation();
 
   // Filter out admin links if user is not an admin
   const filteredSidebarLinks = sidebarLinks.filter(
@@ -35,6 +39,11 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
       duration: 300,
     },
   });
+
+  // update local state when context values are updated
+  useEffect(() => {
+    setUserProfilePhoto(appContext.profilePhoto);
+  }, [appContext.profilePhoto]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen?.(!isSidebarOpen);
@@ -60,11 +69,19 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
         >
           <FiArrowLeft className="text-lg" />
         </Link>
-        <button className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200">
-          <span className="text-gray-500 text-lg font-medium">
-            {userName.charAt(0)}
-          </span>
-        </button>
+        {userProfilePhoto ? (
+          <img
+            src={userProfilePhoto}
+            alt="Profile Photo"
+            className="w-14 h-14 rounded-full cursor-pointer text-sm border-2 border-secondary shadow-md"
+          />
+        ) : (
+          <button className="flex items-center justify-center w-14 h-14 rounded-full bg-gray-200 border-2 border-secondary shadow-md">
+            <span className="text-gray-500 text-lg font-medium">
+              {userName.charAt(0)}
+            </span>
+          </button>
+        )}
         <div className="px-4 py-2 border-b border-gray-300">
           <p className="text-md font-medium">{userName}</p>
         </div>
@@ -84,8 +101,8 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
             {link.options ? (
               <div>
                 <div className="flex flex-row items-center">
-                  <p
-                    className={`flex block px-6 py-3 text-md font-medium cursor-pointer w-full ${
+                  <div
+                    className={`flex items-center block px-6 py-3 text-md font-medium cursor-pointer w-full ${
                       selectedOption === link.label
                         ? "text-white bg-secondary"
                         : "text-gray-500 hover:bg-secondary-100 transition-colors"
@@ -96,7 +113,7 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                     <div className="flex items-center ml-2">
                       {isSettingsOpen ? <FiChevronUp /> : <FiChevronDown />}
                     </div>
-                  </p>
+                  </div>
                 </div>
                 {isSettingsOpen && (
                   <div>
@@ -130,6 +147,8 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                   key={index}
                   to={link.to}
                   className={`block px-6 py-3 text-md font-medium ${
+                    link.to === location.pathname ||
+                    link.to === location.pathname.slice(0, -1) ||
                     selectedOption === link.label
                       ? "text-white bg-secondary"
                       : "text-gray-500 hover:bg-secondary-100 transition-colors"

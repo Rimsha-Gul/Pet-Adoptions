@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PrimaryLogo from "../icons/PrimaryLogo";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
@@ -16,6 +16,14 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
 
   const navigate = useNavigate();
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState(false);
+  const [userProfilePhoto, setUserProfilePhoto] = useState(
+    appContext.profilePhoto
+  );
+
+  // update local state when context values are updated
+  useEffect(() => {
+    setUserProfilePhoto(appContext.profilePhoto);
+  }, [appContext.profilePhoto]);
 
   const handleUserOptionsClick = () => {
     setIsUserOptionsOpen(!isUserOptionsOpen);
@@ -34,14 +42,23 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
       <PrimaryLogo />
       <div className="flex items-center">
         <div className="relative">
-          <button
-            className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-200"
-            onClick={handleUserOptionsClick}
-          >
-            <span className="text-gray-500 text-lg font-medium">
-              {userName.charAt(0)}
-            </span>
-          </button>
+          {userProfilePhoto ? (
+            <img
+              src={userProfilePhoto}
+              alt="Profile Photo"
+              className="w-14 h-14 rounded-full cursor-pointer text-sm border-2 border-secondary shadow-md"
+              onClick={handleUserOptionsClick}
+            />
+          ) : (
+            <button
+              className="flex items-center justify-center w-14 h-14 rounded-full bg-gray-200 border-2 border-secondary shadow-md"
+              onClick={handleUserOptionsClick}
+            >
+              <span className="text-gray-500 text-lg font-medium">
+                {userName.charAt(0)}
+              </span>
+            </button>
+          )}
           {isUserOptionsOpen && (
             <div className="absolute right-0 mt-6 w-48 bg-white border border-gray-300 rounded shadow">
               <div className="px-4 py-2 border-b border-gray-300">

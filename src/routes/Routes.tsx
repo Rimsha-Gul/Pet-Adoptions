@@ -34,6 +34,7 @@ export const getRoutes = (
     Settings,
     ChangeEmail,
     ChangePassword,
+    UserProfile,
   ];
 
   const renderProtectedRoute = (Component: any) => {
@@ -56,12 +57,12 @@ export const getRoutes = (
         );
       } else {
         return (
-          <>
+          <div className="flex flex-col">
             <PrimaryHeader handleLogout={handleLogout} />
-            <div className="mt-20">
+            <div className="">
               <Component />
             </div>
-          </>
+          </div>
         );
       }
     }

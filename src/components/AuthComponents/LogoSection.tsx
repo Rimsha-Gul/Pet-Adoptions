@@ -22,8 +22,9 @@ const LogoSection = ({ paragraph, linkName, linkUrl }: HeaderProps) => {
       </h1>
       {paragraph && linkName && linkUrl && (
         <div className=" flex flex-row items-center justify-center space-x-4">
-          <p className="mt-2 text-center text-sm text-gray-600 mt-5">
+          <p className="text-center text-sm text-gray-600 mt-5">
             {paragraph}
+            <span className="mr-1"></span>
             <Link
               to={linkUrl}
               className="font-medium text-primary hover:text-secondary"

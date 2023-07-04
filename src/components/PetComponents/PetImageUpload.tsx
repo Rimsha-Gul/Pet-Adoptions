@@ -115,7 +115,9 @@ export const FileInput = ({
 
   return (
     <div key="images" className="col-span-1 md:col-span-2 lg:col-span-1 my-5">
-      <label htmlFor="images">Images</label>
+      <label className="text-gray-700 font-medium text-lg" htmlFor="images">
+        Images
+      </label>
       <div
         {...getRootProps()}
         className="w-full mt-2 h-28 border-2 border-dashed border-gray-400 rounded-md flex justify-center items-center mb-5"

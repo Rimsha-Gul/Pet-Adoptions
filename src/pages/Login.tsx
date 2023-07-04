@@ -12,7 +12,7 @@ function Login() {
     <div className="bg-radial-gradient min-h-screen flex flex-col justify-center items-center p-16 lg:px-18 xl:px-32 2xl:px-72">
       <div className="grid md:grid-cols-2 w-full">
         <LogoSection
-          paragraph="Don't have an account yet? "
+          paragraph="Don't have an account yet?"
           linkName="Signup"
           linkUrl="/signup"
         />

@@ -109,6 +109,7 @@ const HomePage = () => {
           appContext.setDisplayName?.(response.data.name);
           appContext.setUserEmail?.(response.data.email);
           appContext.setUserRole?.(response.data.role);
+          appContext.setProfilePhoto?.(response.data.profilePhoto);
           //localStorage.setItem("userEmail", response.data.email);
           //localStorage.setItem("userName", response.data.name);
           //localStorage.setItem("userRole", response.data.role);

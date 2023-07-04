@@ -20,6 +20,7 @@ interface InputProps {
   validationError?: string;
   options?: Array<string | { label: string; value: string }>;
   showShelterID?: boolean;
+  labelClassName?: string;
 }
 
 const fixedInputClass =
@@ -46,6 +47,7 @@ const Input = ({
   validationError,
   options,
   showShelterID,
+  labelClassName,
 }: InputProps) => {
   const customStyles = {
     control: (provided: any, state: any) => ({
@@ -96,7 +98,7 @@ const Input = ({
     };
     return (
       <div className="my-5">
-        <label htmlFor={labelFor} className="not-sr-only">
+        <label htmlFor={labelFor} className={`not-sr-only  ${labelClassName}`}>
           {labelText}
         </label>
         <Datetime
@@ -130,7 +132,7 @@ const Input = ({
     const radioOptions = options as string[];
     return (
       <div className="flex flex-col my-10">
-        <label>{labelText}</label>
+        <label className={` ${labelClassName}`}>{labelText}</label>
         <div className="flex flex-row gap-12 items-center">
           {radioOptions?.map((option) => (
             <label key={option} className="items-start">
@@ -158,7 +160,7 @@ const Input = ({
 
     return (
       <div className="my-5">
-        <label>{labelText}</label>
+        <label className={` ${labelClassName}`}>{labelText}</label>
         <Select
           className={`${fixedSelectClass} ${customClass} ${
             validationError && isTouched ? "border-red-500" : ""
@@ -184,7 +186,9 @@ const Input = ({
   if (type === "textarea") {
     return (
       <div className="my-5">
-        <label htmlFor={labelFor}>{labelText}</label>
+        <label className={` ${labelClassName}`} htmlFor={labelFor}>
+          {labelText}
+        </label>
         <textarea
           onChange={handleChange}
           onBlur={handleBlur}
@@ -208,7 +212,7 @@ const Input = ({
   if (type === "toggle") {
     return (
       <div className="flex flex-row my-5 justify-between">
-        <label>{labelText}</label>
+        <label className={` ${labelClassName}`}>{labelText}</label>
 
         <Switch
           checked={isChecked}
@@ -226,7 +230,7 @@ const Input = ({
           activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
           height={20}
           width={48}
-          className="react-switch"
+          className={`react-switch  ${customClass} `}
         />
       </div>
     );
@@ -238,7 +242,7 @@ const Input = ({
 
   return (
     <div className="my-5">
-      <label htmlFor={labelFor} className="not-sr-only">
+      <label htmlFor={labelFor} className={`not-sr-only  ${labelClassName} `}>
         {labelText}
       </label>
       <div className="relative">
@@ -257,7 +261,7 @@ const Input = ({
         />
 
         {type === "password" && (
-          <label className="flex items-center mt-2 ml-2">
+          <label className={`flex items-center mt-2 ml-2 ${labelClassName}`}>
             <input
               type="checkbox"
               className="mr-2 w-3 h-3"
