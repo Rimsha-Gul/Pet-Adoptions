@@ -27,6 +27,7 @@ function App() {
       appContext.setUserEmail?.("");
       appContext.setLoggedIn?.(false);
       appContext.setDisplayName?.("");
+      appContext.setUserRole?.("");
       <Navigate to="/" />;
       console.log(response.status);
     } catch (error: any) {

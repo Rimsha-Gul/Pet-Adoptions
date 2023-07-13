@@ -77,6 +77,8 @@ api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 const AddPet = () => {
   const appContext = useContext(AppContext);
+  const navigate = useNavigate();
+  const userRole = appContext.userRole;
   const [addPetState, setAddPetState] = useState<FieldsState>(fieldsState);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -85,7 +87,7 @@ const AddPet = () => {
   const [serverErrorMessage, setServerError] = useState<string>("");
   const [shelters, setShelters] = useState([]);
   const [errors, setErrors] = useState<FieldsState>({
-    shelter: "shelter is required",
+    ...(userRole === "ADMIN" && { shelter: "shelter is required" }),
     category: "category is required",
     microchipID: "microchipID is required",
     petName: "name is required",
@@ -110,7 +112,7 @@ const AddPet = () => {
   });
 
   const addPetData = {
-    shelterID: addPetState.shelter,
+    ...(userRole === "ADMIN" && { shelterID: addPetState.shelter }),
     category: addPetState.category,
     microchipID: addPetState.microchipID,
     name: addPetState.petName,
@@ -131,40 +133,41 @@ const AddPet = () => {
     adoptionFee: `${addPetState.adoptionFee} ${addPetState.currency}`,
     bio: addPetState.bio,
   };
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchShelters = async () => {
-      try {
-        const response = await api.get("/auth/shelters");
-        if (response.status === 200) {
-          console.log(response.data);
-          setShelters(
-            response.data.map((shelter: { id: string; name: string }) => ({
-              label: shelter.name,
-              value: shelter.id,
-            }))
-          );
+    if (userRole === "ADMIN") {
+      const fetchShelters = async () => {
+        try {
+          const response = await api.get("/auth/shelters");
+          if (response.status === 200) {
+            console.log(response.data);
+            setShelters(
+              response.data.map((shelter: { id: string; name: string }) => ({
+                label: shelter.name,
+                value: shelter.id,
+              }))
+            );
+          }
+        } catch (error: any) {
+          // if (error.response.status === 401) {
+          //   console.error(error.response.status);
+          //   navigate("/");
+          // }
+          if (error.response.status === 500) {
+            console.error("Server error:", error.response.data.message);
+            setServerError(
+              "An error occurred on the server. Please try again later."
+            );
+            showErrorAlert(
+              "An error occurred on the server. Please try again later."
+            );
+          }
         }
-      } catch (error: any) {
-        // if (error.response.status === 401) {
-        //   console.error(error.response.status);
-        //   navigate("/");
-        // }
-        if (error.response.status === 500) {
-          console.error("Server error:", error.response.data.message);
-          setServerError(
-            "An error occurred on the server. Please try again later."
-          );
-          showErrorAlert(
-            "An error occurred on the server. Please try again later."
-          );
-        }
-      }
-    };
+      };
 
-    fetchShelters();
-  }, []);
+      fetchShelters();
+    }
+  }, [userRole]);
 
   const handleChange = (e: { target: { id: any; value: any } }) => {
     const { id, value } = e.target;
@@ -226,13 +229,13 @@ const AddPet = () => {
           formData.append(key, value as string);
         }
       });
-
+      console.log(selectedFiles);
       if (selectedFiles) {
         for (let i = 0; i < selectedFiles.length; i++) {
           formData.append("images", selectedFiles[i]);
         }
       }
-
+      console.log("formdata: ", formData);
       const response = await api.post("/pet", formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Set the correct content type for FormData
@@ -370,7 +373,7 @@ const AddPet = () => {
                             field.name === "shelter" ? shelters : field.options
                           }
                           validationError={errors[field.id]}
-                          showShelterID={appContext.userRole === "ADMIN"}
+                          showShelterID={userRole === "ADMIN"}
                         />
                       );
                     })}

@@ -3,7 +3,8 @@ import { FieldsState } from "../types/common";
 export const validateField = (
   id: string,
   value: string,
-  fieldsState: FieldsState
+  fieldsState: FieldsState,
+  newValue?: string
 ): string => {
   const validationRules: Record<string, (value: string) => string> = {
     name: (value) => {
@@ -80,43 +81,6 @@ export const validateField = (
       }
       return "";
     },
-    age: (value) => {
-      if (!value) {
-        return "Age is required";
-      }
-
-      // Check if the age format is valid (expecting "Xyr Xmo", "Xyr", or "Xmo")
-      const ageRegex = /^((?<years>\d+)yr\s*)?((?<months>\d+)m)?$/;
-      const matchResult = ageRegex.exec(value.trim());
-      if (!matchResult) {
-        return "Invalid age format. Please use 'Xyr Xm', 'Xyr', or 'Xm'. For example, '2yr 2m', '2yr', or '2m'.";
-      }
-
-      // Extract years and months from the match result
-      const years =
-        matchResult.groups && matchResult.groups.years
-          ? parseInt(matchResult.groups.years)
-          : 0;
-      const months =
-        matchResult.groups && matchResult.groups.months
-          ? parseInt(matchResult.groups.months)
-          : 0;
-
-      // Check if years and months are within valid range
-      if (years < 0 || years > 100) {
-        return "Years should be between 0 and 100";
-      }
-      if (months < 0 || months > 12) {
-        return "Months should be between 0 and 12";
-      }
-
-      // If both years and months are defined, make sure they are not both 0
-      if (years === 0 && months === 0) {
-        return "Age should be more than 0";
-      }
-
-      return "";
-    },
     breed: (value) => {
       if (!value) {
         return "Breed is required";
@@ -167,8 +131,72 @@ export const validateField = (
         return "Choose at least one image";
       }
       if (parseInt(value) > 10) {
-        console.log(value);
         return "You can add a maximum of 10 files";
+      }
+      return "";
+    },
+    residenceType: (value) => {
+      if (!value) {
+        return "Residence Type is required";
+      }
+
+      return "";
+    },
+    childrenAges: (value) => {
+      console.log(fieldsState.hasChildren);
+      console.log(newValue);
+      const childrenValue = newValue;
+      if (childrenValue === "true") {
+        if (!value) {
+          return "Children Ages are required";
+        }
+      }
+      return "";
+    },
+    otherPetsInfo: (value) => {
+      if (fieldsState.otherPets === "true") {
+        if (!value) {
+          return "Other pets info is required";
+        }
+      }
+      return "";
+    },
+    petAloneTime: (value) => {
+      if (!value) {
+        return "Pet alone time is required";
+      }
+      if (isNaN(Number(value))) {
+        return "Pet alone time should be a valid number";
+      }
+      return "";
+    },
+    petActivities: (value) => {
+      if (!value) {
+        return "Pet Activities is required";
+      }
+      return "";
+    },
+    handlePetIssues: (value) => {
+      if (!value) {
+        return "Handle pet issues is required";
+      }
+      return "";
+    },
+    moveWithPet: (value) => {
+      if (!value) {
+        return "Moving with pet is required";
+      }
+      return "";
+    },
+    petTravelPlans: (value) => {
+      if (!value) {
+        return "Pet travel plans is required";
+      }
+      return "";
+    },
+    petOutlivePlans: (value) => {
+      if (!value) {
+        return "Pet outlive plans is required";
       }
       return "";
     },

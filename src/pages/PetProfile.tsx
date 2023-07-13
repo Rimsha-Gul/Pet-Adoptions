@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import PetImagesCarousel from "../components/PetComponents/PetImagesCarousel";
 import PetBasicInfo from "../components/PetComponents/PetBasicInfo";
 import PetAdditionalInfo from "../components/PetComponents/PetAdditionalInfo";
@@ -6,9 +6,16 @@ import PetTraits from "../components/PetComponents/PetTraits";
 import PetAdoptionApply from "../components/PetComponents/PetAdoptionApply";
 
 const PetProfile = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { pet } = location.state;
   const petBio = pet.bio.replace(/\\n/g, "\n \n");
+
+  const handleAdoptionApply = () => {
+    navigate(`/adoptionApplication/${encodeURIComponent(pet.name)}`, {
+      state: { pet },
+    });
+  };
 
   return (
     <>
@@ -37,7 +44,10 @@ const PetProfile = () => {
             <PetTraits petCategory={pet.category} petTraits={pet.traits} />
           </div>
           <div className="w-full md:w-1/4">
-            <PetAdoptionApply petAdoptionFee={pet.adoptionFee} />
+            <PetAdoptionApply
+              petAdoptionFee={pet.adoptionFee}
+              handleSubmit={handleAdoptionApply}
+            />
           </div>
         </div>
       </div>

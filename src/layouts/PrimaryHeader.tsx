@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import PrimaryLogo from "../icons/PrimaryLogo";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
@@ -15,6 +15,7 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
   const userName = appContext.displayName;
 
   const navigate = useNavigate();
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [isUserOptionsOpen, setIsUserOptionsOpen] = useState(false);
   const [userProfilePhoto, setUserProfilePhoto] = useState(
     appContext.profilePhoto
@@ -37,6 +38,23 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
       navigate(path);
     }
   };
+
+  // Handler for clicking outside dropdown menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsUserOptionsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="fixed top-0 w-full flex items-center justify-between p-4 shadow-md mb-12 z-20 bg-white">
       <PrimaryLogo />
@@ -60,7 +78,10 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
             </button>
           )}
           {isUserOptionsOpen && (
-            <div className="absolute right-0 mt-6 w-48 bg-white border border-gray-300 rounded shadow">
+            <div
+              ref={dropdownRef}
+              className="absolute right-0 mt-6 w-48 bg-white border border-gray-300 rounded shadow"
+            >
               <div className="px-4 py-2 border-b border-gray-300">
                 <p className="text-md font-medium">{userName}</p>
               </div>

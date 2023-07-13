@@ -10,9 +10,11 @@ const NewEmailForm = () => {
   appContext.setNewEmail?.(userNewEmail);
   appContext.setVerificationOperation?.("changedEmail");
   const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [verificationCodeError, setVerificationCodeError] =
     useState<string>("");
+
   const handleEmailChange = async (e: any) => {
     setVerificationCodeError("");
     e.preventDefault();

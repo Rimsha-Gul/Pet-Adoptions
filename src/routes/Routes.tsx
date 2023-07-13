@@ -17,6 +17,7 @@ import ChangePassword from "../pages/ChangePassword";
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import UserProfile from "../pages/UserProfile";
+import AdoptionApplication from "../pages/AdoptionApplication";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -27,7 +28,7 @@ export const getRoutes = (
   const appContext = useContext(AppContext);
   const userRole = appContext.userRole;
   const existingUser = appContext.loggedIn;
-  const AdminRoutes = [AddPet];
+  const AdminAndShelterRoutes = [AddPet];
   const sidebarRoutes = [
     Dashboard,
     AddPet,
@@ -40,7 +41,7 @@ export const getRoutes = (
   const renderProtectedRoute = (Component: any) => {
     if (isAuthenticated) {
       if (sidebarRoutes.includes(Component)) {
-        if (AdminRoutes.includes(Component) && userRole !== "ADMIN") {
+        if (AdminAndShelterRoutes.includes(Component) && userRole === "USER") {
           return <NotFoundPage />;
         }
         return (
@@ -98,5 +99,9 @@ export const getRoutes = (
     { path: "/changeEmail", element: renderProtectedRoute(ChangeEmail) },
     { path: "/changePassword", element: renderProtectedRoute(ChangePassword) },
     { path: "/userProfile", element: renderProtectedRoute(UserProfile) },
+    {
+      path: "/adoptionApplication/:petName",
+      element: renderProtectedRoute(AdoptionApplication),
+    },
   ];
 };
