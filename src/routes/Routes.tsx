@@ -18,6 +18,8 @@ import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import UserProfile from "../pages/UserProfile";
 import AdoptionApplication from "../pages/AdoptionApplication";
+import ViewApplications from "../pages/ApplicationsList";
+import Application from "../pages/Application";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -102,6 +104,11 @@ export const getRoutes = (
     {
       path: "/adoptionApplication/:petName",
       element: renderProtectedRoute(AdoptionApplication),
+    },
+    { path: "/applications", element: renderProtectedRoute(ViewApplications) },
+    {
+      path: "/view/application/:petName",
+      element: renderProtectedRoute(Application),
     },
   ];
 };

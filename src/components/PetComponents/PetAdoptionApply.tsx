@@ -4,11 +4,13 @@ import { AppContext } from "../../context/AppContext";
 interface PetAdoptionApplyProps {
   petAdoptionFee: string;
   handleSubmit: (e: FormEvent) => void;
+  text: string;
 }
 
 const PetAdoptionApply = ({
   petAdoptionFee,
   handleSubmit,
+  text,
 }: PetAdoptionApplyProps) => {
   const appContext = useContext(AppContext);
   const userRole = appContext.userRole;
@@ -25,7 +27,7 @@ const PetAdoptionApply = ({
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-primary bg-primary hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-primary"
             onClick={handleSubmit}
           >
-            Apply for adoption
+            {text}
           </button>
         )}
       </div>

@@ -4,12 +4,17 @@ import PetBasicInfo from "../components/PetComponents/PetBasicInfo";
 import PetAdditionalInfo from "../components/PetComponents/PetAdditionalInfo";
 import PetTraits from "../components/PetComponents/PetTraits";
 import PetAdoptionApply from "../components/PetComponents/PetAdoptionApply";
+import api from "../api";
+
+const accessToken = localStorage.getItem("accessToken");
+api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 const PetProfile = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { pet } = location.state;
   const petBio = pet.bio.replace(/\\n/g, "\n \n");
+  const hasAdoptionRequest = pet.hasAdoptionRequest;
 
   const handleAdoptionApply = () => {
     navigate(`/adoptionApplication/${encodeURIComponent(pet.name)}`, {
@@ -17,9 +22,13 @@ const PetProfile = () => {
     });
   };
 
+  const handleViewApplication = () => {
+    navigate(`/view/application/${pet.name}`);
+  };
+
   return (
     <>
-      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 flex flex-col justify-center items-center">
+      <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 flex flex-col justify-center items-center mt-20">
         <PetImagesCarousel petImages={pet.images} />
         <div className="flex flex-col md:flex-row justify-center w-full px-8 space-y-8 md:space-y-0 md:space-x-8">
           <div className="w-full md:w-3/4 mx-auto max-w-6xl">
@@ -46,7 +55,14 @@ const PetProfile = () => {
           <div className="w-full md:w-1/4">
             <PetAdoptionApply
               petAdoptionFee={pet.adoptionFee}
-              handleSubmit={handleAdoptionApply}
+              handleSubmit={
+                hasAdoptionRequest ? handleViewApplication : handleAdoptionApply
+              }
+              text={
+                hasAdoptionRequest
+                  ? "View Application Status"
+                  : "Apply for adoption"
+              }
             />
           </div>
         </div>
