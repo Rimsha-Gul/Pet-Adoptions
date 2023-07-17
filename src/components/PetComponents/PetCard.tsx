@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 interface Pet {
+  microchipID: string;
   shelterId: number;
   name: string;
   birthDate: string;
@@ -19,7 +20,7 @@ const PetCard = ({ pet }: PetCardProps) => {
     <div
       className="bg-gray-100 rounded-lg shadow-lg flex flex-col gap-4 justify-center items-center hover:cursor-pointer hover:shadow-primary transform transition-all duration-300 hover:scale-105"
       onClick={() =>
-        navigate(`/pet/${encodeURIComponent(pet.name)}`, {
+        navigate(`/pet/${pet.microchipID}`, {
           state: { pet },
         })
       }

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import api from "../api";
-import { Navigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import loadingIcon from "../assets/loading.gif";
 import Select from "react-select";
@@ -165,7 +164,7 @@ const HomePage = () => {
         setPrevFilterOption(filterOption);
         setPrevSearchQuery(searchQuery);
       }
-      const response = await api.get("/pet", {
+      const response = await api.get("/pet/all", {
         params: {
           page,
           limit: 6,
@@ -223,7 +222,7 @@ const HomePage = () => {
         const nextPage = currentPage + 1;
 
         // Fetch the next page of data
-        const response = await api.get("/pet", {
+        const response = await api.get("/pet/all", {
           params: {
             page: nextPage,
             limit: 6,

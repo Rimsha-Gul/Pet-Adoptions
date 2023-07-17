@@ -94,7 +94,7 @@ export const getRoutes = (
     { path: "/pagenotfound", element: <NotFoundPage /> },
     { path: "/verifyemail", element: renderVerifyEmail() },
     { path: "/homepage", element: renderProtectedRoute(HomePage) },
-    { path: "/pet/:name", element: renderProtectedRoute(PetProfile) },
+    { path: "/pet/:id", element: renderProtectedRoute(PetProfile) },
     { path: "/dashboard", element: renderProtectedRoute(Dashboard) },
     { path: "/addpet", element: renderProtectedRoute(AddPet) },
     { path: "/settings", element: renderProtectedRoute(Settings) },
@@ -102,12 +102,12 @@ export const getRoutes = (
     { path: "/changePassword", element: renderProtectedRoute(ChangePassword) },
     { path: "/userProfile", element: renderProtectedRoute(UserProfile) },
     {
-      path: "/adoptionApplication/:petName",
+      path: "/adoptionApplication/:petID",
       element: renderProtectedRoute(AdoptionApplication),
     },
     { path: "/applications", element: renderProtectedRoute(ViewApplications) },
     {
-      path: "/view/application/:petName",
+      path: "/view/application/:id",
       element: renderProtectedRoute(Application),
     },
   ];
