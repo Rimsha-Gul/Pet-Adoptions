@@ -404,17 +404,6 @@ export const adoptPetFields = [
     dependsOnValue: "true",
   },
   {
-    labelText:
-      "Are you willing to go through a home inspection process as part of the adoption process?",
-    labelFor: "isWillingHomeInspection",
-    id: "isWillingHomeInspection",
-    name: "isWillingHomeInspection",
-    type: "toggle",
-    autoComplete: "off",
-    isRequired: true,
-    defaultValue: false,
-  },
-  {
     labelText: "How many hours a day will the pet be left alone?",
     labelFor: "petAloneTime",
     id: "petAloneTime",

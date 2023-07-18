@@ -14,7 +14,6 @@ const groups = [
     fields: [
       "residenceType",
       "hasRentPetPermission",
-      "isWillingHomeInspection",
       "hasChildren",
       "childrenAges",
       "hasOtherPets",
@@ -81,7 +80,6 @@ const AdoptionApplication = () => {
     ...(adoptPetState.residenceType === "rentHouse" && {
       hasRentPetPermission: adoptPetState.hasRentPetPermission === "true",
     }),
-    isWillingHomeInspection: adoptPetState.isWillingHomeInspection === "true",
     hasChildren: adoptPetState.hasChildren === "true",
     ...(adoptPetState.hasChildren === "true" && {
       childrenAges: adoptPetState.childrenAges,
@@ -109,7 +107,6 @@ const AdoptionApplication = () => {
 
     if (
       id === "hasRentPetPermission" ||
-      id === "isWillingHomeInspection" ||
       id === "hasChildren" ||
       id === "hasOtherPets" ||
       id === "hasPlayTimeParks" ||

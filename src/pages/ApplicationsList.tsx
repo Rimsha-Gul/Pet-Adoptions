@@ -9,6 +9,7 @@ interface Application {
   id: string;
   status: string;
   submissionDate: Date;
+  microchipID: string;
   petImage: string;
   petName: string;
   shelterName: string;
@@ -88,7 +89,7 @@ const ViewApplications = () => {
                     <img
                       src={application.petImage}
                       alt="Pet Image"
-                      className="w-full h-20 w-20 object-cover rounded-t-lg"
+                      className="h-20 w-20 object-cover rounded-t-lg"
                     />
                     <p className="text-xl text-gray-600 whitespace-pre-line">
                       {application.petName}
