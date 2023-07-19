@@ -1,6 +1,6 @@
 export enum Status {
   UnderReview = "Under Review",
-  ApprovedForHomeVisit = "Approved For Home Visit",
+  HomeVisitRequested = "Home Visit Requested",
   HomeVisitScheduled = "Home Visit Scheduled",
   HomeApproved = "Home Approved",
   HomeRejected = "Home Rejected",

@@ -20,6 +20,7 @@ import UserProfile from "../pages/UserProfile";
 import AdoptionApplication from "../pages/AdoptionApplication";
 import ViewApplications from "../pages/ApplicationsList";
 import Application from "../pages/Application";
+import scheduleHomeVisit from "../pages/ScheduleHomeVisit";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -30,7 +31,7 @@ export const getRoutes = (
   const appContext = useContext(AppContext);
   const userRole = appContext.userRole;
   const existingUser = appContext.loggedIn;
-  const AdminAndShelterRoutes = [AddPet];
+  const adminAndShelterRoutes = [AddPet];
   const sidebarRoutes = [
     Dashboard,
     AddPet,
@@ -43,7 +44,7 @@ export const getRoutes = (
   const renderProtectedRoute = (Component: any) => {
     if (isAuthenticated) {
       if (sidebarRoutes.includes(Component)) {
-        if (AdminAndShelterRoutes.includes(Component) && userRole === "USER") {
+        if (adminAndShelterRoutes.includes(Component) && userRole === "USER") {
           return <NotFoundPage />;
         }
         return (
@@ -109,6 +110,10 @@ export const getRoutes = (
     {
       path: "/view/application/:id",
       element: renderProtectedRoute(Application),
+    },
+    {
+      path: "/:id/scheduleHomeVisit",
+      element: renderProtectedRoute(scheduleHomeVisit),
     },
   ];
 };

@@ -6,6 +6,7 @@ import { Status } from "../../types/enums";
 import { getNextStatus } from "../../utils/getNextStatus";
 import { formatFieldValue } from "../../utils/formatFieldValue";
 import { showErrorAlert, showSuccessAlert } from "../../utils/alert";
+import { statusButtonText } from "../../utils/getStatusButtonText";
 
 export interface Application {
   petImage: string;
@@ -231,6 +232,28 @@ const ApplicationDetailsShelter = () => {
                           </p>
                         </div>
                       );
+                    if (
+                      typeof application[field as keyof Application] ===
+                      "boolean"
+                    )
+                      return (
+                        <div
+                          key={field}
+                          className="flex flex-row items-center gap-2"
+                        >
+                          <label className="text-gray-700 text-xl font-medium">
+                            {applicationFieldLabels[field as keyof Application]}
+                            :
+                          </label>
+
+                          <p className="text-xl text-gray-700 whitespace-pre-line">
+                            {formatFieldValue(
+                              field as keyof Application,
+                              application[field as keyof Application]
+                            )}
+                          </p>
+                        </div>
+                      );
                     return (
                       <div
                         key={field}
@@ -266,34 +289,68 @@ const ApplicationDetailsShelter = () => {
               application.status === Status.HomeVisitScheduled ||
               application.status === Status.UserApprovedShelter ? (
                 <>
-                  <label className="text-gray-700 text-xl font-medium">
-                    Update Status to:
-                  </label>
                   <button
-                    className="group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-lime-500 bg-lime-500 hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-lime-500"
+                    className={`group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-lime-500 bg-lime-500 hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-lime-500 ${
+                      isLoading
+                        ? "bg-lime-500 text-white cursor-not-allowed"
+                        : ""
+                    }`}
                     onClick={() => updateApplicationStatus("approve")}
                   >
-                    {getNextStatus(application.status, "approve")}
+                    {isLoading && (
+                      <img
+                        src={loadingIcon}
+                        alt="Loading"
+                        className="mr-2 h-4 w-4"
+                      />
+                    )}
+                    {statusButtonText(
+                      getNextStatus(application.status, "approve")
+                    )}
                   </button>
                   <button
-                    className="group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-red-600 bg-red-600 hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-red-600"
+                    className={`group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-red-600 bg-red-600 hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-red-600 ${
+                      isLoading
+                        ? "bg-red-600 text-white cursor-not-allowed"
+                        : ""
+                    }`}
                     onClick={() => updateApplicationStatus("reject")}
                   >
-                    {getNextStatus(application.status, "reject")}
+                    {isLoading && (
+                      <img
+                        src={loadingIcon}
+                        alt="Loading"
+                        className="mr-2 h-4 w-4"
+                      />
+                    )}
+                    {statusButtonText(
+                      getNextStatus(application.status, "reject")
+                    )}
                   </button>
                 </>
               ) : (
-                getNextStatus(application.status, "approve") && (
+                statusButtonText(
+                  getNextStatus(application.status, "approve")
+                ) && (
                   <>
-                    <label className="text-gray-700 text-xl font-medium">
-                      Update Status to:
-                    </label>
-
                     <button
-                      className="group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-primary bg-primary hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-primary"
+                      className={`group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-primary bg-primary hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-primary ${
+                        isLoading
+                          ? "bg-primary text-white cursor-not-allowed"
+                          : ""
+                      }`}
                       onClick={() => updateApplicationStatus("approve")}
                     >
-                      {getNextStatus(application.status, "approve")}
+                      {isLoading && (
+                        <img
+                          src={loadingIcon}
+                          alt="Loading"
+                          className="mr-2 h-4 w-4"
+                        />
+                      )}
+                      {statusButtonText(
+                        getNextStatus(application.status, "approve")
+                      )}
                     </button>
                   </>
                 )

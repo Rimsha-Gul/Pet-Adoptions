@@ -3,10 +3,8 @@ import { Status } from "../types/enums";
 export const getNextStatus = (currentStatus: Status, action: string) => {
   switch (currentStatus) {
     case Status.UnderReview:
-      return action === "approve"
-        ? Status.ApprovedForHomeVisit
-        : Status.Rejected;
-    case Status.ApprovedForHomeVisit:
+      return action === "approve" ? Status.HomeVisitRequested : Status.Rejected;
+    case Status.HomeVisitRequested:
       return Status.HomeVisitScheduled;
     case Status.HomeVisitScheduled:
       return action === "approve" ? Status.HomeApproved : Status.HomeRejected;
