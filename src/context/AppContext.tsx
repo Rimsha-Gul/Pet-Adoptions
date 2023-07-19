@@ -130,7 +130,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (loggedIn && !userEmail) {
+    if (loggedIn) {
       console.log("Session called");
       api
         .get("/session")

@@ -1,4 +1,5 @@
 export const headerLinks = [
+  { to: "/applications", label: "View Applications" },
   { to: "/userprofile", label: "Profile & Settings" },
   { to: "/", label: "Logout" },
 ];

@@ -17,6 +17,9 @@ import ChangePassword from "../pages/ChangePassword";
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import UserProfile from "../pages/UserProfile";
+import AdoptionApplication from "../pages/AdoptionApplication";
+import ViewApplications from "../pages/ApplicationsList";
+import Application from "../pages/Application";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -27,7 +30,7 @@ export const getRoutes = (
   const appContext = useContext(AppContext);
   const userRole = appContext.userRole;
   const existingUser = appContext.loggedIn;
-  const AdminRoutes = [AddPet];
+  const AdminAndShelterRoutes = [AddPet];
   const sidebarRoutes = [
     Dashboard,
     AddPet,
@@ -40,7 +43,7 @@ export const getRoutes = (
   const renderProtectedRoute = (Component: any) => {
     if (isAuthenticated) {
       if (sidebarRoutes.includes(Component)) {
-        if (AdminRoutes.includes(Component) && userRole !== "ADMIN") {
+        if (AdminAndShelterRoutes.includes(Component) && userRole === "USER") {
           return <NotFoundPage />;
         }
         return (
@@ -91,12 +94,21 @@ export const getRoutes = (
     { path: "/pagenotfound", element: <NotFoundPage /> },
     { path: "/verifyemail", element: renderVerifyEmail() },
     { path: "/homepage", element: renderProtectedRoute(HomePage) },
-    { path: "/pet/:name", element: renderProtectedRoute(PetProfile) },
+    { path: "/pet/:id", element: renderProtectedRoute(PetProfile) },
     { path: "/dashboard", element: renderProtectedRoute(Dashboard) },
     { path: "/addpet", element: renderProtectedRoute(AddPet) },
     { path: "/settings", element: renderProtectedRoute(Settings) },
     { path: "/changeEmail", element: renderProtectedRoute(ChangeEmail) },
     { path: "/changePassword", element: renderProtectedRoute(ChangePassword) },
     { path: "/userProfile", element: renderProtectedRoute(UserProfile) },
+    {
+      path: "/adoptionApplication/:petID",
+      element: renderProtectedRoute(AdoptionApplication),
+    },
+    { path: "/applications", element: renderProtectedRoute(ViewApplications) },
+    {
+      path: "/view/application/:id",
+      element: renderProtectedRoute(Application),
+    },
   ];
 };

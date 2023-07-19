@@ -92,6 +92,10 @@ const Input = ({
     setIsTouched(true);
   };
 
+  if (id === "shelter" && !showShelterID) {
+    return null; // Return null if the shelterID input should not be shown
+  }
+
   if (type === "date") {
     let inputProps = {
       placeholder: "Birth date",
@@ -234,10 +238,6 @@ const Input = ({
         />
       </div>
     );
-  }
-
-  if (id === "shelterID" && !showShelterID) {
-    return null; // Return null if the shelterID input should not be shown
   }
 
   return (

@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import api from "../api";
-import { Navigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import loadingIcon from "../assets/loading.gif";
 import Select from "react-select";
@@ -92,7 +91,7 @@ const HomePage = () => {
 
   if (!appContext.loggedIn) {
     //console.log(localStorage.getItem("userEmail"));
-    return <Navigate to={"/"} />;
+    //return <Navigate to={"/"} />;
   }
 
   const accessToken = localStorage.getItem("accessToken");
@@ -100,31 +99,31 @@ const HomePage = () => {
   api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   //const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchSession = async () => {
-      try {
-        const response = await api.get("/session");
+  // useEffect(() => {
+  //   const fetchSession = async () => {
+  //     try {
+  //       const response = await api.get("/session");
 
-        if (response.status === 200) {
-          appContext.setDisplayName?.(response.data.name);
-          appContext.setUserEmail?.(response.data.email);
-          appContext.setUserRole?.(response.data.role);
-          appContext.setProfilePhoto?.(response.data.profilePhoto);
-          //localStorage.setItem("userEmail", response.data.email);
-          //localStorage.setItem("userName", response.data.name);
-          //localStorage.setItem("userRole", response.data.role);
-          console.log(response.data);
-        }
-      } catch (error: any) {
-        // if (error.response.status === 401) {
-        //   console.error(error.response.status);
-        //   navigate("/");
-        // }
-      }
-    };
+  //       if (response.status === 200) {
+  //         appContext.setDisplayName?.(response.data.name);
+  //         appContext.setUserEmail?.(response.data.email);
+  //         appContext.setUserRole?.(response.data.role);
+  //         appContext.setProfilePhoto?.(response.data.profilePhoto);
+  //         //localStorage.setItem("userEmail", response.data.email);
+  //         //localStorage.setItem("userName", response.data.name);
+  //         //localStorage.setItem("userRole", response.data.role);
+  //         console.log(response.data);
+  //       }
+  //     } catch (error: any) {
+  //       // if (error.response.status === 401) {
+  //       //   console.error(error.response.status);
+  //       //   navigate("/");
+  //       // }
+  //     }
+  //   };
 
-    fetchSession();
-  }, []);
+  //   fetchSession();
+  // }, []);
 
   useEffect(() => {
     // When category changes, reset all the filters
@@ -148,9 +147,9 @@ const HomePage = () => {
     genderFilter,
   ]);
 
-  const fetchPets = async (page: number) => {
+  const fetchPets = async (apiPage: number) => {
     try {
-      let apiPage = page;
+      let page = apiPage;
       console.log("In fetch pets");
       setPetsLoadingError("");
       setIsLoading(true);
@@ -158,16 +157,16 @@ const HomePage = () => {
         prevFilterOption !== filterOption ||
         prevSearchQuery !== searchQuery
       ) {
-        apiPage = 1;
+        page = 1;
         console.log("Current page: ", currentPage);
         setCurrentPage(1);
-        console.log("api page: ", apiPage);
+        console.log("api page: ", page);
         setPrevFilterOption(filterOption);
         setPrevSearchQuery(searchQuery);
       }
-      const response = await api.get("/pet", {
+      const response = await api.get("/pet/all", {
         params: {
-          apiPage,
+          page,
           limit: 6,
           searchQuery,
           filterOption,
@@ -223,7 +222,7 @@ const HomePage = () => {
         const nextPage = currentPage + 1;
 
         // Fetch the next page of data
-        const response = await api.get("/pet", {
+        const response = await api.get("/pet/all", {
           params: {
             page: nextPage,
             limit: 6,
@@ -255,7 +254,7 @@ const HomePage = () => {
         setGenders(genders);
         console.log("Updated pets:", pets);
       } catch (error: any) {
-        console.error(error);
+        //console.error(error);
         // if (error.response.status === 401) {
         //   console.error(error.response.status);
         //   navigate("/");
@@ -287,7 +286,7 @@ const HomePage = () => {
   return (
     <>
       <div className="flex flex-col justify-center p-8 sm:mt-14">
-        <div className="flex flex-row gap-6 justify-end me-0 md:me-24 items-end">
+        <div className="flex flex-row gap-6 justify-end me-0 md:me-24 items-end pt-8">
           <div className="flex items-center justify-between w-64 h-12 pr-4 border border-gray-400 rounded-md focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
             <input
               type="text"

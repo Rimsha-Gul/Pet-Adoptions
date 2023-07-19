@@ -27,7 +27,7 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
 
   // Filter out admin links if user is not an admin
   const filteredSidebarLinks = sidebarLinks.filter(
-    (link) => !link.admin || userRole === "ADMIN"
+    (link) => !link.admin || userRole === "ADMIN" || userRole === "SHELTER"
   );
 
   // Transition config for the settings dropdown
