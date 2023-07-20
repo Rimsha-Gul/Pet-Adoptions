@@ -86,6 +86,26 @@ const ApplicationDetailsUser = () => {
                 {new Date(application.submissionDate).toLocaleDateString()}
               </p>
             </div>
+            {application.homeVisitDate && (
+              <div className="flex flex-row items-center gap-2">
+                <label className="text-gray-700 text-xl font-medium">
+                  Home Visit Date:
+                </label>
+                <p className="text-xl text-gray-600 whitespace-pre-line">
+                  {new Date(application.homeVisitDate).toLocaleString()}
+                </p>
+              </div>
+            )}
+            {application.shelterVisitDate && (
+              <div className="flex flex-row items-center gap-2">
+                <label className="text-gray-700 text-xl font-medium">
+                  Shelter Visit Date:
+                </label>
+                <p className="text-xl text-gray-600 whitespace-pre-line">
+                  {new Date(application.shelterVisitDate).toLocaleString()}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}

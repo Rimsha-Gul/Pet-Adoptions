@@ -9,6 +9,8 @@ import {
 import api from "../api";
 
 interface AppContextProps {
+  isLoading: boolean;
+  setIsLoading: Dispatch<SetStateAction<boolean>> | null;
   userRole: string;
   setUserRole: Dispatch<SetStateAction<string>> | null;
   userEmail: string;
@@ -28,6 +30,8 @@ interface AppContextProps {
 }
 
 export const AppContext = createContext<AppContextProps>({
+  isLoading: false,
+  setIsLoading: null,
   userRole: "",
   setUserRole: null,
   userEmail: "",
@@ -48,6 +52,8 @@ export const AppContext = createContext<AppContextProps>({
 
 const AppContextProvider = (props: { children: ReactNode }) => {
   const { children } = props;
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const [userEmail, setUserEmail] = useState<string>("");
   const [userRole, setUserRole] = useState<string>("");
   const [displayName, setDisplayName] = useState<string>("");
@@ -140,10 +146,12 @@ const AppContextProvider = (props: { children: ReactNode }) => {
           setDisplayName(data.name);
           setUserRole(data.role);
           setProfilePhoto(data.profilePhoto);
+          setIsLoading(false);
         })
         .catch((error) => {
           setLoggedIn(false);
           console.error(error.response?.data?.message || error.response?.data);
+          setIsLoading(false);
         });
     }
   }, [loggedIn]);
@@ -151,6 +159,8 @@ const AppContextProvider = (props: { children: ReactNode }) => {
   return (
     <AppContext.Provider
       value={{
+        isLoading,
+        setIsLoading,
         userRole,
         setUserRole,
         userEmail,

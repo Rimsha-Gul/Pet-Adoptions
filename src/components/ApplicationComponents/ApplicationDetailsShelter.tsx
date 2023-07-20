@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import loadingIcon from "../../assets/loading.gif";
 import { Status } from "../../types/enums";
 import { getNextStatus } from "../../utils/getNextStatus";
 import { formatFieldValue } from "../../utils/formatFieldValue";
 import { showErrorAlert, showSuccessAlert } from "../../utils/alert";
 import { statusButtonText } from "../../utils/getStatusButtonText";
+import moment from "moment";
 
 export interface Application {
   petImage: string;
@@ -32,6 +33,8 @@ export interface Application {
   canAffordPetsMediacal: boolean;
   petTravelPlans: string;
   petOutlivePlans: string;
+  homeVisitDate: Date;
+  shelterVisitDate: Date;
 }
 
 const groups = [
@@ -64,7 +67,10 @@ const groups = [
 ];
 
 const ApplicationDetailsShelter = () => {
+  const navigate = useNavigate();
   const [application, setApplication] = useState<Application | null>(null);
+  const [isApproving, setIsApproving] = useState<boolean>(false);
+  const [isRejecting, setIsRejecting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { id } = useParams();
 
@@ -92,6 +98,88 @@ const ApplicationDetailsShelter = () => {
     canAffordPetsMediacal: "Can Afford Pet Medical Costs",
     petTravelPlans: "Travel Plans With Pet",
     petOutlivePlans: "Plans incase Pet Outlives Applicant",
+    homeVisitDate: "Home Visit Date",
+    shelterVisitDate: "Shelter Visit Date",
+  };
+
+  const groupedFields = useMemo(() => {
+    return groups.map((group) => {
+      return {
+        ...group,
+        fields: group.fields.filter((field) => {
+          if (
+            (field === "hasRentPetPermission" &&
+              application?.residenceType !== "rentHouse") ||
+            (field === "childrenAges" && !application?.hasChildren) ||
+            (field === "otherPetsInfo" && !application?.hasOtherPets)
+          ) {
+            return false;
+          }
+          return true;
+        }),
+      };
+    });
+  }, [application]);
+
+  const StatusButton = ({ status, action, homeVisitDate }: any) => {
+    // Get the current date.
+    const currentDate = moment().utc();
+    console.log(currentDate);
+
+    // Parse homeVisitDate as a UTC time.
+    const homeVisitDateObj = moment.utc(homeVisitDate);
+    console.log(homeVisitDateObj);
+
+    // Check if the homeVisitDate has been reached.
+    const isHomeVisitDateReached = currentDate.isSameOrAfter(homeVisitDateObj);
+    console.log(isHomeVisitDateReached);
+
+    const handleStatusUpdate = () => {
+      if (status === Status.HomeApproved) {
+        navigate(`/${id}/scheduleShelterVisit`);
+      } else {
+        updateApplicationStatus(action);
+      }
+    };
+
+    let buttonColor = "";
+    let hoverColor = "";
+    switch (action) {
+      case "approve":
+        buttonColor = "lime-500";
+        hoverColor = "text-lime-500";
+        break;
+      case "reject":
+        buttonColor = "red-600";
+        hoverColor = "text-red-600";
+        break;
+      default:
+        buttonColor = "primary";
+        hoverColor = "text-primary";
+    }
+
+    // If the homeVisitDate has not been reached, return null to prevent rendering the button.
+    if (!isHomeVisitDateReached) {
+      return null;
+    }
+    console.log(status);
+    console.log(getNextStatus(status, action));
+    console.log(statusButtonText(getNextStatus(status, action)));
+
+    return (
+      <button
+        className={`group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white bg-${buttonColor} hover:bg-white hover:ring-2 hover:ring-${buttonColor} hover:ring-offset-2 hover:${hoverColor} ${
+          isLoading ? `${buttonColor} text-white cursor-not-allowed` : ""
+        }`}
+        onClick={handleStatusUpdate}
+      >
+        {(action === "approve" && isApproving) ||
+        (action === "reject" && isRejecting) ? (
+          <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
+        ) : null}
+        {statusButtonText(getNextStatus(status, action))}
+      </button>
+    );
   };
 
   useEffect(() => {
@@ -122,9 +210,10 @@ const ApplicationDetailsShelter = () => {
       application?.status || Status.UnderReview,
       action
     );
+
     if (nextStatus) {
       try {
-        setIsLoading(true);
+        action === "approve" ? setIsApproving(true) : setIsRejecting(true);
         const response = await api.put("/shelter/updateApplicationStatus", {
           id: id,
           status: nextStatus,
@@ -135,12 +224,61 @@ const ApplicationDetailsShelter = () => {
           );
         }
       } catch (error: any) {
-        showErrorAlert(error.response.data);
+        if (error.response.status === 404) {
+          showErrorAlert(error.response);
+        }
       } finally {
-        setIsLoading(false);
+        action === "approve" ? setIsApproving(false) : setIsRejecting(false);
+        console.log(application);
       }
     }
   };
+
+  interface FieldProps {
+    field: keyof Application;
+    application: Application;
+    fieldLabels: typeof applicationFieldLabels;
+    className?: string;
+  }
+
+  function TextualField({
+    field,
+    application,
+    fieldLabels,
+    className,
+  }: FieldProps) {
+    return (
+      <div key={field} className={`flex items-start gap-2 ${className}`}>
+        <label className="text-gray-700 text-xl font-medium">
+          {fieldLabels[field]}:
+        </label>
+        <p className="text-xl text-gray-600 whitespace-pre-line">
+          {formatFieldValue(field, application[field])}
+        </p>
+      </div>
+    );
+  }
+
+  function BooleanField({
+    field,
+    application,
+    fieldLabels,
+    className,
+  }: FieldProps) {
+    return (
+      <div
+        key={field}
+        className={`flex flex-row items-center gap-2 ${className}`}
+      >
+        <label className="text-gray-700 text-xl font-medium">
+          {fieldLabels[field]}:
+        </label>
+        <p className="text-xl text-gray-700 whitespace-pre-line">
+          {formatFieldValue(field, application[field])}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
@@ -189,9 +327,29 @@ const ApplicationDetailsShelter = () => {
                 {new Date(application.submissionDate).toLocaleDateString()}
               </p>
             </div>
+            {application.homeVisitDate && (
+              <div className="flex flex-row items-center gap-2">
+                <label className="text-gray-700 text-xl font-medium">
+                  Home Visit Date:
+                </label>
+                <p className="text-xl text-gray-600 whitespace-pre-line">
+                  {new Date(application.homeVisitDate).toLocaleString()}
+                </p>
+              </div>
+            )}
+            {application.shelterVisitDate && (
+              <div className="flex flex-row items-center gap-2">
+                <label className="text-gray-700 text-xl font-medium">
+                  Shelter Visit Date:
+                </label>
+                <p className="text-xl text-gray-600 whitespace-pre-line">
+                  {new Date(application.shelterVisitDate).toLocaleString()}
+                </p>
+              </div>
+            )}
           </div>
           <div className="flex flex-col mx-auto w-full space-y-8 mt-8 mb-8 g-12">
-            {groups.map((group) => (
+            {groupedFields.map((group) => (
               <div key={group.label}>
                 <h2 className="text-2xl text-primary font-bold mb-4 mt-2">
                   {group.label}
@@ -199,14 +357,7 @@ const ApplicationDetailsShelter = () => {
                 <div className="border-b-2 border-gray-200 my-2"></div>
                 <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-start gap-10">
                   {group.fields.map((field) => {
-                    if (
-                      (field === "hasRentPetPermission" &&
-                        application.residenceType !== "rentHouse") ||
-                      (field === "childrenAges" && !application.hasChildren) ||
-                      (field === "otherPetsInfo" && !application.hasOtherPets)
-                    ) {
-                      return null; // Don't render the field if the condition is not met
-                    }
+                    const applicationField = field as keyof Application;
                     if (
                       field === "petActivities" ||
                       field === "handlePetIssues" ||
@@ -215,61 +366,32 @@ const ApplicationDetailsShelter = () => {
                       field === "petOutlivePlans"
                     )
                       return (
-                        <div
-                          key={field}
-                          className="flex flex-col items-start gap-2"
-                        >
-                          <label className="text-gray-700 text-xl font-medium">
-                            {applicationFieldLabels[field as keyof Application]}
-                            :
-                          </label>
-
-                          <p className="text-xl text-gray-600 whitespace-pre-line">
-                            {formatFieldValue(
-                              field as keyof Application,
-                              application[field as keyof Application]
-                            )}
-                          </p>
-                        </div>
+                        <TextualField
+                          field={applicationField}
+                          application={application}
+                          fieldLabels={applicationFieldLabels}
+                          className="flex-col"
+                        />
                       );
                     if (
                       typeof application[field as keyof Application] ===
                       "boolean"
                     )
                       return (
-                        <div
-                          key={field}
-                          className="flex flex-row items-center gap-2"
-                        >
-                          <label className="text-gray-700 text-xl font-medium">
-                            {applicationFieldLabels[field as keyof Application]}
-                            :
-                          </label>
-
-                          <p className="text-xl text-gray-700 whitespace-pre-line">
-                            {formatFieldValue(
-                              field as keyof Application,
-                              application[field as keyof Application]
-                            )}
-                          </p>
-                        </div>
+                        <BooleanField
+                          field={applicationField}
+                          application={application}
+                          fieldLabels={applicationFieldLabels}
+                          className="flex-row"
+                        />
                       );
                     return (
-                      <div
-                        key={field}
-                        className="flex flex-row items-center gap-2"
-                      >
-                        <label className="text-gray-700 text-xl font-medium">
-                          {applicationFieldLabels[field as keyof Application]}:
-                        </label>
-
-                        <p className="text-xl text-gray-600 whitespace-pre-line">
-                          {formatFieldValue(
-                            field as keyof Application,
-                            application[field as keyof Application]
-                          )}
-                        </p>
-                      </div>
+                      <TextualField
+                        field={applicationField}
+                        application={application}
+                        fieldLabels={applicationFieldLabels}
+                        className="flex-row"
+                      />
                     );
                   })}
                 </div>
@@ -289,69 +411,27 @@ const ApplicationDetailsShelter = () => {
               application.status === Status.HomeVisitScheduled ||
               application.status === Status.UserApprovedShelter ? (
                 <>
-                  <button
-                    className={`group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-lime-500 bg-lime-500 hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-lime-500 ${
-                      isLoading
-                        ? "bg-lime-500 text-white cursor-not-allowed"
-                        : ""
-                    }`}
-                    onClick={() => updateApplicationStatus("approve")}
-                  >
-                    {isLoading && (
-                      <img
-                        src={loadingIcon}
-                        alt="Loading"
-                        className="mr-2 h-4 w-4"
-                      />
-                    )}
-                    {statusButtonText(
-                      getNextStatus(application.status, "approve")
-                    )}
-                  </button>
-                  <button
-                    className={`group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-red-600 bg-red-600 hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-red-600 ${
-                      isLoading
-                        ? "bg-red-600 text-white cursor-not-allowed"
-                        : ""
-                    }`}
-                    onClick={() => updateApplicationStatus("reject")}
-                  >
-                    {isLoading && (
-                      <img
-                        src={loadingIcon}
-                        alt="Loading"
-                        className="mr-2 h-4 w-4"
-                      />
-                    )}
-                    {statusButtonText(
-                      getNextStatus(application.status, "reject")
-                    )}
-                  </button>
+                  <StatusButton
+                    status={application.status}
+                    action="approve"
+                    homeVisitDate={application.homeVisitDate}
+                  />
+                  <StatusButton
+                    status={application.status}
+                    action="reject"
+                    homeVisitDate={application.homeVisitDate}
+                  />
                 </>
               ) : (
                 statusButtonText(
                   getNextStatus(application.status, "approve")
                 ) && (
                   <>
-                    <button
-                      className={`group relative w-1/5 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-primary bg-primary hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-primary ${
-                        isLoading
-                          ? "bg-primary text-white cursor-not-allowed"
-                          : ""
-                      }`}
-                      onClick={() => updateApplicationStatus("approve")}
-                    >
-                      {isLoading && (
-                        <img
-                          src={loadingIcon}
-                          alt="Loading"
-                          className="mr-2 h-4 w-4"
-                        />
-                      )}
-                      {statusButtonText(
-                        getNextStatus(application.status, "approve")
-                      )}
-                    </button>
+                    <StatusButton
+                      status={application.status}
+                      action=""
+                      homeVisitDate={application.homeVisitDate}
+                    />
                   </>
                 )
               )}

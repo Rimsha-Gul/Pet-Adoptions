@@ -14,6 +14,8 @@ interface Application {
   petName: string;
   shelterName: string;
   applicantName: string;
+  homeVisitDate?: string;
+  shelterVisitDate?: string;
 }
 
 const accessToken = localStorage.getItem("accessToken");

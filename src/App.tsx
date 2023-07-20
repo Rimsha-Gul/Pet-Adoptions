@@ -6,6 +6,7 @@ import api from "./api";
 import { errorMessages } from "./constants/errorMessages";
 import { SidebarContext } from "./context/SidebarContext";
 import { getRoutes } from "./routes/Routes";
+import Loading from "./pages/Loading";
 
 function App() {
   const appContext = useContext(AppContext);
@@ -16,6 +17,7 @@ function App() {
   }, [appContext.loggedIn]);
 
   const isAuthenticated = appContext.loggedIn;
+  const isLoading = appContext.isLoading;
   console.log(isAuthenticated);
 
   const handleLogout = async () => {
@@ -46,6 +48,9 @@ function App() {
   const routes = useRoutes(
     getRoutes(isAuthenticated, handleLogout, isSidebarOpen)
   );
+  if (isLoading) {
+    return <Loading />; // replace with your loading component
+  }
 
   return authStatusChecked ? routes : null;
 }

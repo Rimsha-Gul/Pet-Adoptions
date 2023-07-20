@@ -2,7 +2,7 @@ import { ScheduleForm } from "../components/SchedulingComponents/scheduleVisitFo
 import { useScheduleHomeVisit } from "../hooks/useScheduleVisit";
 import { VisitType } from "../types/enums";
 
-const ScheduleHomeVisit = () => {
+const ScheduleShelterVisit = () => {
   const {
     handleDateChange,
     handleTimeChange,
@@ -10,11 +10,11 @@ const ScheduleHomeVisit = () => {
     isLoading,
     selectedDate,
     selectedTime,
-  } = useScheduleHomeVisit(VisitType.Home);
+  } = useScheduleHomeVisit(VisitType.Shelter);
 
   return (
     <ScheduleForm
-      title="Schedule Home Visit"
+      title="Schedule Shelter Visit"
       handleDateChange={handleDateChange}
       handleTimeChange={handleTimeChange}
       handleSubmit={handleSubmit}
@@ -24,4 +24,4 @@ const ScheduleHomeVisit = () => {
     />
   );
 };
-export default ScheduleHomeVisit;
+export default ScheduleShelterVisit;

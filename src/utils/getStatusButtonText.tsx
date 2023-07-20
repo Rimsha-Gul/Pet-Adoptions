@@ -9,6 +9,7 @@ export const statusButtonText = (status: Status | null) => {
     case Status.HomeApproved:
       return "Approve Applicant Home";
     case Status.UserVisitScheduled:
+      return "Schedule Applicant's Visit to Shelter";
     case Status.UserRejectedShelter:
       return "Reject Shelter";
     case Status.Approved:
