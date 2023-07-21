@@ -52,7 +52,7 @@ export const AppContext = createContext<AppContextProps>({
 
 const AppContextProvider = (props: { children: ReactNode }) => {
   const { children } = props;
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [userEmail, setUserEmail] = useState<string>("");
   const [userRole, setUserRole] = useState<string>("");
@@ -137,6 +137,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
 
   useEffect(() => {
     if (loggedIn) {
+      setIsLoading(true);
       console.log("Session called");
       api
         .get("/session")

@@ -21,6 +21,7 @@ const ScheduleHomeVisit = () => {
       isLoading={isLoading}
       selectedDate={selectedDate}
       selectedTime={selectedTime}
+      visitType={VisitType.Home}
     />
   );
 };

@@ -49,7 +49,7 @@ function App() {
     getRoutes(isAuthenticated, handleLogout, isSidebarOpen)
   );
   if (isLoading) {
-    return <Loading />; // replace with your loading component
+    return <Loading />;
   }
 
   return authStatusChecked ? routes : null;

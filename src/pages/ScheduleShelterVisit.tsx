@@ -21,6 +21,7 @@ const ScheduleShelterVisit = () => {
       isLoading={isLoading}
       selectedDate={selectedDate}
       selectedTime={selectedTime}
+      visitType={VisitType.Shelter}
     />
   );
 };

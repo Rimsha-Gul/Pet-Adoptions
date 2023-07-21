@@ -1,3 +1,8 @@
+export enum UserRole {
+  User = "User",
+  Shelter = "Shelter",
+}
+
 export enum Status {
   UnderReview = "Under Review",
   HomeVisitRequested = "Home Visit Requested",

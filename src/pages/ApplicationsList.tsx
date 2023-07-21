@@ -16,6 +16,8 @@ interface Application {
   applicantName: string;
   homeVisitDate?: string;
   shelterVisitDate?: string;
+  homeVisitEmailSentDate?: string;
+  shelterVisitEmailSentDate?: string;
 }
 
 const accessToken = localStorage.getItem("accessToken");
