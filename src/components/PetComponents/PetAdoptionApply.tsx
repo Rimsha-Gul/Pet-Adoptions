@@ -18,6 +18,9 @@ const PetAdoptionApply = ({
   return (
     <div className="flex flex-col gap-6 max-w-9xl p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
       <p className="text-lg text-gray-500">
+        <span className="text-primary font-bold">Shelter Name:</span> {}
+      </p>
+      <p className="text-lg text-gray-500">
         <span className="text-primary font-bold">Adoption Fee:</span>{" "}
         {petAdoptionFee}
       </p>

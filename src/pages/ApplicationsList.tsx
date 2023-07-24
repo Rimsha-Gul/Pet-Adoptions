@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { getStatusIcon } from "../utils/getStatusIcon";
 import loadingIcon from "../assets/loading.gif";
 import { AppContext } from "../context/AppContext";
+import { Status } from "../types/enums";
 
-interface Application {
+export interface Application {
   id: string;
-  status: string;
+  status: Status;
   submissionDate: Date;
   microchipID: string;
   petImage: string;
@@ -69,7 +70,7 @@ const ViewApplications = () => {
           <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
             <div className="flex flex-col justify-center gap-4">
               <div className="flex flex-row justify-between px-4">
-                <div className="w-full grid grid-cols-3 items-center justify-evenly gap-4">
+                <div className="w-full grid grid-cols-4 items-center justify-evenly gap-4">
                   <h2 className="text-2xl text-gray-700 font-bold">
                     Application for
                   </h2>
@@ -80,9 +81,12 @@ const ViewApplications = () => {
                     </h2>
                   ) : (
                     <h2 className="text-2xl text-gray-700 font-bold">
-                      Submitted on
+                      Shelter Name
                     </h2>
                   )}
+                  <h2 className="text-2xl text-gray-700 font-bold">
+                    Submitted on
+                  </h2>
                 </div>
               </div>
               <div className="border-b-2 border-gray-200"></div>
@@ -96,7 +100,7 @@ const ViewApplications = () => {
                     })
                   }
                 >
-                  <div className="w-full grid grid-cols-3 items-end justify-evenly gap-4">
+                  <div className="w-full grid grid-cols-4 items-end justify-evenly gap-4">
                     <div className="flex flex-col md:flex-row items-start md:items-end justify-start gap-4">
                       <img
                         src={application.petImage}
@@ -119,11 +123,14 @@ const ViewApplications = () => {
                       </p>
                     ) : (
                       <p className="text-xl text-gray-600 whitespace-pre-line">
-                        {new Date(
-                          application.submissionDate
-                        ).toLocaleDateString()}
+                        {application.shelterName}
                       </p>
                     )}
+                    <p className="text-xl text-gray-600 whitespace-pre-line">
+                      {new Date(
+                        application.submissionDate
+                      ).toLocaleDateString()}
+                    </p>
                   </div>
                   <div className="border-b-2 border-gray-200"></div>
                 </div>

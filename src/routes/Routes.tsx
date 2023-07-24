@@ -20,7 +20,7 @@ import UserProfile from "../pages/UserProfile";
 import AdoptionApplication from "../pages/AdoptionApplication";
 import ViewApplications from "../pages/ApplicationsList";
 import Application from "../pages/Application";
-import scheduleHomeVisit from "../pages/ScheduleHomeVisit";
+import InviteShelter from "../pages/InviteShelter";
 import ScheduleHomeVisit from "../pages/ScheduleHomeVisit";
 import ScheduleShelterVisit from "../pages/ScheduleShelterVisit";
 
@@ -33,6 +33,7 @@ export const getRoutes = (
   const appContext = useContext(AppContext);
   const userRole = appContext.userRole;
   const existingUser = appContext.loggedIn;
+  const adminRoutes = [InviteShelter];
   const userRoutes = [ScheduleHomeVisit];
   const adminAndShelterRoutes = [AddPet];
   const sidebarRoutes = [
@@ -42,12 +43,21 @@ export const getRoutes = (
     ChangeEmail,
     ChangePassword,
     UserProfile,
+    InviteShelter,
   ];
 
   const renderProtectedRoute = (Component: any) => {
     if (isAuthenticated) {
+      console.log(sidebarRoutes);
+      console.log(sidebarRoutes.includes(Component));
       if (sidebarRoutes.includes(Component)) {
+        // console.log("sidebar");
         if (adminAndShelterRoutes.includes(Component) && userRole === "USER") {
+          // console.log("here");
+          return <NotFoundPage />;
+        }
+        if (adminRoutes.includes(Component) && userRole !== "ADMIN") {
+          // console.log("now here");
           return <NotFoundPage />;
         }
         return (
@@ -63,17 +73,21 @@ export const getRoutes = (
           </div>
         );
       } else {
+        console.log(userRole);
         if (userRoutes.includes(Component) && userRole !== "USER") {
+          console.log("not user");
           return <NotFoundPage />;
-        }
-        return (
-          <div className="flex flex-col">
-            <PrimaryHeader handleLogout={handleLogout} />
-            <div className="">
-              <Component />
+        } else {
+          console.log("yes user");
+          return (
+            <div className="flex flex-col">
+              <PrimaryHeader handleLogout={handleLogout} />
+              <div className="">
+                <Component />
+              </div>
             </div>
-          </div>
-        );
+          );
+        }
       }
     }
     return <Navigate to="/" />;
@@ -117,6 +131,7 @@ export const getRoutes = (
       path: "/view/application/:id",
       element: renderProtectedRoute(Application),
     },
+    { path: "/inviteShelter", element: renderProtectedRoute(InviteShelter) },
     {
       path: "/:id/scheduleHomeVisit",
       element: renderProtectedRoute(ScheduleHomeVisit),

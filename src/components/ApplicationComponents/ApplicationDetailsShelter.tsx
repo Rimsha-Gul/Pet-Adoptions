@@ -1,15 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import loadingIcon from "../../assets/loading.gif";
-import { Status } from "../../types/enums";
+import { Status, VisitType } from "../../types/enums";
 import { getNextShelterStatus } from "../../utils/getNextStatus";
 import { formatFieldValue } from "../../utils/formatFieldValue";
 import { showErrorAlert, showSuccessAlert } from "../../utils/alert";
 import { statusButtonText } from "../../utils/getStatusButtonText";
-import moment from "moment";
+import StatusButton from "./StatusButton";
 
 export interface Application {
+  id: string;
   petImage: string;
   petName: string;
   status: Status;
@@ -33,8 +34,8 @@ export interface Application {
   canAffordPetsMediacal: boolean;
   petTravelPlans: string;
   petOutlivePlans: string;
-  homeVisitDate: Date;
-  shelterVisitDate: Date;
+  homeVisitDate: string;
+  shelterVisitDate: string;
 }
 
 const groups = [
@@ -67,7 +68,6 @@ const groups = [
 ];
 
 const ApplicationDetailsShelter = () => {
-  const navigate = useNavigate();
   const [application, setApplication] = useState<Application | null>(null);
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isRejecting, setIsRejecting] = useState<boolean>(false);
@@ -75,6 +75,7 @@ const ApplicationDetailsShelter = () => {
   const { id } = useParams();
 
   const applicationFieldLabels: Record<keyof Application, string> = {
+    id: "Application ID",
     petImage: "Pet Image",
     petName: "Pet Name",
     status: "Application Status",
@@ -120,67 +121,6 @@ const ApplicationDetailsShelter = () => {
       };
     });
   }, [application]);
-
-  const StatusButton = ({ status, action, homeVisitDate }: any) => {
-    // Get the current date.
-    const currentDate = moment().utc();
-    console.log(currentDate);
-
-    // Parse homeVisitDate as a UTC time.
-    const homeVisitDateObj = moment.utc(homeVisitDate);
-    console.log(homeVisitDateObj);
-
-    // Check if the homeVisitDate has been reached.
-    const isHomeVisitDateReached = currentDate.isSameOrAfter(homeVisitDateObj);
-    console.log(isHomeVisitDateReached);
-
-    const handleStatusUpdate = () => {
-      if (status === Status.HomeApproved) {
-        navigate(`/${id}/scheduleShelterVisit`);
-      } else {
-        updateApplicationStatus(action);
-      }
-    };
-
-    let buttonColor = "";
-    let hoverColor = "";
-    switch (action) {
-      case "approve":
-        buttonColor = "lime-500";
-        hoverColor = "text-lime-500";
-        break;
-      case "reject":
-        buttonColor = "red-600";
-        hoverColor = "text-red-600";
-        break;
-      default:
-        buttonColor = "primary";
-        hoverColor = "text-primary";
-    }
-
-    // If the homeVisitDate has not been reached, return null to prevent rendering the button.
-    if (!isHomeVisitDateReached && status === Status.HomeVisitScheduled) {
-      return null;
-    }
-    console.log(status);
-    console.log(getNextShelterStatus(status, action));
-    console.log(statusButtonText(getNextShelterStatus(status, action)));
-
-    return (
-      <button
-        className={`group relative w-1/3 lg:w-1/5 2xl:w-1/6 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white bg-${buttonColor} hover:bg-white hover:ring-2 hover:ring-${buttonColor} hover:ring-offset-2 hover:${hoverColor} ${
-          isLoading ? `${buttonColor} text-white cursor-not-allowed` : ""
-        }`}
-        onClick={handleStatusUpdate}
-      >
-        {(action === "approve" && isApproving) ||
-        (action === "reject" && isRejecting) ? (
-          <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
-        ) : null}
-        {statusButtonText(getNextShelterStatus(status, action))}
-      </button>
-    );
-  };
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -287,7 +227,7 @@ const ApplicationDetailsShelter = () => {
           <img src={loadingIcon} alt="Loading" className="h-10 w-10" />
         </div>
       )}
-      {application && (
+      {application && id && (
         <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
           <div className="flex flex-col items-center gap-6">
             <img
@@ -303,6 +243,16 @@ const ApplicationDetailsShelter = () => {
             </Link>
           </div>
           <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-center mt-10 gap-8">
+            <div className="flex flex-row gap-2">
+              <label className="text-gray-700 text-xl font-medium">
+                Application ID:
+              </label>
+              <div className="flex flex-row items-center gap-2">
+                <p className="text-xl text-gray-600 whitespace-pre-line">
+                  {application.id}
+                </p>
+              </div>
+            </div>
             <div className="flex flex-row items-center gap-2">
               <label className="text-gray-700 text-xl font-medium">
                 Applicant Name:
@@ -414,12 +364,24 @@ const ApplicationDetailsShelter = () => {
                   <StatusButton
                     status={application.status}
                     action="approve"
-                    homeVisitDate={application.homeVisitDate}
+                    visitDate={application.homeVisitDate || ""}
+                    isLoading={isLoading}
+                    isApproving={isApproving}
+                    isRejecting={isRejecting}
+                    id={id}
+                    updateApplicationStatus={updateApplicationStatus}
+                    visitType={VisitType.Shelter}
                   />
                   <StatusButton
                     status={application.status}
                     action="reject"
-                    homeVisitDate={application.homeVisitDate}
+                    visitDate={application.homeVisitDate || ""}
+                    isLoading={isLoading}
+                    isApproving={isApproving}
+                    isRejecting={isRejecting}
+                    id={id}
+                    updateApplicationStatus={updateApplicationStatus}
+                    visitType={VisitType.Shelter}
                   />
                 </>
               ) : (
@@ -430,7 +392,13 @@ const ApplicationDetailsShelter = () => {
                     <StatusButton
                       status={application.status}
                       action=""
-                      homeVisitDate={application.homeVisitDate}
+                      visitDate={application.homeVisitDate || ""}
+                      isLoading={isLoading}
+                      isApproving={isApproving}
+                      isRejecting={isRejecting}
+                      id={id}
+                      updateApplicationStatus={updateApplicationStatus}
+                      visitType={VisitType.Shelter}
                     />
                   </>
                 )

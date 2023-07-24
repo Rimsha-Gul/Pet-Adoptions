@@ -13,17 +13,19 @@ import { AppContext } from "../context/AppContext";
 import { useTransition, animated } from "@react-spring/web";
 
 const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
-  //const userName = localStorage.getItem("userName") || "";
   const appContext = useContext(AppContext);
+  const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
   const userName = appContext.displayName;
   const userRole = appContext.userRole;
   const [userProfilePhoto, setUserProfilePhoto] = useState(
     appContext.profilePhoto
   );
-  const [selectedOption, setSelectedOption] = useState<string>("");
-  const { isSidebarOpen, setIsSidebarOpen } = useContext(SidebarContext);
+
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const location = useLocation();
+  const [selectedOption, setSelectedOption] = useState<string>(
+    location.pathname.substring(1)
+  );
 
   // Filter out admin links if user is not an admin
   const filteredSidebarLinks = sidebarLinks.filter(
@@ -55,7 +57,7 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
       handleLogout(); // Call handleLogout function for Logout option
     }
   };
-
+  console.log(location.pathname.substring(1));
   return (
     <div
       className={`w-64 pt-4 bg-secondary-10 h-screen fixed top-0 left-0 transform transition-all duration-300 ease-in-out ${
@@ -103,7 +105,7 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                 <div className="flex flex-row items-center">
                   <div
                     className={`flex items-center block px-6 py-3 text-md font-medium cursor-pointer w-full ${
-                      selectedOption === link.label
+                      selectedOption === link.to
                         ? "text-white bg-secondary"
                         : "text-gray-500 hover:bg-secondary-100 transition-colors"
                     } ${isSidebarOpen ? "" : ""}`}
@@ -126,7 +128,7 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                                 key={option.to}
                                 to={option.to}
                                 className={`block px-6 py-3 text-md font-medium ${
-                                  selectedOption === option.label
+                                  selectedOption === option.to
                                     ? "text-white bg-secondary"
                                     : "text-gray-500 hover:bg-secondary-100 transition-colors"
                                 } ${isSidebarOpen ? "" : ""}`}
@@ -148,8 +150,8 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                   to={link.to}
                   className={`block px-6 py-3 text-md font-medium ${
                     link.to === location.pathname ||
-                    link.to === location.pathname.slice(0, -1) ||
-                    selectedOption === link.label
+                    link.to === location.pathname.substring(1) ||
+                    selectedOption === link.to
                       ? "text-white bg-secondary"
                       : "text-gray-500 hover:bg-secondary-100 transition-colors"
                   } ${isSidebarOpen ? "" : ""}`}
