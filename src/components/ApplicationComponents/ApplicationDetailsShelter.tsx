@@ -4,107 +4,24 @@ import { Link, useParams } from "react-router-dom";
 import loadingIcon from "../../assets/loading.gif";
 import { Status, VisitType } from "../../types/enums";
 import { getNextShelterStatus } from "../../utils/getNextStatus";
-import { formatFieldValue } from "../../utils/formatFieldValue";
 import { showErrorAlert, showSuccessAlert } from "../../utils/alert";
 import { statusButtonText } from "../../utils/getStatusButtonText";
 import StatusButton from "./StatusButton";
-
-export interface Application {
-  id: string;
-  petImage: string;
-  petName: string;
-  status: Status;
-  applicantEmail: string;
-  applicantName: string;
-  shelterName: string;
-  submissionDate: string;
-  microchipID: string;
-  residenceType: string;
-  hasRentPetPermission: boolean;
-  hasChildren: boolean;
-  childrenAges: string;
-  hasOtherPets: boolean;
-  otherPetsInfo: string;
-  petAloneTime: number;
-  hasPlayTimeParks: boolean;
-  petActivities: string;
-  handlePetIssues: string;
-  moveWithPet: string;
-  canAffordPetsNeeds: boolean;
-  canAffordPetsMediacal: boolean;
-  petTravelPlans: string;
-  petOutlivePlans: string;
-  homeVisitDate: string;
-  shelterVisitDate: string;
-}
-
-const groups = [
-  {
-    label: "Residence Information",
-    fields: [
-      "residenceType",
-      "hasRentPetPermission",
-      "hasChildren",
-      "childrenAges",
-      "hasOtherPets",
-      "otherPetsInfo",
-    ],
-  },
-  {
-    label: "Pet Engagement Information",
-    fields: ["petAloneTime", "hasPlayTimeParks", "petActivities"],
-  },
-  {
-    label: "Pet Commitment Information",
-    fields: [
-      "handlePetIssues",
-      "moveWithPet",
-      "canAffordPetsNeeds",
-      "canAffordPetsMediacal",
-      "petTravelPlans",
-      "petOutlivePlans",
-    ],
-  },
-];
+import { getStatusIcon } from "../../utils/getStatusIcon";
+import { applicationGroups } from "../../constants/groups";
+import { Application } from "../../types/interfaces";
+import ApplicationGroupedFields from "./ApplicationDetails";
 
 const ApplicationDetailsShelter = () => {
   const [application, setApplication] = useState<Application | null>(null);
   const [isApproving, setIsApproving] = useState<boolean>(false);
   const [isRejecting, setIsRejecting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [visitDate, setVisitDate] = useState<string>("");
   const { id } = useParams();
 
-  const applicationFieldLabels: Record<keyof Application, string> = {
-    id: "Application ID",
-    petImage: "Pet Image",
-    petName: "Pet Name",
-    status: "Application Status",
-    applicantEmail: "Applicant Email",
-    applicantName: "Applicant Name",
-    shelterName: "Shelter Name",
-    submissionDate: "Submission Date",
-    microchipID: "Microchip ID",
-    residenceType: "Residence Type",
-    hasRentPetPermission: "Has Permission to Rent Pet",
-    hasChildren: "Has Children",
-    childrenAges: "Children Ages",
-    hasOtherPets: "Has Other Pets",
-    otherPetsInfo: "Other Pets Info",
-    petAloneTime: "Pet Daily Alone Time",
-    hasPlayTimeParks: "Has Play Time Parks",
-    petActivities: "Activities the appllicant will like to do with the pet",
-    handlePetIssues: "How Applicant Will Handle Pet Issues",
-    moveWithPet: "Plans for Pet if Applicant has to Move",
-    canAffordPetsNeeds: "Can Afford Pet Needs",
-    canAffordPetsMediacal: "Can Afford Pet Medical Costs",
-    petTravelPlans: "Travel Plans With Pet",
-    petOutlivePlans: "Plans incase Pet Outlives Applicant",
-    homeVisitDate: "Home Visit Date",
-    shelterVisitDate: "Shelter Visit Date",
-  };
-
   const groupedFields = useMemo(() => {
-    return groups.map((group) => {
+    return applicationGroups.map((group) => {
       return {
         ...group,
         fields: group.fields.filter((field) => {
@@ -133,6 +50,10 @@ const ApplicationDetailsShelter = () => {
         });
         console.log(response.data);
         setApplication(response.data.application);
+        if (response.data.application.status === Status.HomeVisitScheduled)
+          setVisitDate(response.data.application.homeVisitDate);
+        else if (response.data.application.status === Status.UserVisitScheduled)
+          setVisitDate(response.data.application.shelterVisitDate);
       } catch (error) {
         console.error(error);
       } finally {
@@ -173,52 +94,6 @@ const ApplicationDetailsShelter = () => {
       }
     }
   };
-
-  interface FieldProps {
-    field: keyof Application;
-    application: Application;
-    fieldLabels: typeof applicationFieldLabels;
-    className?: string;
-  }
-
-  function TextualField({
-    field,
-    application,
-    fieldLabels,
-    className,
-  }: FieldProps) {
-    return (
-      <div key={field} className={`flex items-start gap-2 ${className}`}>
-        <label className="text-gray-700 text-xl font-medium">
-          {fieldLabels[field]}:
-        </label>
-        <p className="text-xl text-gray-600 whitespace-pre-line">
-          {formatFieldValue(field, application[field])}
-        </p>
-      </div>
-    );
-  }
-
-  function BooleanField({
-    field,
-    application,
-    fieldLabels,
-    className,
-  }: FieldProps) {
-    return (
-      <div
-        key={field}
-        className={`flex flex-row items-center gap-2 ${className}`}
-      >
-        <label className="text-gray-700 text-xl font-medium">
-          {fieldLabels[field]}:
-        </label>
-        <p className="text-xl text-gray-700 whitespace-pre-line">
-          {formatFieldValue(field, application[field])}
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
@@ -299,89 +174,47 @@ const ApplicationDetailsShelter = () => {
             )}
           </div>
           <div className="flex flex-col mx-auto w-full space-y-8 mt-8 mb-8 g-12">
-            {groupedFields.map((group) => (
-              <div key={group.label}>
-                <h2 className="text-2xl text-primary font-bold mb-4 mt-2">
-                  {group.label}
-                </h2>
-                <div className="border-b-2 border-gray-200 my-2"></div>
-                <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-start gap-10">
-                  {group.fields.map((field) => {
-                    const applicationField = field as keyof Application;
-                    if (
-                      field === "petActivities" ||
-                      field === "handlePetIssues" ||
-                      field === "moveWithPet" ||
-                      field === "petTravelPlans" ||
-                      field === "petOutlivePlans"
-                    )
-                      return (
-                        <TextualField
-                          field={applicationField}
-                          application={application}
-                          fieldLabels={applicationFieldLabels}
-                          className="flex-col"
-                        />
-                      );
-                    if (
-                      typeof application[field as keyof Application] ===
-                      "boolean"
-                    )
-                      return (
-                        <BooleanField
-                          field={applicationField}
-                          application={application}
-                          fieldLabels={applicationFieldLabels}
-                          className="flex-row"
-                        />
-                      );
-                    return (
-                      <TextualField
-                        field={applicationField}
-                        application={application}
-                        fieldLabels={applicationFieldLabels}
-                        className="flex-row"
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-
+            <ApplicationGroupedFields
+              groupedFields={groupedFields}
+              application={application}
+            />
             <div className="flex flex-row gap-2 pt-8">
               <label className="text-gray-700 text-xl font-medium">
                 Application Status:
               </label>
-              <p className="text-xl text-gray-600 whitespace-pre-line">
-                {application.status}
-              </p>
+              <div className="flex flex-row items-center gap-2">
+                {getStatusIcon(application.status)}
+                <p className="text-xl text-gray-600 whitespace-pre-line">
+                  {application.status}
+                </p>
+              </div>
             </div>
             <div className="flex flex-row items-center justify-center gap-4">
               {application.status === Status.UnderReview ||
               application.status === Status.HomeVisitScheduled ||
-              application.status === Status.UserApprovedShelter ? (
+              application.status === Status.UserVisitScheduled ? (
                 <>
                   <StatusButton
                     status={application.status}
                     action="approve"
-                    visitDate={application.homeVisitDate || ""}
+                    visitDate={visitDate}
                     isLoading={isLoading}
                     isApproving={isApproving}
                     isRejecting={isRejecting}
                     id={id}
                     updateApplicationStatus={updateApplicationStatus}
-                    visitType={VisitType.Shelter}
+                    visitType={VisitType.Home}
                   />
                   <StatusButton
                     status={application.status}
                     action="reject"
-                    visitDate={application.homeVisitDate || ""}
+                    visitDate={visitDate}
                     isLoading={isLoading}
                     isApproving={isApproving}
                     isRejecting={isRejecting}
                     id={id}
                     updateApplicationStatus={updateApplicationStatus}
-                    visitType={VisitType.Shelter}
+                    visitType={VisitType.Home}
                   />
                 </>
               ) : (
@@ -398,7 +231,7 @@ const ApplicationDetailsShelter = () => {
                       isRejecting={isRejecting}
                       id={id}
                       updateApplicationStatus={updateApplicationStatus}
-                      visitType={VisitType.Shelter}
+                      visitType={VisitType.Home}
                     />
                   </>
                 )

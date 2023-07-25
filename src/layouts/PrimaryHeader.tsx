@@ -9,8 +9,6 @@ interface HeaderProps {
 }
 
 const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
-  //const role = localStorage.getItem("userRole") || "";
-  //const userName = localStorage.getItem("userName") || "";
   const appContext = useContext(AppContext);
   const userName = appContext.displayName;
 

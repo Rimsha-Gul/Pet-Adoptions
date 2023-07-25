@@ -172,14 +172,16 @@ const AdoptionApplication = () => {
       setIsLoading(true);
       const response = await api.post("/application/", adoptPetData);
       console.log(response);
+      const id = response.data.application.id;
+      console.log(id);
       showSuccessAlert(
         "Application submitted successfully.",
-        () => navigate("/applications"),
+        () => navigate(`/view/application/${id}`),
         () =>
-          navigate(`/pet/${encodeURIComponent(pet.name)}`, {
+          navigate(`/pet/${encodeURIComponent(pet.microchipID)}`, {
             state: { pet },
           }),
-        '<a href id="navigatePet">View your application and its status</a><style>#navigateApplication:hover { text-decoration: underline; }</style>',
+        '<a href id="navigateApplication">View your application and its status</a><style>#navigateApplication:hover { text-decoration: underline; }</style>',
         "navigateApplication"
       );
     } catch (error: any) {

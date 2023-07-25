@@ -9,6 +9,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 interface Pet {
   shelterId: number;
+  shelterName: string;
   microchipID: string;
   name: string;
   birthDate: string;

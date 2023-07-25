@@ -4,22 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getStatusIcon } from "../utils/getStatusIcon";
 import loadingIcon from "../assets/loading.gif";
 import { AppContext } from "../context/AppContext";
-import { Status } from "../types/enums";
-
-export interface Application {
-  id: string;
-  status: Status;
-  submissionDate: Date;
-  microchipID: string;
-  petImage: string;
-  petName: string;
-  shelterName: string;
-  applicantName: string;
-  homeVisitDate?: string;
-  shelterVisitDate?: string;
-  homeVisitEmailSentDate?: string;
-  shelterVisitEmailSentDate?: string;
-}
+import { Application } from "../types/interfaces";
 
 const accessToken = localStorage.getItem("accessToken");
 api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
@@ -39,7 +24,11 @@ const ViewApplications = () => {
         const response = await api.get("/application/applications");
         if (response.data.length === 0) setNoApplications(true);
         console.log(response.data);
-        setApplications(response.data);
+        const reshapedData = response.data.map(
+          (item: { application: Application }) => item.application
+        );
+        setApplications(reshapedData);
+        //setApplications(response.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -61,9 +50,15 @@ const ViewApplications = () => {
         </div>
       )}
       {noApplications ? (
-        <p className="text-gray-700 text-xl font-medium text-center">
-          No adoption applications received at this moment
-        </p>
+        userRole === "SHELTER" ? (
+          <p className="text-gray-700 text-xl font-medium text-center">
+            No adoption applications received at this moment
+          </p>
+        ) : (
+          <p className="text-gray-700 text-xl font-medium text-center">
+            You have not applied for any pets yet
+          </p>
+        )
       ) : (
         !isLoading &&
         applications && (

@@ -1,14 +1,16 @@
 import { Link, useParams } from "react-router-dom";
 import { getStatusIcon } from "../../utils/getStatusIcon";
 import api from "../../api";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import loadingIcon from "../../assets/loading.gif";
-import { Status } from "../../types/enums";
+import { Status, VisitType } from "../../types/enums";
 import { statusButtonText } from "../../utils/getStatusButtonText";
 import { getNextUserStatus } from "../../utils/getNextStatus";
 import { showErrorAlert, showSuccessAlert } from "../../utils/alert";
-import { Application } from "../../pages/ApplicationsList";
 import StatusButton from "./StatusButton";
+import { Application } from "../../types/interfaces";
+import ApplicationGroupedFields from "./ApplicationDetails";
+import { applicationGroups } from "../../constants/groups";
 
 const accessToken = localStorage.getItem("accessToken");
 api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
@@ -16,21 +18,37 @@ api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 const ApplicationDetailsUser = () => {
   const [application, setApplication] = useState<Application | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isApproving, setIsApproving] = useState<boolean>(false);
-  const [isRejecting, setIsRejecting] = useState<boolean>(false);
   console.log(application);
 
   const { id } = useParams();
 
-  const updateApplicationStatus = async (action: string) => {
+  const groupedFields = useMemo(() => {
+    return applicationGroups.map((group) => {
+      return {
+        ...group,
+        fields: group.fields.filter((field) => {
+          if (
+            (field === "hasRentPetPermission" &&
+              application?.residenceType !== "rentHouse") ||
+            (field === "childrenAges" && !application?.hasChildren) ||
+            (field === "otherPetsInfo" && !application?.hasOtherPets)
+          ) {
+            return false;
+          }
+          return true;
+        }),
+      };
+    });
+  }, [application]);
+
+  const updateApplicationStatus = async () => {
     const nextStatus = getNextUserStatus(
-      application?.status || Status.UnderReview,
-      action
+      application?.status || Status.UnderReview
     );
 
     if (nextStatus) {
       try {
-        action === "approve" ? setIsApproving(true) : setIsRejecting(true);
+        setIsLoading(true);
         const response = await api.put("/application/updateStatus", {
           id: id,
           status: nextStatus,
@@ -46,7 +64,7 @@ const ApplicationDetailsUser = () => {
         }
         console.error;
       } finally {
-        action === "approve" ? setIsApproving(false) : setIsRejecting(false);
+        setIsLoading(false);
         console.log(application);
       }
     }
@@ -61,7 +79,7 @@ const ApplicationDetailsUser = () => {
             id: id,
           },
         });
-        setApplication(response.data);
+        setApplication(response.data.application);
       } catch (error) {
         console.error(error);
       } finally {
@@ -114,10 +132,10 @@ const ApplicationDetailsUser = () => {
                 Application Status:
               </label>
               <div className="flex flex-row items-center gap-2">
+                {getStatusIcon(application.status)}
                 <p className="text-xl text-gray-600 whitespace-pre-line">
                   {application.status}
                 </p>
-                {getStatusIcon(application.status)}
               </div>
             </div>
             <div className="flex flex-row items-center gap-2">
@@ -157,47 +175,25 @@ const ApplicationDetailsUser = () => {
               </div>
             )}
           </div>
+          <div className="flex flex-col mx-auto w-full space-y-8 mt-8 mb-8 g-12">
+            <ApplicationGroupedFields
+              groupedFields={groupedFields}
+              application={application}
+            />
+          </div>
+
           <div className="flex flex-row items-center justify-center gap-4 pt-16">
-            {application.status === Status.UserVisitScheduled ? (
+            {statusButtonText(getNextUserStatus(application.status)) && (
               <>
                 <StatusButton
                   status={application.status}
-                  action="approve"
-                  visitDate={application.shelterVisitDate || ""}
+                  action=""
                   isLoading={isLoading}
-                  isApproving={isApproving}
-                  isRejecting={isRejecting}
                   id={id}
                   updateApplicationStatus={updateApplicationStatus}
-                />
-                <StatusButton
-                  status={application.status}
-                  action="reject"
-                  visitDate={application.shelterVisitDate || ""}
-                  isLoading={isLoading}
-                  isApproving={isApproving}
-                  isRejecting={isRejecting}
-                  id={id}
-                  updateApplicationStatus={updateApplicationStatus}
+                  visitType={VisitType.Shelter}
                 />
               </>
-            ) : (
-              statusButtonText(
-                getNextUserStatus(application.status, "approve")
-              ) && (
-                <>
-                  <StatusButton
-                    status={application.status}
-                    action=""
-                    visitDate={application.shelterVisitDate || ""}
-                    isLoading={isLoading}
-                    isApproving={isApproving}
-                    isRejecting={isRejecting}
-                    id={id}
-                    updateApplicationStatus={updateApplicationStatus}
-                  />
-                </>
-              )
             )}
           </div>
         </div>

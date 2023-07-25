@@ -11,6 +11,7 @@ import { FileInput } from "../components/PetComponents/PetImageUpload";
 import { AppContext } from "../context/AppContext";
 
 interface Pet {
+  microchipID: string;
   name: string;
   gender: string;
   birthDate: string;
@@ -249,7 +250,9 @@ const AddPet = () => {
         showSuccessAlert(
           "The pet has been added successfully.",
           () =>
-            navigate(`/pet/${encodeURIComponent(pet.name)}`, { state: pet }),
+            navigate(`/pet/${encodeURIComponent(pet.microchipID)}`, {
+              state: pet,
+            }),
           () => navigate("/addpet"),
           '<a href id="navigatePet">View the pet\'s profile page</a><style>#navigatePet:hover { text-decoration: underline; }</style>',
           "navigatePet"

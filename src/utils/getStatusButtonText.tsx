@@ -6,14 +6,10 @@ export const statusButtonText = (status: Status | null) => {
       return "Request for Home Visit";
     case Status.HomeVisitScheduled:
       return "Schedule Shelter's Visit to Your Home";
-    case Status.UserApprovedShelter:
-      return "Approve Shelter";
     case Status.HomeApproved:
       return "Approve Applicant Home";
     case Status.UserVisitScheduled:
       return "Schedule Applicant's Visit to Shelter";
-    case Status.UserRejectedShelter:
-      return "Reject Shelter";
     case Status.Approved:
       return "Approve Aplication";
     case Status.HomeRejected:

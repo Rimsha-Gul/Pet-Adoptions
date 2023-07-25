@@ -10,10 +10,9 @@ export enum Status {
   HomeApproved = "Home Approved",
   HomeRejected = "Home Rejected",
   UserVisitScheduled = "User Visit Scheduled",
-  UserApprovedShelter = "User Approved Shelter",
-  UserRejectedShelter = "User Rejected Shelter",
   Approved = "Approved",
   Rejected = "Rejected",
+  Closed = "Closed",
 }
 
 export enum VisitType {
