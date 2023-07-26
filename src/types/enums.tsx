@@ -1,12 +1,21 @@
+export enum UserRole {
+  User = "User",
+  Shelter = "Shelter",
+}
+
 export enum Status {
   UnderReview = "Under Review",
-  ApprovedForHomeVisit = "Approved For Home Visit",
+  HomeVisitRequested = "Home Visit Requested",
   HomeVisitScheduled = "Home Visit Scheduled",
   HomeApproved = "Home Approved",
   HomeRejected = "Home Rejected",
   UserVisitScheduled = "User Visit Scheduled",
-  UserApprovedShelter = "User Approved Shelter",
-  UserRejectedShelter = "User Rejected Shelter",
   Approved = "Approved",
   Rejected = "Rejected",
+  Closed = "Closed",
+}
+
+export enum VisitType {
+  Home = "Home",
+  Shelter = "Shelter",
 }
