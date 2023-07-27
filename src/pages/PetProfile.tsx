@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PetImagesCarousel from "../components/PetComponents/PetImagesCarousel";
 import PetBasicInfo from "../components/PetComponents/PetBasicInfo";
 import PetAdditionalInfo from "../components/PetComponents/PetAdditionalInfo";
@@ -7,14 +7,15 @@ import PetAdoptionApply from "../components/PetComponents/PetAdoptionApply";
 import api from "../api";
 import { useEffect, useState } from "react";
 import loadingIcon from "../assets/loading.gif";
+import { Pet } from "./HomePage";
 
 const accessToken = localStorage.getItem("accessToken");
 api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 const PetProfile = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const [pet, setPet] = useState(location.state?.pet);
+  //const location = useLocation();
+  const [pet, setPet] = useState<Pet | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { id } = useParams();
 
@@ -42,13 +43,16 @@ const PetProfile = () => {
   console.log(pet);
 
   const handleAdoptionApply = () => {
-    navigate(`/adoptionApplication/${encodeURIComponent(pet.microchipID)}`, {
-      state: { pet },
-    });
+    navigate(
+      `/adoptionApplication/${encodeURIComponent(pet?.microchipID || "")}`,
+      {
+        state: { pet },
+      }
+    );
   };
 
   const handleViewApplication = () => {
-    navigate(`/view/application/${pet.applicationID}`);
+    navigate(`/view/application/${pet?.applicationID}`);
   };
 
   return (
