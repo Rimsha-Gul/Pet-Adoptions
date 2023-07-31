@@ -7,7 +7,7 @@ import { FaSearch } from "react-icons/fa";
 import PetCard from "../components/PetComponents/PetCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-interface Pet {
+export interface Pet {
   shelterId: number;
   shelterName: string;
   microchipID: string;
@@ -16,6 +16,25 @@ interface Pet {
   color: string;
   bio: string;
   images: string[];
+  applicationID?: string;
+  gender: string;
+  breed: string;
+  activityNeeds: string;
+  levelOfGrooming: string;
+  isHouseTrained: string;
+  healthInfo: {
+    healthCheck: boolean;
+    allergiesTreated: boolean;
+    wormed: boolean;
+    heartwormTreated: boolean;
+    vaccinated: boolean;
+    deSexed: boolean;
+  };
+  traits: string[];
+  adoptionFee: string;
+  hasAdoptionRequest: boolean;
+  isAdopted: boolean;
+  category: string;
 }
 
 const ageRange = (ages: number[]): string[] => {
@@ -76,6 +95,8 @@ const HomePage = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined);
   const [filterOption, setFilterOption] = useState<string>("");
   const [prevFilterOption, setPrevFilterOption] = useState<string>("");
   const [prevSearchQuery, setPrevSearchQuery] = useState<string>("");
@@ -136,12 +157,31 @@ const HomePage = () => {
     }
   }, [filterOption]);
 
+  /// This effect is responsible for managing the debounce
+  useEffect(() => {
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
+
+    const id = window.setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    setTimeoutId(id);
+
+    return () => {
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [searchQuery]);
+
   useEffect(() => {
     console.log("useEffect called");
     fetchPets(currentPage);
   }, [
     filterOption,
-    searchQuery,
+    debouncedSearchQuery,
     colorFilter,
     ageFilter,
     breedFilter,
@@ -288,7 +328,7 @@ const HomePage = () => {
     <>
       <div className="flex flex-col justify-center p-8 sm:mt-14">
         <div className="flex flex-row gap-6 justify-end me-0 md:me-24 items-end pt-8">
-          <div className="flex items-center justify-between w-64 h-12 pr-4 border border-gray-400 rounded-md focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
+          <div className="flex items-center justify-between w-72 h-[3.3rem] pr-4 border border-gray-400 rounded-md focus-within:outline-none focus-within:ring-primary focus-within:border-primary hover:border-primary">
             <input
               type="text"
               placeholder="Search pets..."
@@ -397,11 +437,7 @@ const HomePage = () => {
                   </div>
                 }
               >
-                <div
-                  className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-16 m-0 md:m-12 ${
-                    isLoading ? "opacity-50" : ""
-                  }`}
-                >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-16 m-0 md:m-12">
                   {pets.map((pet) => (
                     <PetCard key={pet.microchipID} pet={pet} />
                   ))}

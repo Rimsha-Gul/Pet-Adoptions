@@ -3,8 +3,9 @@ import moment, { Moment } from "moment";
 import loadingIcon from "../../assets/loading.gif";
 import { useEffect, useState } from "react";
 import api from "../../api";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { VisitType } from "../../types/enums";
+import { Application } from "../../types/interfaces";
 
 interface ScheduleFormProps {
   title: string;
@@ -30,11 +31,36 @@ export const ScheduleForm = ({
   const [isDateValid, setDateValid] = useState<boolean>(false);
   const [isTimeValid, setTimeValid] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
-  const location = useLocation();
-  const [application, setApplication] = useState(location.state?.application);
+  const [application, setApplication] = useState<Application | null>(null);
   const [isLoadingApplication, setIsLoadingApplication] =
     useState<boolean>(true);
   const { id } = useParams();
+
+  useEffect(() => {
+    const fetchApplication = async () => {
+      try {
+        setIsLoadingApplication(true);
+        const endpoint =
+          visitType === VisitType.Home
+            ? "/application/"
+            : "/shelter/application/";
+        const response = await api.get(endpoint, {
+          params: {
+            id: id,
+          },
+        });
+        setApplication(response.data.application);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoadingApplication(false);
+      }
+    };
+
+    if (id && !application) {
+      fetchApplication();
+    }
+  }, [id, application]);
 
   useEffect(() => {
     setIsDisabled(!isDateValid || !isTimeValid || isLoading);
@@ -46,8 +72,8 @@ export const ScheduleForm = ({
 
     const emailSentTimestamp =
       visitType === VisitType.Home
-        ? application.homeVisitEmailSentDate
-        : application.shelterVisitEmailSentDate;
+        ? application?.homeVisitEmailSentDate
+        : application?.shelterVisitEmailSentDate;
     const emailSentTime = moment(emailSentTimestamp);
     const oneWeekFromEmailSent = emailSentTime
       .clone()
@@ -85,36 +111,12 @@ export const ScheduleForm = ({
     handleTimeChange(time);
   };
 
-  useEffect(() => {
-    const fetchApplication = async () => {
-      try {
-        setIsLoadingApplication(true);
-        const endpoint =
-          visitType === VisitType.Home
-            ? "/application/"
-            : "/shelter/application/";
-        const response = await api.get(endpoint, {
-          params: {
-            id: id,
-          },
-        });
-        setApplication(response.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoadingApplication(false);
-      }
-    };
-
-    if (id && !application) {
-      fetchApplication();
-    }
-  }, [id, application]);
   console.log(application);
-  const visitScheduled =
-    application &&
-    ((visitType === VisitType.Home && application.homeVisitDate) ||
-      (visitType === VisitType.Shelter && application.shelterVisitDate));
+  const visitScheduled: boolean = application
+    ? (visitType === VisitType.Home && Boolean(application.homeVisitDate)) ||
+      (visitType === VisitType.Shelter && Boolean(application.shelterVisitDate))
+    : false;
+
   console.log(visitScheduled);
 
   if (isLoadingApplication) {
@@ -193,7 +195,9 @@ export const ScheduleForm = ({
             </div>
             <button
               className={`group relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-md font-medium rounded-md text-white hover:text-primary bg-primary hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-primary ${
-                isLoading ? "bg-primary text-white cursor-not-allowed" : ""
+                isLoading
+                  ? "bg-primary text-white cursor-not-allowed items-center"
+                  : ""
               } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
               type="submit"
               disabled={isDisabled}
