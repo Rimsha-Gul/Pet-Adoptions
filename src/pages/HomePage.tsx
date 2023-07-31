@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import api from "../api";
 import { AppContext } from "../context/AppContext";
 import loadingIcon from "../assets/loading.gif";
@@ -6,7 +6,6 @@ import Select from "react-select";
 import { FaSearch } from "react-icons/fa";
 import PetCard from "../components/PetComponents/PetCard";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { debounce } from "lodash";
 
 export interface Pet {
   shelterId: number;
@@ -97,7 +96,7 @@ const HomePage = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-
+  const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined);
   const [filterOption, setFilterOption] = useState<string>("");
   const [prevFilterOption, setPrevFilterOption] = useState<string>("");
   const [prevSearchQuery, setPrevSearchQuery] = useState<string>("");
@@ -158,15 +157,24 @@ const HomePage = () => {
     }
   }, [filterOption]);
 
-  // Function to debounce the setting of the search query
-  const debouncedSetSearchQuery = useCallback(
-    debounce((query) => setDebouncedSearchQuery(query), 500),
-    []
-  );
-
+  /// This effect is responsible for managing the debounce
   useEffect(() => {
-    debouncedSetSearchQuery(searchQuery);
-  }, [searchQuery, debouncedSetSearchQuery]);
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
+
+    const id = window.setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    setTimeoutId(id);
+
+    return () => {
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [searchQuery]);
 
   useEffect(() => {
     console.log("useEffect called");

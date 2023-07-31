@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { getStatusIcon } from "../utils/getStatusIcon";
@@ -8,7 +8,6 @@ import { Application } from "../types/interfaces";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Select from "react-select";
 import { FaSearch } from "react-icons/fa";
-import { debounce } from "lodash";
 
 const accessToken = localStorage.getItem("accessToken");
 api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
@@ -44,7 +43,7 @@ const ViewApplications = () => {
   const navigate = useNavigate();
   const [applicationsLoadingError, setApplicationsLoadingError] =
     useState<string>("");
-
+  const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined);
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false);
@@ -61,15 +60,24 @@ const ViewApplications = () => {
     //console.log("Updated applications:", applications);
   }, [applications]);
 
-  // Function to debounce the setting of the search query
-  const debouncedSetSearchQuery = useCallback(
-    debounce((query) => setDebouncedSearchQuery(query), 500),
-    []
-  );
-
+  // This effect is responsible for managing the debounce
   useEffect(() => {
-    debouncedSetSearchQuery(searchQuery);
-  }, [searchQuery, debouncedSetSearchQuery]);
+    if (timeoutId !== null) {
+      window.clearTimeout(timeoutId);
+    }
+
+    const id = window.setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    setTimeoutId(id);
+
+    return () => {
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+    };
+  }, [searchQuery]);
 
   useEffect(() => {
     fetchApplications(currentPage);
@@ -264,9 +272,7 @@ const ViewApplications = () => {
                             key={index}
                             className="flex flex-row hover:bg-gray-100 shadow-md p-4 flex flex-col justify-center items-center hover:cursor-pointer hover:shadow-primary transform transition-all duration-300 hover:scale-[1.01] rounded-lg"
                             onClick={() =>
-                              navigate(`/view/application/${application.id}`, {
-                                state: { application },
-                              })
+                              navigate(`/view/application/${application.id}`)
                             }
                           >
                             <div className="w-full grid grid-cols-4 items-center justify-evenly gap-4">
