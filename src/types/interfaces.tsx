@@ -1,9 +1,19 @@
 import { Status } from "./enums";
 
+export interface User {
+  profilePhoto: string | File;
+  name: string;
+  email: string;
+  address: string;
+  bio: string;
+  canReview?: boolean;
+}
+
 export interface Application {
   id: string;
   status: Status;
   submissionDate: string;
+  shelterID: string;
   shelterName: string;
   microchipID: string;
   petImage: string;

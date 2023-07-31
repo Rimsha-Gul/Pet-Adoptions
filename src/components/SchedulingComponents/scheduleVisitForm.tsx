@@ -4,8 +4,10 @@ import loadingIcon from "../../assets/loading.gif";
 import { useEffect, useState } from "react";
 import api from "../../api";
 import { useParams } from "react-router-dom";
-import { VisitType } from "../../types/enums";
+import { Status, VisitType } from "../../types/enums";
 import { Application } from "../../types/interfaces";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { BiTime } from "react-icons/bi";
 
 interface ScheduleFormProps {
   title: string;
@@ -31,6 +33,7 @@ export const ScheduleForm = ({
   const [isDateValid, setDateValid] = useState<boolean>(false);
   const [isTimeValid, setTimeValid] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const [canSchedule, setCanSchedule] = useState<boolean>(true);
   const [application, setApplication] = useState<Application | null>(null);
   const [isLoadingApplication, setIsLoadingApplication] =
     useState<boolean>(true);
@@ -63,8 +66,31 @@ export const ScheduleForm = ({
   }, [id, application]);
 
   useEffect(() => {
+    const canScheduleYet =
+      visitType === VisitType.Home
+        ? Boolean(application?.status === Status.HomeVisitRequested)
+        : Boolean(application?.status === Status.HomeApproved);
+    setCanSchedule(canScheduleYet);
+    console.log(canScheduleYet);
+  }, [application]);
+
+  useEffect(() => {
     setIsDisabled(!isDateValid || !isTimeValid || isLoading);
   }, [isDateValid, isTimeValid, isLoading]);
+
+  const CustomDateInput = (props: any) => (
+    <div className="flex flex-row">
+      <input {...props} className="flex-grow" />
+      <FaRegCalendarAlt color="#ff5363" size={16} className="mr-2" />
+    </div>
+  );
+
+  const CustomTimeInput = (props: any) => (
+    <div className="flex flex-row">
+      <input {...props} className="flex-grow" />
+      <BiTime color="#ff5363" size={20} className="mr-2" />
+    </div>
+  );
 
   const validateDateTime = (date: string | Moment, time: string | Moment) => {
     const dateMoment = typeof date === "string" ? moment(date) : date;
@@ -87,7 +113,8 @@ export const ScheduleForm = ({
     const isTimeValid = dateMoment.isSame(emailSentTime, "day")
       ? timeMoment.isAfter(twentyFourHoursFromEmailSent)
       : true;
-
+    console.log("isDateValid", isDateValid);
+    console.log("isTimeValid", isTimeValid);
     return isDateValid && isTimeValid;
   };
 
@@ -111,19 +138,32 @@ export const ScheduleForm = ({
     handleTimeChange(time);
   };
 
-  console.log(application);
+  // console.log(application);
   const visitScheduled: boolean = application
     ? (visitType === VisitType.Home && Boolean(application.homeVisitDate)) ||
       (visitType === VisitType.Shelter && Boolean(application.shelterVisitDate))
     : false;
 
-  console.log(visitScheduled);
+  //console.log(visitScheduled);
 
   if (isLoadingApplication) {
     return (
       <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
         <div className="flex items-center justify-center mb-8">
           <img src={loadingIcon} alt="Loading" className="h-10 w-10" />
+        </div>
+      </div>
+    );
+  } else if (!canSchedule) {
+    return (
+      <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
+        <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
+          <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
+            {title}
+          </h2>
+          <p className="text-gray-700 text-xl font-medium text-center">
+            You cannot schedule a visit for this application yet.
+          </p>
         </div>
       </div>
     );
@@ -162,6 +202,7 @@ export const ScheduleForm = ({
                 Date:
               </label>
               <Datetime
+                renderInput={CustomDateInput}
                 value={selectedDate}
                 onChange={handleDateChangeValidated}
                 timeFormat={false} // don't need time selection
@@ -185,6 +226,7 @@ export const ScheduleForm = ({
                 Time:
               </label>
               <Datetime
+                renderInput={CustomTimeInput}
                 value={selectedTime}
                 onChange={handleTimeChangeValidated}
                 dateFormat={false} // don't need date selection

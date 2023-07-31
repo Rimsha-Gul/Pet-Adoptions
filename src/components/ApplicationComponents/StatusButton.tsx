@@ -6,7 +6,7 @@ import {
   getNextUserStatus,
 } from "../../utils/getNextStatus";
 import loadingIcon from "../../assets/loading.gif";
-import moment from "moment";
+import { isVisitDateReached } from "../../utils/isVisitDateReached";
 
 interface StatusButtonProps {
   status: Status;
@@ -33,17 +33,8 @@ export const StatusButton = ({
 }: StatusButtonProps) => {
   const navigate = useNavigate();
 
-  // Get the current date.
-  const currentDate = moment().utc();
-  console.log(currentDate);
-
-  // Parse visitDate as a UTC time.
-  const visitDateObj = moment.utc(visitDate);
-  console.log(visitDateObj);
-
-  // Check if the shelterVisitDate has been reached.
-  const isVisitDateReached = currentDate.isSameOrAfter(visitDateObj);
-  console.log(isVisitDateReached);
+  // Check if the visitDate has been reached.
+  const visitDateReached = isVisitDateReached(visitDate);
 
   const handleStatusUpdate = () => {
     if (visitType === VisitType.Shelter)
@@ -83,7 +74,7 @@ export const StatusButton = ({
 
   // If the shelterVisitDate has not been reached, return null to prevent rendering the button.
   if (
-    !isVisitDateReached &&
+    !visitDateReached &&
     visitType === VisitType.Home &&
     (status === Status.HomeVisitScheduled ||
       status === Status.UserVisitScheduled)

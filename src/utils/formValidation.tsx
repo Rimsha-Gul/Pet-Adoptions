@@ -200,6 +200,24 @@ export const validateField = (
       }
       return "";
     },
+    rating: (value) => {
+      if (!value) {
+        return "Rating is required";
+      }
+      if (parseInt(value) < 1 || parseInt(value) > 5) {
+        return "Rating should be between 1 and 5";
+      }
+      return "";
+    },
+    review: (value) => {
+      if (!value) {
+        return "Review is required";
+      }
+      if (value.length < 10) {
+        return "Review should be at least 10 characters long";
+      }
+      return "";
+    },
   };
 
   const validationRule = validationRules[id];
