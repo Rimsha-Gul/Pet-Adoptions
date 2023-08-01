@@ -12,7 +12,6 @@ import { Application } from "../../types/interfaces";
 import ApplicationGroupedFields from "./ApplicationDetails";
 import { applicationGroups } from "../../constants/groups";
 import { BiLinkExternal } from "react-icons/bi";
-import { isVisitDateReached } from "../../utils/isVisitDateReached";
 
 const accessToken = localStorage.getItem("accessToken");
 api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
@@ -20,6 +19,7 @@ api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 const ApplicationDetailsUser = () => {
   const navigate = useNavigate();
   const [application, setApplication] = useState<Application | null>(null);
+  const [canUserReview, setCanUserReview] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   console.log(application);
 
@@ -82,7 +82,9 @@ const ApplicationDetailsUser = () => {
             id: id,
           },
         });
-        setApplication(response.data.application);
+        const { application, canReview } = response.data;
+        setCanUserReview(canReview);
+        setApplication(application);
       } catch (error) {
         console.error(error);
       } finally {
@@ -205,19 +207,18 @@ const ApplicationDetailsUser = () => {
                 />
               </>
             )}
-            {application.status === Status.UserVisitScheduled &&
-              isVisitDateReached(application.shelterVisitDate) && (
-                <button
-                  className={`group relative w-1/3 lg:w-1/5 2xl:w-1/6 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white bg-primary hover:bg-white hover:text-primary hover:ring-2 hover:ring-primary hover:ring-offset-2" ${
-                    isLoading
-                      ? `bg-primary text-white cursor-not-allowed items-center`
-                      : ""
-                  }`}
-                  onClick={handleReview}
-                >
-                  Review Shelter
-                </button>
-              )}
+            {canUserReview && (
+              <button
+                className={`group relative w-1/3 lg:w-1/5 2xl:w-1/6 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white bg-primary hover:bg-white hover:text-primary hover:ring-2 hover:ring-primary hover:ring-offset-2" ${
+                  isLoading
+                    ? `bg-primary text-white cursor-not-allowed items-center`
+                    : ""
+                }`}
+                onClick={handleReview}
+              >
+                Review Shelter
+              </button>
+            )}
           </div>
         </div>
       )}

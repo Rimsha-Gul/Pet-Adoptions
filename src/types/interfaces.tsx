@@ -6,7 +6,12 @@ export interface User {
   email: string;
   address: string;
   bio: string;
-  canReview?: boolean;
+}
+
+export interface Shelter extends User {
+  canReview: boolean;
+  rating: number;
+  numberOfReviews: number;
 }
 
 export interface Application {
@@ -39,4 +44,10 @@ export interface Application {
   shelterVisitDate?: string;
   homeVisitEmailSentDate?: string;
   shelterVisitEmailSentDate?: string;
+}
+
+export interface Review {
+  applicantName: string;
+  rating: number;
+  reviewText: string;
 }

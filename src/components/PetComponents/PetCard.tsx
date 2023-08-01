@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 interface Pet {
   microchipID: string;
-  shelterId: number;
+  shelterID: string;
   name: string;
   birthDate: string;
   color: string;
