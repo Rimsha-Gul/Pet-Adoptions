@@ -8,7 +8,7 @@ import PetCard from "../components/PetComponents/PetCard";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 export interface Pet {
-  shelterId: number;
+  shelterID: string;
   shelterName: string;
   microchipID: string;
   name: string;

@@ -493,3 +493,26 @@ export const adoptPetFields = [
     isRequired: true,
   },
 ];
+
+export const reviewFields = [
+  {
+    labelText: "Rating",
+    labelFor: "rating",
+    id: "rating",
+    name: "rating",
+    type: "number",
+    autoComplete: "off",
+    isRequired: true,
+    placeholder: "Enter your rating",
+  },
+  {
+    labelText: "Review",
+    labelFor: "review",
+    id: "review",
+    name: "review",
+    type: "text",
+    autoComplete: "off",
+    isRequired: true,
+    placeholder: "Write your review here...",
+  },
+];

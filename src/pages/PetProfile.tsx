@@ -14,7 +14,6 @@ api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 const PetProfile = () => {
   const navigate = useNavigate();
-  //const location = useLocation();
   const [pet, setPet] = useState<Pet | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { id } = useParams();
@@ -91,6 +90,7 @@ const PetProfile = () => {
             </div>
             <div className="w-full md:w-1/4">
               <PetAdoptionApply
+                petShelterID={pet.shelterID}
                 petShelterName={pet.shelterName}
                 petAdoptionFee={pet.adoptionFee}
                 handleSubmit={

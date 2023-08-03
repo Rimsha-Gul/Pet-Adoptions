@@ -1,7 +1,9 @@
 import { FormEvent, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
+import { Link } from "react-router-dom";
 
 interface PetAdoptionApplyProps {
+  petShelterID: string;
   petShelterName: string;
   petAdoptionFee: string;
   handleSubmit: (e: FormEvent) => void;
@@ -10,6 +12,7 @@ interface PetAdoptionApplyProps {
 }
 
 const PetAdoptionApply = ({
+  petShelterID,
   petShelterName,
   petAdoptionFee,
   handleSubmit,
@@ -23,7 +26,12 @@ const PetAdoptionApply = ({
     <div className="flex flex-col gap-6 max-w-9xl p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
       <p className="text-lg text-gray-500">
         <span className="text-primary font-bold">Shelter Name:</span>{" "}
-        {petShelterName}
+        <Link
+          className="hover:underline"
+          to={`/shelterProfile/${petShelterID}`}
+        >
+          {petShelterName}
+        </Link>
       </p>
       <p className="text-lg text-gray-500">
         <span className="text-primary font-bold">Adoption Fee:</span>{" "}

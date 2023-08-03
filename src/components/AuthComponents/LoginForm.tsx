@@ -73,6 +73,7 @@ const LoginForm = () => {
         const { tokens } = response.data;
         localStorage.setItem("accessToken", tokens.accessToken);
         localStorage.setItem("refreshToken", tokens.refreshToken);
+        console.log("go home");
         navigate("/homepage");
       }
     } catch (error: any) {

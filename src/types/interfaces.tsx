@@ -1,9 +1,24 @@
 import { Status } from "./enums";
 
+export interface User {
+  profilePhoto: string | File;
+  name: string;
+  email: string;
+  address: string;
+  bio: string;
+}
+
+export interface Shelter extends User {
+  canReview: boolean;
+  rating: number;
+  numberOfReviews: number;
+}
+
 export interface Application {
   id: string;
   status: Status;
   submissionDate: string;
+  shelterID: string;
   shelterName: string;
   microchipID: string;
   petImage: string;
@@ -29,4 +44,10 @@ export interface Application {
   shelterVisitDate?: string;
   homeVisitEmailSentDate?: string;
   shelterVisitEmailSentDate?: string;
+}
+
+export interface Review {
+  applicantName: string;
+  rating: number;
+  reviewText: string;
 }

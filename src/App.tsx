@@ -12,12 +12,15 @@ function App() {
   const appContext = useContext(AppContext);
   const [authStatusChecked, setAuthStatusChecked] = useState(false);
   const { isSidebarOpen } = useContext(SidebarContext);
+  let isLoading;
   useEffect(() => {
     setAuthStatusChecked(true);
   }, [appContext.loggedIn]);
 
+  useEffect(() => {
+    isLoading = appContext.isLoading;
+  }, [appContext.isLoading]);
   const isAuthenticated = appContext.loggedIn;
-  const isLoading = appContext.isLoading;
   console.log(isAuthenticated);
 
   const handleLogout = async () => {

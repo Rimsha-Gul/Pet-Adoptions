@@ -122,8 +122,6 @@ const AppContextProvider = (props: { children: ReactNode }) => {
               });
             } catch (err) {
               setLoggedIn(false);
-              localStorage.removeItem("accessToken");
-              localStorage.removeItem("refreshToken");
             }
           }
           return Promise.reject(error);
