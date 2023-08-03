@@ -24,6 +24,7 @@ import InviteShelter from "../pages/InviteShelter";
 import ScheduleHomeVisit from "../pages/ScheduleHomeVisit";
 import ScheduleShelterVisit from "../pages/ScheduleShelterVisit";
 import ShelterProfile from "../pages/ShelterProfile";
+import ShelterInvitation from "../pages/ShelterInvitation";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -144,6 +145,10 @@ export const getRoutes = (
     {
       path: "/shelterProfile/:id",
       element: renderProtectedRoute(ShelterProfile),
+    },
+    {
+      path: "/shelter/invitation/:invitationToken",
+      element: <ShelterInvitation />,
     },
   ];
 };

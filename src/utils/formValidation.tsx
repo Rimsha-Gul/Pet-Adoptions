@@ -127,6 +127,8 @@ export const validateField = (
       return "";
     },
     images: (value) => {
+      console.log(value);
+
       if (!value || parseInt(value) === 0) {
         return "Choose at least one image";
       }

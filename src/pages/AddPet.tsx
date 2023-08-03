@@ -250,10 +250,19 @@ const AddPet = () => {
         showSuccessAlert(
           "The pet has been added successfully.",
           () =>
-            navigate(`/pet/${encodeURIComponent(pet.microchipID)}`, {
+            navigate(`/pet/${addPetData.microchipID}`, {
               state: pet,
             }),
-          () => navigate("/addpet"),
+          () => {
+            // Get the current URL path
+            const path = window.location.pathname;
+
+            // Check whether the current page is the application page
+            if (!path.includes(`/pet/${addPetData.microchipID}`)) {
+              // If it's not, navigate to the pet page
+              navigate("/addpet");
+            }
+          },
           '<a href id="navigatePet">View the pet\'s profile page</a><style>#navigatePet:hover { text-decoration: underline; }</style>',
           "navigatePet"
         );

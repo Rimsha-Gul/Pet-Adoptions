@@ -1,5 +1,10 @@
 import { Status } from "./enums";
 
+export interface SignupFormProps {
+  initialEmail?: string;
+  initialRole?: string;
+}
+
 export interface User {
   profilePhoto: string | File;
   name: string;

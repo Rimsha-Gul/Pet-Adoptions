@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Review, Shelter } from "../types/interfaces";
 import api from "../api";
 import { useParams } from "react-router-dom";
@@ -8,6 +8,9 @@ import { FieldsState } from "../types/common";
 import { reviewFields } from "../constants/formFields";
 import { showErrorAlert, showSuccessAlert } from "../utils/alert";
 import loadingIcon from "../assets/loading.gif";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { UserRole } from "../types/enums";
+import { AppContext } from "../context/AppContext";
 
 const fields = reviewFields;
 let fieldsState: FieldsState = {};
@@ -32,6 +35,11 @@ const ShelterProfile = () => {
   };
   const [shelter, setShelter] = useState<Shelter | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false);
+  const appContext = useContext(AppContext);
+  const userRole = appContext.userRole;
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -49,10 +57,15 @@ const ShelterProfile = () => {
         const reviewsResponse = await api.get("/review/all", {
           params: {
             id: id,
+            page: 1,
+            limit: 3,
           },
         });
         console.log(reviewsResponse);
-        setReviews(reviewsResponse.data.reviews);
+        const { reviews, totalPages } = reviewsResponse.data;
+        setReviews(reviews);
+        setTotalPages(totalPages);
+        setCurrentPage(1);
       } catch (error: any) {
         console.log(error);
       } finally {
@@ -62,6 +75,39 @@ const ShelterProfile = () => {
 
     if (id && !shelter) fetchUserData();
   }, [id, shelter]);
+
+  const loadMoreData = async () => {
+    console.log("Load more reviews");
+    //console.log("currentPage", currentPage);
+    if (currentPage < totalPages) {
+      try {
+        setIsMoreLoading(true);
+        const nextPage = currentPage + 1;
+        //console.log("nextPage", nextPage);
+
+        // Fetch the next page of data
+        const response = await api.get("/review/all", {
+          params: {
+            id: id,
+            page: nextPage,
+            limit: 3,
+          },
+        });
+        //console.log(response.data);
+        const { reviews: newReviews, totalPages } = response.data;
+
+        // Append the new reviews to the existing reviews
+        setReviews((prevReviews) => [...prevReviews, ...newReviews]);
+        setCurrentPage(nextPage);
+        setTotalPages(totalPages);
+        console.log("Updated reviews:", reviews);
+      } catch (error: any) {
+        console.error(error.response.status);
+      } finally {
+        setIsMoreLoading(false);
+      }
+    }
+  };
 
   const handleReview = () => {
     console.log("Review");
@@ -177,7 +223,7 @@ const ShelterProfile = () => {
               <p className="w-2/3 text-xl text-gray-600 whitespace-pre-line text-justify">
                 {shelter.bio}
               </p>
-              {shelter.canReview && (
+              {shelter.canReview && userRole === UserRole.User && (
                 <button
                   className={`mt-8 group relative w-1/3 lg:w-1/5 2xl:w-1/6 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white bg-primary hover:bg-white hover:text-primary hover:ring-2 hover:ring-primary hover:ring-offset-2" ${
                     isLoading
@@ -302,25 +348,43 @@ const ShelterProfile = () => {
                   {shelter.numberOfReviews > 1 ? "reviews" : "review"}
                 </p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {reviews.map((review) => (
-                  <div
-                    key={review.applicantName}
-                    className="border rounded-lg p-4 mb-4 bg-secondary-10 shadow-lg rounded-md self-start"
-                  >
-                    <h3 className="text-xl font-semibold">
-                      {review.applicantName}
-                    </h3>
-                    <StarRatings
-                      rating={review.rating}
-                      starDimension="20px"
-                      starSpacing="5px"
-                      starRatedColor="gold"
-                    />
-                    <p className="mt-2 text-justify">{review.reviewText}</p>
-                  </div>
-                ))}
-              </div>
+              <InfiniteScroll
+                dataLength={reviews.length}
+                next={loadMoreData}
+                hasMore={currentPage < totalPages}
+                loader={
+                  isMoreLoading && (
+                    <div className="flex items-center justify-center" key={0}>
+                      <img
+                        src={loadingIcon}
+                        alt="Loading"
+                        className="mt-2 h-10 w-10"
+                      />
+                    </div>
+                  )
+                }
+                className="overflow-hidden p-2"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {reviews.map((review) => (
+                    <div
+                      key={review.applicantName}
+                      className="border rounded-lg p-4 mb-4 bg-secondary-10 shadow-lg rounded-md"
+                    >
+                      <h3 className="text-xl font-semibold">
+                        {review.applicantName}
+                      </h3>
+                      <StarRatings
+                        rating={review.rating}
+                        starDimension="20px"
+                        starSpacing="5px"
+                        starRatedColor="gold"
+                      />
+                      <p className="mt-2 text-justify">{review.reviewText}</p>
+                    </div>
+                  ))}
+                </div>
+              </InfiniteScroll>
             </div>
           )}
         </div>

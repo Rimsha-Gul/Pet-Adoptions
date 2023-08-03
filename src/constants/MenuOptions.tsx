@@ -1,29 +1,35 @@
 export const headerLinks = [
   { to: "/applications", label: "View Applications" },
-  { to: "/userprofile", label: "Profile & Settings" },
+  { to: "/userProfile", label: "Profile & Settings" },
   { to: "/", label: "Logout" },
 ];
 
 export const sidebarLinks = [
   {
-    to: "/userprofile",
+    to: "/userProfile",
     label: "Profile",
   },
   {
     divider: true,
     admin: true,
+    shelter: true,
   },
   {
     heading: "Admin Tasks",
     admin: true,
   },
   {
+    heading: "Shelter Tasks",
+    shelter: true,
+  },
+  {
     to: "/addpet",
     label: "Add a pet",
     admin: true,
+    shelter: true,
   },
   {
-    to: "/inviteshelter",
+    to: "/inviteShelter",
     label: "Invite a shelter",
     admin: true,
   },

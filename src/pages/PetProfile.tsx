@@ -42,12 +42,7 @@ const PetProfile = () => {
   console.log(pet);
 
   const handleAdoptionApply = () => {
-    navigate(
-      `/adoptionApplication/${encodeURIComponent(pet?.microchipID || "")}`,
-      {
-        state: { pet },
-      }
-    );
+    navigate(`/adoptionApplication/${pet?.microchipID || ""}`);
   };
 
   const handleViewApplication = () => {

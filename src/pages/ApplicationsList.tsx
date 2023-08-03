@@ -144,7 +144,7 @@ const ViewApplications = () => {
           applicationStatuses,
         } = response.data;
 
-        // Append the new pets to the existing pets
+        // Append the new applications to the existing applications
         setApplications((prevApps) => [...prevApps, ...newApplicatiions]);
         setCurrentPage(nextPage);
         setTotalPages(totalPages);
