@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../api";
 import NewPassword from "../components/SettingsComponents/NewPassword";
 import VerifyCurrentPassword from "../components/SettingsComponents/VerifyCurrentPassword";
+import { RequestType } from "../types/enums";
 
 const ChangePassword = () => {
   const [userCurrentPassword, setUserCurrentPassword] = useState("");
@@ -43,7 +44,11 @@ const ChangePassword = () => {
   };
 
   return isPasswordVerified ? (
-    <NewPassword verificationCodeError={verificationCodeError} />
+    <NewPassword
+      requestType={RequestType.changePassword}
+      buttonText={RequestType.changePassword}
+      verificationCodeError={verificationCodeError}
+    />
   ) : (
     <VerifyCurrentPassword
       onSubmit={handlePasswordVerification}

@@ -8,6 +8,7 @@ import { Application } from "../types/interfaces";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Select from "react-select";
 import { FaSearch } from "react-icons/fa";
+import { UserRole } from "../types/enums";
 
 const accessToken = localStorage.getItem("accessToken");
 api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
@@ -215,9 +216,15 @@ const ViewApplications = () => {
         {!applicationsLoadingError && (
           <>
             {noApplications && !isLoading ? (
-              <p className="text-gray-700 text-xl font-medium text-center">
-                No applications found
-              </p>
+              userRole === UserRole.Shelter ? (
+                <p className="text-gray-700 text-xl font-medium text-center">
+                  No applications received yet
+                </p>
+              ) : (
+                <p className="text-gray-700 text-xl font-medium text-center">
+                  You have not applied for any pets yet
+                </p>
+              )
             ) : (
               applications &&
               !isLoading && (

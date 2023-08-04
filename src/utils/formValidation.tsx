@@ -3,7 +3,7 @@ import { FieldsState } from "../types/common";
 export const validateField = (
   id: string,
   value: string,
-  fieldsState: FieldsState,
+  fieldsState?: FieldsState,
   newValue?: string
 ): string => {
   const validationRules: Record<string, (value: string) => string> = {
@@ -29,7 +29,7 @@ export const validateField = (
       if (!value) {
         return "Confirm password is required";
       }
-      if (value != fieldsState.password) {
+      if (value != fieldsState?.password) {
         return "Passwords do not match";
       }
       return "";
@@ -145,7 +145,7 @@ export const validateField = (
       return "";
     },
     childrenAges: (value) => {
-      console.log(fieldsState.hasChildren);
+      console.log(fieldsState?.hasChildren);
       console.log(newValue);
       const childrenValue = newValue;
       if (childrenValue === "true") {
@@ -156,7 +156,7 @@ export const validateField = (
       return "";
     },
     otherPetsInfo: (value) => {
-      if (fieldsState.otherPets === "true") {
+      if (fieldsState?.otherPets === "true") {
         if (!value) {
           return "Other pets info is required";
         }

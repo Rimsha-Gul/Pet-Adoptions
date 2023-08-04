@@ -4,7 +4,7 @@ import Input from "./Input";
 import { FieldsState } from "../../types/common";
 import FormAction from "./FormAction";
 import api from "../../api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import { validateField } from "../../utils/formValidation";
 
@@ -95,8 +95,8 @@ const LoginForm = () => {
   };
 
   return (
-    <form className="mx-auto md:w-full px-8 lg:px-16 xl:px-4 xl:w-2/3 space-y-8 mt-8">
-      <div className="-space-y-px">
+    <form className="mx-auto md:w-full px-8 lg:px-16 xl:px-4 xl:w-2/3 mt-8">
+      <div className="space-y-6">
         {fields.map((field) => (
           <Input
             key={field.id}
@@ -113,6 +113,14 @@ const LoginForm = () => {
             validationError={errors[field.id]}
           />
         ))}
+      </div>
+      <div className="text-right">
+        <Link
+          to="/resetPasswordRequest"
+          className="text-primary text-sm hover:underline"
+        >
+          Forgot password?
+        </Link>
       </div>
       <FormAction
         handleSubmit={handleSubmit}

@@ -8,17 +8,26 @@ import Loading from "../../pages/Loading";
 import { changePasswordFields } from "../../constants/formFields";
 import { FieldsState } from "../../types/common";
 import api from "../../api";
+import { RequestType } from "../../types/enums";
 
 const fields = changePasswordFields;
 let fieldsState: FieldsState = {};
 fields.forEach((field) => (fieldsState[field.id] = ""));
 
 interface PasswordComponentProps {
-  verificationCodeError: string;
+  requestType: RequestType;
+  buttonText: string;
+  verificationCodeError?: string;
+  email?: string;
 }
 
 // component for entering a new password and confirm new password
-const NewPassword = ({ verificationCodeError }: PasswordComponentProps) => {
+const NewPassword = ({
+  requestType,
+  buttonText,
+  verificationCodeError,
+  email,
+}: PasswordComponentProps) => {
   const navigate = useNavigate();
   const [changePasswordState, setChangePasswordState] =
     useState<FieldsState>(fieldsState);
@@ -73,12 +82,15 @@ const NewPassword = ({ verificationCodeError }: PasswordComponentProps) => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log(changePasswordState);
-    changePassword();
+    requestType === RequestType.changePassword
+      ? changePassword()
+      : resetPassword();
   };
 
   const changePassword = async () => {
     try {
       setIsLoading(true);
+
       const accessToken = localStorage.getItem("accessToken");
       console.log(accessToken);
 
@@ -86,6 +98,34 @@ const NewPassword = ({ verificationCodeError }: PasswordComponentProps) => {
       const response = await api.put("/auth/changePassword", {
         password: changePasswordState.password,
       });
+
+      setShowBlankScreen(true);
+      // show success alert
+      showSuccessAlert(response.data.message, undefined, () =>
+        navigate("/userProfile")
+      );
+    } catch (error: any) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password: error.response.data,
+      }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetPassword = async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await api.put(
+        "/auth/resetPassword",
+        {
+          email: email,
+          newPassword: changePasswordState.password,
+        },
+        { headers: { Authorization: "" } }
+      );
 
       setShowBlankScreen(true);
       // show success alert
@@ -131,7 +171,7 @@ const NewPassword = ({ verificationCodeError }: PasswordComponentProps) => {
             </div>
             <FormAction
               handleSubmit={handleSubmit}
-              text="Change Password"
+              text={buttonText}
               isLoading={isLoading}
               disabled={!isFormValid}
               customClass="w-full mt-0"

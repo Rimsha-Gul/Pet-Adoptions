@@ -25,6 +25,8 @@ import ScheduleHomeVisit from "../pages/ScheduleHomeVisit";
 import ScheduleShelterVisit from "../pages/ScheduleShelterVisit";
 import ShelterProfile from "../pages/ShelterProfile";
 import ShelterInvitation from "../pages/ShelterInvitation";
+import ResetPasswordRequest from "../pages/ResetPasswordRequest";
+import ResetPassword from "../pages/ResetPassword";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -150,5 +152,10 @@ export const getRoutes = (
       path: "/shelter/invitation/:invitationToken",
       element: <ShelterInvitation />,
     },
+    {
+      path: "/resetPasswordRequest",
+      element: <ResetPasswordRequest />,
+    },
+    { path: "/resetPassword/:resetToken", element: <ResetPassword /> },
   ];
 };
