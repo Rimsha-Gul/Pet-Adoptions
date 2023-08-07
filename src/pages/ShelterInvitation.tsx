@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 import loadingIcon from "../assets/loading.gif";
+import { AppContext } from "../context/AppContext";
 
 const ShelterInvitation = () => {
+  const appContext = useContext(AppContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [verificationError, setVerificationError] = useState<string>("");
@@ -19,18 +21,17 @@ const ShelterInvitation = () => {
           params: { invitationToken },
         });
 
-        if (response.status === 200) {
-          // On successful verification, navigate to the signup page with email and role
-          console.log(response.data);
-          navigate("/signup", {
-            state: { email: response.data.email, role: "SHELTER" },
-          });
-        } else {
-          // Handle failure (e.g., show an error message)
-        }
+        // On successful verification, navigate to the signup page with email and role
+        console.log(response.data);
+        navigate("/signup", {
+          state: { email: response.data.email, role: "SHELTER" },
+        });
       } catch (error: any) {
         setVerificationError(error.response.data);
-        // Handle error (e.g., show an error message)
+        if (error.response.status === 409 && error.response.data.email) {
+          appContext.setUserEmail?.(error.response.data.email);
+          navigate("/verifyemail");
+        }
       } finally {
         setIsLoading(false);
       }

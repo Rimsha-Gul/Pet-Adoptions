@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import api from "../api";
 import loadingIcon from "../assets/loading.gif";
 import NewPassword from "../components/SettingsComponents/NewPassword";
 import { RequestType } from "../types/enums";
 
 const ResetPassword = () => {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [verificationError, setVerificationError] = useState<string>("");
   const [isTokenVerified, setIsTokenVerified] = useState<boolean>(false);
@@ -23,20 +22,13 @@ const ResetPassword = () => {
           params: { resetToken },
         });
 
-        if (response.status === 200) {
-          // On successful verification, navigate to the signup page with email and role
-          const { email } = response.data;
-          setEmail(email);
-          setIsTokenVerified(true);
-          //   navigate("/signup", {
-          //     state: { email: response.data.email, role: "SHELTER" },
-          //   });
-        } else {
-          // Handle failure (e.g., show an error message)
-        }
+        const { email } = response.data;
+        setEmail(email);
+        setIsTokenVerified(true);
       } catch (error: any) {
-        setVerificationError(error.response.data);
-        // Handle error (e.g., show an error message)
+        setVerificationError(
+          "Your password reset token is invalid or has expired. Please request a new one."
+        );
       } finally {
         setIsLoading(false);
       }

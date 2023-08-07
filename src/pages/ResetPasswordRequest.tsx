@@ -5,12 +5,14 @@ import { FieldsState } from "../types/common";
 import FormAction from "../components/AuthComponents/FormAction";
 import { validateField } from "../utils/formValidation";
 import api from "../api";
+import { showSuccessAlert } from "../utils/alert";
 
 const ResetPasswordRequest = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [isRequestSent, setIsRequestSent] = useState<boolean>(false);
   const [errors, setErrors] = useState<FieldsState>({
     email: "Email is required",
   });
@@ -40,12 +42,6 @@ const ResetPasswordRequest = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // Here you'd make an API request to your backend with the email
-    // After receiving a successful response from your backend, you can display a message to the user
-    // setMessage(
-    //   `A password reset link has been sent to ${email}. Please check your email.`
-    // );
-    // setEmail("");
     requestForPasswordReset();
   };
 
@@ -63,12 +59,23 @@ const ResetPasswordRequest = () => {
       );
 
       console.log(response.data);
+      showSuccessAlert(
+        "Please check your email inbox for a link to complete the reset.",
+        undefined,
+        () => {
+          setIsRequestSent(true);
+        }
+      );
     } catch (error: any) {
       if (error.response.status === 404) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           email: "User not found.",
         }));
+      } else if (error.response.status === 400) {
+        setMessage(
+          "Your password reset token is invalid or has expired. Please request a new one."
+        );
       } else console.log(error);
     } finally {
       setIsLoading(false);
@@ -78,11 +85,7 @@ const ResetPasswordRequest = () => {
   return (
     <div className="bg-radial-gradient min-h-screen flex flex-col justify-center items-center p-16 lg:px-18 xl:px-32 2xl:px-72">
       <div className="grid md:grid-cols-2 w-full">
-        <LogoSection
-          paragraph="Don't have an account yet?"
-          linkName="Signup"
-          linkUrl="/signup"
-        />
+        <LogoSection />
         <div className="bg-white rounded-lg shadow-md px-12 pb-12 md:py-12 md:px-4 md:rounded-l-none">
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-700">
             Reset Password
@@ -107,13 +110,14 @@ const ResetPasswordRequest = () => {
                 placeholder={"Email"}
                 customClass=""
                 validationError={errors["email"]}
+                readOnly={isLoading || isRequestSent}
               />
             </div>
             <FormAction
               handleSubmit={handleSubmit}
               text="Request"
               isLoading={isLoading}
-              disabled={!isFormValid}
+              disabled={!isFormValid || isRequestSent}
               customClass="w-full"
             />
           </form>
