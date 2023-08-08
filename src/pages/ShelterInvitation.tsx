@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 import loadingIcon from "../assets/loading.gif";
 import { AppContext } from "../context/AppContext";
+import { showInfoAlert } from "../utils/alert";
 
 const ShelterInvitation = () => {
   const appContext = useContext(AppContext);
@@ -15,6 +16,14 @@ const ShelterInvitation = () => {
   console.log(invitationToken);
 
   useEffect(() => {
+    console.log(appContext.loggedIn);
+    if (appContext.loggedIn === true) {
+      showInfoAlert(
+        "You are currently logged in from another account. Please log out and click the invitation link again to proceed further"
+      );
+      setIsLoading(false);
+      return;
+    }
     const verifyInvitation = async () => {
       try {
         const response = await api.get(`/shelter/verifyInvitationToken`, {

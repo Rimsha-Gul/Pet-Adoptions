@@ -41,3 +41,13 @@ export const showSuccessAlert = (
     },
   });
 };
+
+export const showInfoAlert = (message: string) => {
+  Swal.fire({
+    title: "Attention!",
+    text: message,
+    icon: "info",
+    confirmButtonText: '<p class="px-8"></p> OK',
+    confirmButtonColor: "#ff5363", // Choose a neutral color
+  });
+};
