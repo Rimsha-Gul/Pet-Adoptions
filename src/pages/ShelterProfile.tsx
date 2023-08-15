@@ -8,9 +8,9 @@ import { FieldsState } from "../types/common";
 import { reviewFields } from "../constants/formFields";
 import { showErrorAlert, showSuccessAlert } from "../utils/alert";
 import loadingIcon from "../assets/loading.gif";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { UserRole } from "../types/enums";
 import { AppContext } from "../context/AppContext";
+import ReviewList from "../components/ShelterComponents/ReviewsList";
 
 const fields = reviewFields;
 let fieldsState: FieldsState = {};
@@ -334,58 +334,14 @@ const ShelterProfile = () => {
             </div>
           )}
           {reviews.length > 0 && (
-            <div className="w-full lg:w-3/4 xl:w-2/3 mb-8 px-16">
-              <h2 className="text-2xl font-bold mb-4">Reviews</h2>
-              <div className="flex flex-row gap-4 mb-4">
-                <StarRatings
-                  rating={shelter.rating}
-                  starDimension="20px"
-                  starSpacing="5px"
-                  starRatedColor="gold"
-                />
-                <p className="text-lg text-gray-600">
-                  {shelter.numberOfReviews}{" "}
-                  {shelter.numberOfReviews > 1 ? "reviews" : "review"}
-                </p>
-              </div>
-              <InfiniteScroll
-                dataLength={reviews.length}
-                next={loadMoreData}
-                hasMore={currentPage < totalPages}
-                loader={
-                  isMoreLoading && (
-                    <div className="flex items-center justify-center" key={0}>
-                      <img
-                        src={loadingIcon}
-                        alt="Loading"
-                        className="mt-2 h-10 w-10"
-                      />
-                    </div>
-                  )
-                }
-                className="overflow-hidden p-2"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {reviews.map((review) => (
-                    <div
-                      key={review.applicantName}
-                      className="border rounded-lg p-4 mb-4 bg-secondary-10 shadow-lg rounded-md"
-                    >
-                      <h3 className="text-xl font-semibold">
-                        {review.applicantName}
-                      </h3>
-                      <StarRatings
-                        rating={review.rating}
-                        starDimension="20px"
-                        starSpacing="5px"
-                        starRatedColor="gold"
-                      />
-                      <p className="mt-2 text-justify">{review.reviewText}</p>
-                    </div>
-                  ))}
-                </div>
-              </InfiniteScroll>
-            </div>
+            <ReviewList
+              reviews={reviews}
+              shelter={shelter}
+              loadMoreData={loadMoreData}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              isMoreLoading={isMoreLoading}
+            />
           )}
         </div>
       )}

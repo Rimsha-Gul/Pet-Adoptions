@@ -53,6 +53,7 @@ export interface Application {
 
 export interface Review {
   applicantName: string;
+  applicantEmail: string;
   rating: number;
   reviewText: string;
 }
