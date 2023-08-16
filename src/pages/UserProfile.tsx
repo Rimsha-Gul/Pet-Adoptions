@@ -13,10 +13,12 @@ import { MdModeEditOutline } from "react-icons/md";
 import { showSuccessAlert } from "../utils/alert";
 import { useNavigate } from "react-router-dom";
 import { User } from "../types/interfaces";
+import { UserRole } from "../types/enums";
 
 const UserProfile = () => {
   const appContext = useContext(AppContext);
   const userName = appContext.displayName;
+  const userRole = appContext.userRole;
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -290,10 +292,10 @@ const UserProfile = () => {
                   value={user.name}
                   onChange={(e) => handleInputChange(e, "name")}
                   autoFocus
-                  className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                  className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 />
               ) : (
-                <div className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
+                <div className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
                   {user.name}
                 </div>
               )}
@@ -315,11 +317,15 @@ const UserProfile = () => {
                   value={user.address}
                   onChange={(e) => handleInputChange(e, "address")}
                   autoFocus
-                  className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                  className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 />
-              ) : (
-                <div className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
+              ) : user.address ? (
+                <div className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
                   {user.address}
+                </div>
+              ) : (
+                <div className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-500 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
+                  Your Street, Your City
                 </div>
               )}
               <p className="text-red-500 text-xs mt-2">{addressError}</p>
@@ -341,11 +347,17 @@ const UserProfile = () => {
                   onChange={(e) => handleInputChange(e, "bio")}
                   autoFocus
                   rows={5}
-                  className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                  className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 />
-              ) : (
-                <div className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
+              ) : user.bio ? (
+                <div className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
                   {user.bio}
+                </div>
+              ) : (
+                <div className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-500 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
+                  {userRole === UserRole.User
+                    ? " Your background, hobbies, and what you love to do"
+                    : `Your shelter's mission and the animals you care for`}
                 </div>
               )}
             </div>

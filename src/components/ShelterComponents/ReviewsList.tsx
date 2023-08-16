@@ -52,7 +52,7 @@ const ReviewList = ({
   const [reviewState, setReviewState] = useState<FieldsState>(fieldsState);
   const reviewData = {
     shelterID: id,
-    rating: reviewState.rating,
+    rating: Number(reviewState.rating),
     reviewText: reviewState.review,
   };
 
@@ -78,6 +78,10 @@ const ReviewList = ({
 
   const handleEditClick = (review: Review) => {
     setShowReviewOption(false);
+    setReviewState({
+      rating: review.rating.toString(),
+      review: review.reviewText,
+    });
     setReview(review.reviewText);
     setRating(review.rating);
     setShowEditModal(true);
@@ -164,7 +168,7 @@ const ReviewList = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {reviews.map((review) => (
             <div
-              key={review.applicantName}
+              key={review.applicantEmail}
               className="border rounded-lg p-4 mb-4 bg-secondary-10 shadow-lg rounded-md"
             >
               <div className="flex justify-between items-center">
@@ -228,7 +232,7 @@ const ReviewList = ({
             >
               &#8203;
             </span>
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -269,7 +273,7 @@ const ReviewList = ({
                             onChange={(e) =>
                               handleChange(field.name, e.target.value)
                             }
-                            rows={3}
+                            rows={4}
                           />
                         </div>
                       )

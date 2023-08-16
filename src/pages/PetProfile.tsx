@@ -87,6 +87,7 @@ const PetProfile = () => {
               <PetAdoptionApply
                 petShelterID={pet.shelterID}
                 petShelterName={pet.shelterName}
+                petShelterRating={pet.shelterRating}
                 petAdoptionFee={pet.adoptionFee}
                 handleSubmit={
                   pet.hasAdoptionRequest
