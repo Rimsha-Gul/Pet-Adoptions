@@ -8,6 +8,7 @@ import { Status, VisitType } from "../../types/enums";
 import { Application } from "../../types/interfaces";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { BiTime } from "react-icons/bi";
+import Select from "react-select";
 
 interface ScheduleFormProps {
   title: string;
@@ -30,6 +31,32 @@ export const ScheduleForm = ({
   selectedTime,
   visitType,
 }: ScheduleFormProps) => {
+  const customStyles = {
+    control: (provided: any, state: any) => ({
+      ...provided,
+      border: state.isFocused ? "1px solid #ff5363" : "1px solid #9ca3af",
+      borderRadius: "0.375rem",
+      backgroundColor: "#fff",
+      padding: "0.5rem",
+      cursor: "pointer",
+      "&:hover": {
+        border: "1px solid #ff5363",
+      },
+    }),
+    option: (provided: any, state: { isSelected: any; isFocused: any }) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? "#ff5363" : "#fff",
+      color: state.isSelected ? "#fff" : "#000",
+      padding: "0.5rem",
+      "&:hover": {
+        backgroundColor: "#fb7a75",
+        color: "#fff",
+        cursor: "pointer",
+      },
+    }),
+  };
+
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
   const [isDateValid, setDateValid] = useState<boolean>(false);
   const [isTimeValid, setTimeValid] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
@@ -38,6 +65,12 @@ export const ScheduleForm = ({
   const [isLoadingApplication, setIsLoadingApplication] =
     useState<boolean>(true);
   const { id } = useParams();
+  const emailSentTimestamp =
+    visitType === VisitType.Home
+      ? application?.homeVisitEmailSentDate
+      : application?.shelterVisitEmailSentDate;
+  const emailSentTime = moment(emailSentTimestamp);
+  const formattedSelectedTime = moment(selectedTime).format("HH:mm A");
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -64,6 +97,43 @@ export const ScheduleForm = ({
       fetchApplication();
     }
   }, [id, application]);
+
+  useEffect(() => {
+    // Get the current date and time
+    const now = moment();
+
+    // Set to the next day
+    const initialSelectedDate = now.add(1, "days");
+
+    // Make sure the date is set to start of day to avoid time conflicts
+    initialSelectedDate.startOf("day");
+
+    // Update the state with the new initialSelectedDate
+    handleDateChange(initialSelectedDate);
+    handleDateChangeValidated(initialSelectedDate);
+  }, []);
+
+  useEffect(() => {
+    if (isDateValid && application) {
+      const fetchTimeSlots = async () => {
+        try {
+          const response = await api.get("/application/timeSlots", {
+            params: {
+              id: application.shelterID,
+              visitDate: moment(selectedDate).format("YYYY-MM-DD"),
+              visitType: visitType,
+            },
+          });
+          console.log(response.data);
+          setTimeSlots(response.data.availableTimeSlots);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchTimeSlots();
+    }
+  }, [selectedDate, isDateValid, application]);
 
   useEffect(() => {
     const canScheduleYet =
@@ -96,11 +166,6 @@ export const ScheduleForm = ({
     const dateMoment = typeof date === "string" ? moment(date) : date;
     const timeMoment = typeof time === "string" ? moment(time) : time;
 
-    const emailSentTimestamp =
-      visitType === VisitType.Home
-        ? application?.homeVisitEmailSentDate
-        : application?.shelterVisitEmailSentDate;
-    const emailSentTime = moment(emailSentTimestamp);
     const oneWeekFromEmailSent = emailSentTime
       .clone()
       .add(7, "days")
@@ -129,13 +194,17 @@ export const ScheduleForm = ({
   };
 
   const handleTimeChangeValidated = (time: string | Moment) => {
-    if (validateDateTime(moment(selectedDate), time)) {
+    const formattedTime =
+      typeof time === "string" ? moment(time, "HH:mm") : time;
+
+    if (validateDateTime(moment(selectedDate), formattedTime)) {
       setDateValid(true);
       setTimeValid(true);
     } else {
       setTimeValid(false);
     }
-    handleTimeChange(time);
+    console.log(time);
+    handleTimeChange(formattedTime);
   };
 
   // console.log(application);
@@ -145,6 +214,10 @@ export const ScheduleForm = ({
     : false;
 
   //console.log(visitScheduled);
+  const formattedTimeSlots = timeSlots.map((time) => ({
+    label: time,
+    value: time,
+  }));
 
   if (isLoadingApplication) {
     return (
@@ -210,9 +283,27 @@ export const ScheduleForm = ({
                 inputProps={{ id: "date" }}
                 isValidDate={(current) => {
                   const today = moment().startOf("day");
-                  const nextWeek = moment().add(7, "days").endOf("day");
+                  const tomorrow = moment().add(1, "days").startOf("day");
+                  const emailSentDate = moment(emailSentTime).startOf("day");
+                  const oneWeekAfterEmailSent = moment(emailSentDate)
+                    .add(7, "days")
+                    .endOf("day");
+
+                  const isValidToday = today.isSameOrBefore(
+                    oneWeekAfterEmailSent
+                  );
+
+                  if (!isValidToday) {
+                    // If today's date is more than one week after the emailSentDate,
+                    // no dates should be selectable
+                    return false;
+                  }
+
                   const isValid =
-                    current.isAfter(today) && current.isBefore(nextWeek);
+                    current.isSameOrAfter(tomorrow) &&
+                    current.isSameOrAfter(emailSentDate) &&
+                    current.isBefore(oneWeekAfterEmailSent);
+
                   return isValid;
                 }}
                 className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm cursor-pointer bg-white"
@@ -225,7 +316,18 @@ export const ScheduleForm = ({
               >
                 Time:
               </label>
-              <Datetime
+              <Select
+                className="w-52"
+                styles={customStyles}
+                options={formattedTimeSlots}
+                value={formattedTimeSlots.find(
+                  (option) => option.value === selectedTime.toString()
+                )}
+                onChange={(selectedOption: any) => {
+                  handleTimeChangeValidated(selectedOption.value);
+                }}
+              />
+              {/* <Datetime
                 renderInput={CustomTimeInput}
                 value={selectedTime}
                 onChange={handleTimeChangeValidated}
@@ -233,7 +335,7 @@ export const ScheduleForm = ({
                 closeOnSelect
                 inputProps={{ id: "time" }}
                 className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm cursor-pointer bg-white"
-              />
+              /> */}
             </div>
             <button
               className={`group relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-md font-medium rounded-md text-white hover:text-primary bg-primary hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-primary ${

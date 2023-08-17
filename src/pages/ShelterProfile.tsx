@@ -170,7 +170,6 @@ const ShelterProfile = () => {
     imageSrc = shelter.profilePhoto as string;
   }
 
-  console.log("reviews", reviews);
   return (
     <div className="bg-white mt-28 mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pb-8">
       {isLoading && (
@@ -179,7 +178,7 @@ const ShelterProfile = () => {
         </div>
       )}
       {shelter && (
-        <div className="w-full flex flex-col items-center justify-center min-h-screen py-2">
+        <div className="w-full flex flex-col items-center justify-center py-2">
           <div className="relative w-48 h-48 rounded-full mb-4">
             {imageSrc ? (
               <img
