@@ -42,12 +42,7 @@ const PetProfile = () => {
   console.log(pet);
 
   const handleAdoptionApply = () => {
-    navigate(
-      `/adoptionApplication/${encodeURIComponent(pet?.microchipID || "")}`,
-      {
-        state: { pet },
-      }
-    );
+    navigate(`/adoptionApplication/${pet?.microchipID || ""}`);
   };
 
   const handleViewApplication = () => {
@@ -92,6 +87,7 @@ const PetProfile = () => {
               <PetAdoptionApply
                 petShelterID={pet.shelterID}
                 petShelterName={pet.shelterName}
+                petShelterRating={pet.shelterRating}
                 petAdoptionFee={pet.adoptionFee}
                 handleSubmit={
                   pet.hasAdoptionRequest

@@ -100,7 +100,7 @@ export const FileInput = ({
       return updatedPreviews;
     });
     const allFiles = selectedFiles.filter((_, i) => i !== index);
-
+    console.log(allFiles.length.toString());
     const fieldError = validateField(
       "images",
       allFiles.length.toString(),

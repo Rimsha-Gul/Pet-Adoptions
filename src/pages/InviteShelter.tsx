@@ -22,7 +22,7 @@ const InviteShelter = () => {
       });
       if (response.status === 200) {
         showSuccessAlert(response.data.message, undefined, () =>
-          navigate("/userProfile")
+          navigate("/inviteShelter")
         );
       }
     } catch (error: any) {

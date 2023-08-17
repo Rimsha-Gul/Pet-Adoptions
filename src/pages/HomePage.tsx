@@ -10,6 +10,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 export interface Pet {
   shelterID: string;
   shelterName: string;
+  shelterRating: number;
   microchipID: string;
   name: string;
   birthDate: string;
@@ -90,6 +91,7 @@ const HomePage = () => {
   };
   const appContext = useContext(AppContext);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false);
   const [pets, setPets] = useState<Pet[]>([]);
   const [petsLoadingError, setPetsLoadingError] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -259,7 +261,8 @@ const HomePage = () => {
   const loadMoreData = async () => {
     if (currentPage < totalPages) {
       try {
-        setIsLoading(true);
+        setIsMoreLoading(true);
+        setPetsLoadingError("");
         const nextPage = currentPage + 1;
 
         // Fetch the next page of data
@@ -304,7 +307,7 @@ const HomePage = () => {
           setPetsLoadingError("Failed to fetch pets");
         }
       } finally {
-        setIsLoading(false);
+        setIsMoreLoading(false);
       }
     }
   };
@@ -416,10 +419,10 @@ const HomePage = () => {
           </div>
         )}
         {petsLoadingError && <p>{petsLoadingError}</p>}
-        {!petsLoadingError && (
+        {!isLoading && !petsLoadingError && (
           <>
             {noPetsFound ? (
-              <div className="flex items-center justify-center h-full">
+              <div className="flex items-center justify-center h-full mt-6">
                 <p>No pets found with the selected criteria.</p>
               </div>
             ) : (
@@ -428,13 +431,15 @@ const HomePage = () => {
                 next={loadMoreData}
                 hasMore={currentPage < totalPages}
                 loader={
-                  <div className="flex items-center justify-center" key={0}>
-                    <img
-                      src={loadingIcon}
-                      alt="Loading"
-                      className="h-10 w-10"
-                    />
-                  </div>
+                  isMoreLoading && (
+                    <div className="flex items-center justify-center" key={0}>
+                      <img
+                        src={loadingIcon}
+                        alt="Loading"
+                        className="h-10 w-10"
+                      />
+                    </div>
+                  )
                 }
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-10 gap-16 m-0 md:m-12">

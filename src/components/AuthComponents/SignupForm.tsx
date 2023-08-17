@@ -7,17 +7,25 @@ import FormAction from "./FormAction";
 import api from "../../api";
 import { AppContext } from "../../context/AppContext";
 import { validateField } from "../../utils/formValidation";
+import { SignupFormProps } from "../../types/interfaces";
 
 const fields = signupFields;
 let fieldsState: FieldsState = {};
 fields.forEach((field) => (fieldsState[field.id] = ""));
 
-const SignupForm = () => {
+const SignupForm = ({
+  initialEmail = "",
+  initialRole = "",
+}: SignupFormProps) => {
   const appContext = useContext(AppContext);
-  const [signupState, setSignupState] = useState<FieldsState>(fieldsState);
+  const [signupState, setSignupState] = useState<FieldsState>({
+    ...fieldsState,
+    email: initialEmail,
+    role: initialRole,
+  });
   const [errors, setErrors] = useState<FieldsState>({
     name: "Name is required",
-    email: "Email is required",
+    email: initialEmail !== "" ? "" : "Email is required",
     password: "Password is required",
     confirmPassword: "Confirm password is required",
   });
@@ -28,6 +36,7 @@ const SignupForm = () => {
     name: signupState.name,
     email: signupState.email,
     password: signupState.password,
+    role: initialRole !== "" ? "SHELTER" : "USER",
   };
 
   const handleChange = (e: { target: { id: any; value: any } }) => {
@@ -115,6 +124,7 @@ const SignupForm = () => {
             placeholder={field.placeholder}
             customClass=""
             validationError={errors[field.id]}
+            readOnly={initialEmail !== ""}
           />
         ))}
       </div>

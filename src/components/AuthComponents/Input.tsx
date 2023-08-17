@@ -21,6 +21,7 @@ interface InputProps {
   options?: Array<string | { label: string; value: string }>;
   showShelterID?: boolean;
   labelClassName?: string;
+  readOnly?: boolean;
 }
 
 const fixedInputClass =
@@ -48,6 +49,7 @@ const Input = ({
   options,
   showShelterID,
   labelClassName,
+  readOnly,
 }: InputProps) => {
   const customStyles = {
     control: (provided: any, state: any) => ({
@@ -254,6 +256,8 @@ const Input = ({
           name={name}
           type={inputType}
           required={isRequired}
+          readOnly={type === "email" && readOnly}
+          disabled={type === "email" && readOnly}
           className={`${fixedInputClass} ${customClass} ${
             validationError && isTouched ? "border-red-500" : ""
           }`}

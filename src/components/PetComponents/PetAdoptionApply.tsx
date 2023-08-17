@@ -1,10 +1,12 @@
 import { FormEvent, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
+import StarRatings from "react-star-ratings";
 
 interface PetAdoptionApplyProps {
   petShelterID: string;
   petShelterName: string;
+  petShelterRating: number;
   petAdoptionFee: string;
   handleSubmit: (e: FormEvent) => void;
   text: string;
@@ -14,6 +16,7 @@ interface PetAdoptionApplyProps {
 const PetAdoptionApply = ({
   petShelterID,
   petShelterName,
+  petShelterRating,
   petAdoptionFee,
   handleSubmit,
   text,
@@ -32,6 +35,14 @@ const PetAdoptionApply = ({
         >
           {petShelterName}
         </Link>
+        {petShelterRating && (
+          <StarRatings
+            rating={petShelterRating}
+            starDimension="20px"
+            starSpacing="3px"
+            starRatedColor="gold"
+          />
+        )}
       </p>
       <p className="text-lg text-gray-500">
         <span className="text-primary font-bold">Adoption Fee:</span>{" "}

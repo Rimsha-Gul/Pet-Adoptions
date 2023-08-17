@@ -1,6 +1,6 @@
 export enum UserRole {
-  User = "User",
-  Shelter = "Shelter",
+  User = "USER",
+  Shelter = "SHELTER",
 }
 
 export enum Status {
@@ -18,4 +18,9 @@ export enum Status {
 export enum VisitType {
   Home = "Home",
   Shelter = "Shelter",
+}
+
+export enum RequestType {
+  changePassword = "Change PAssword",
+  resetPassword = "Reset Password",
 }

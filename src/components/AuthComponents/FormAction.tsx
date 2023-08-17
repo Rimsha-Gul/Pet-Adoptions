@@ -26,8 +26,8 @@ const FormAction = ({
         <button
           type={action}
           className={`group relative flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:text-primary bg-primary hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-primary mt-10 ${
-            isLoading ? "bg-primary text-white cursor-not-allowed" : ""
-          } ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${customClass}`}
+            isLoading ? "bg-primary text-white" : ""
+          } ${disabled ? "opacity-50" : ""} ${customClass}`}
           onClick={handleSubmit}
           disabled={isLoading || disabled}
         >
