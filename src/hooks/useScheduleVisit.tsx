@@ -9,8 +9,8 @@ export const useScheduleHomeVisit = (visitType: VisitType) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = useState(moment().toDate());
-  const [selectedTime, setSelectedTime] = useState(moment().toDate());
+  const [selectedDate, setSelectedDate] = useState<Date>(moment().toDate());
+  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
 
   const handleDateChange = (date: string | Moment) => {
     if (moment.isMoment(date)) setSelectedDate(date.toDate());

@@ -17,7 +17,7 @@ interface ScheduleFormProps {
   handleSubmit: (event: React.FormEvent) => void;
   isLoading: boolean;
   selectedDate: Date;
-  selectedTime: Date;
+  selectedTime: Date | null;
   visitType: VisitType;
 }
 
@@ -56,8 +56,9 @@ export const ScheduleForm = ({
     }),
   };
 
+  const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState<boolean>(false);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
-  const [isDateValid, setDateValid] = useState<boolean>(false);
+  const [isDateValid, setDateValid] = useState<boolean>(true);
   const [isTimeValid, setTimeValid] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [canSchedule, setCanSchedule] = useState<boolean>(true);
@@ -117,9 +118,11 @@ export const ScheduleForm = ({
     if (isDateValid && application) {
       const fetchTimeSlots = async () => {
         try {
+          setIsLoadingTimeSlots(true);
           const response = await api.get("/application/timeSlots", {
             params: {
               id: application.shelterID,
+              petID: application.microchipID,
               visitDate: moment(selectedDate).format("YYYY-MM-DD"),
               visitType: visitType,
             },
@@ -128,6 +131,8 @@ export const ScheduleForm = ({
           setTimeSlots(response.data.availableTimeSlots);
         } catch (error) {
           console.error(error);
+        } finally {
+          setIsLoadingTimeSlots(false);
         }
       };
 
@@ -163,6 +168,7 @@ export const ScheduleForm = ({
   );
 
   const validateDateTime = (date: string | Moment, time: string | Moment) => {
+    console.log(time);
     const dateMoment = typeof date === "string" ? moment(date) : date;
     const timeMoment = typeof time === "string" ? moment(time) : time;
 
@@ -170,41 +176,55 @@ export const ScheduleForm = ({
       .clone()
       .add(7, "days")
       .endOf("day");
-    const twentyFourHoursFromEmailSent = emailSentTime.clone().add(24, "hours");
 
     const isDateValid =
       dateMoment.isAfter(emailSentTime) &&
       dateMoment.isBefore(oneWeekFromEmailSent);
-    const isTimeValid = dateMoment.isSame(emailSentTime, "day")
-      ? timeMoment.isAfter(twentyFourHoursFromEmailSent)
-      : true;
+    const isTimeValid = timeSlots.includes(timeMoment.toString());
+
     console.log("isDateValid", isDateValid);
     console.log("isTimeValid", isTimeValid);
     return isDateValid && isTimeValid;
   };
 
   const handleDateChangeValidated = (date: string | Moment) => {
-    if (validateDateTime(date, moment(selectedTime))) {
-      setDateValid(true);
-      setTimeValid(true);
-    } else {
-      setDateValid(false);
+    const isThisDateValid = validateDate(date);
+    setDateValid(isThisDateValid);
+
+    if (!isThisDateValid) {
+      setTimeSlots([]); // Clear time slots if date is not valid
+      setTimeValid(false); // Set time as invalid since the date is invalid
     }
+
     handleDateChange(date);
+  };
+
+  const validateDate = (date: string | Moment) => {
+    const dateMoment = typeof date === "string" ? moment(date) : date;
+    const oneWeekFromEmailSent = emailSentTime
+      .clone()
+      .add(7, "days")
+      .endOf("day");
+
+    return (
+      dateMoment.isAfter(emailSentTime) &&
+      dateMoment.isBefore(oneWeekFromEmailSent)
+    );
   };
 
   const handleTimeChangeValidated = (time: string | Moment) => {
     const formattedTime =
       typeof time === "string" ? moment(time, "HH:mm") : time;
-
-    if (validateDateTime(moment(selectedDate), formattedTime)) {
-      setDateValid(true);
-      setTimeValid(true);
-    } else {
-      setTimeValid(false);
-    }
-    console.log(time);
+    const isThisTimeValid = validateTime(formattedTime);
+    setTimeValid(isThisTimeValid);
     handleTimeChange(formattedTime);
+  };
+
+  const validateTime = (time: string | Moment) => {
+    const timeMoment = typeof time === "string" ? moment(time) : time;
+    console.log(time);
+    console.log(timeSlots);
+    return timeSlots.includes(timeMoment.format("H:mm"));
   };
 
   // console.log(application);
@@ -218,6 +238,9 @@ export const ScheduleForm = ({
     label: time,
     value: time,
   }));
+  console.log(isDisabled);
+  console.log(timeSlots);
+  console.log(timeSlots.length === 0 && isDateValid);
 
   if (isLoadingApplication) {
     return (
@@ -227,7 +250,7 @@ export const ScheduleForm = ({
         </div>
       </div>
     );
-  } else if (!canSchedule) {
+  } else if (!canSchedule && !visitScheduled) {
     return (
       <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
         <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
@@ -321,7 +344,8 @@ export const ScheduleForm = ({
                 styles={customStyles}
                 options={formattedTimeSlots}
                 value={formattedTimeSlots.find(
-                  (option) => option.value === selectedTime.toString()
+                  (option) =>
+                    option.value === (selectedTime && selectedTime.toString())
                 )}
                 onChange={(selectedOption: any) => {
                   handleTimeChangeValidated(selectedOption.value);
@@ -351,6 +375,14 @@ export const ScheduleForm = ({
               )}
               Schedule Visit
             </button>
+            {timeSlots.length === 0 &&
+            isDateValid &&
+            !isLoading &&
+            !isLoadingTimeSlots ? (
+              <div className="text-lg text-red-600 mt-4">
+                No slots are available for the selected date.
+              </div>
+            ) : null}
           </form>
         </div>
       </div>
