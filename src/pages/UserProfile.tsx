@@ -212,7 +212,7 @@ const UserProfile = () => {
           <img src={loadingIcon} alt="Loading" className="h-10 w-10" />
         </div>
       ) : (
-        <div className="w-1/2 flex flex-col items-center justify-center min-h-screen py-2">
+        <div className="w-2/3 md:w-1/2 flex flex-col items-center justify-center min-h-screen py-2">
           <div className="relative w-48 h-48 rounded-full mb-4">
             {imageSrc ? (
               <img
@@ -317,14 +317,14 @@ const UserProfile = () => {
                   value={user.address}
                   onChange={(e) => handleInputChange(e, "address")}
                   autoFocus
-                  className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                  className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 />
               ) : user.address ? (
-                <div className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
+                <div className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
                   {user.address}
                 </div>
               ) : (
-                <div className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-500 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
+                <div className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-500 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
                   Your Street, Your City
                 </div>
               )}
@@ -346,17 +346,17 @@ const UserProfile = () => {
                   value={user.bio}
                   onChange={(e) => handleInputChange(e, "bio")}
                   autoFocus
-                  rows={5}
-                  className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
+                  rows={10}
+                  className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm"
                 />
               ) : user.bio ? (
-                <div className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
+                <div className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
                   {user.bio}
                 </div>
               ) : (
-                <div className="h-14 rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-500 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
+                <div className="rounded-md overflow-hidden text-overflow-ellipsis white-space-nowrap appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-500 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm">
                   {userRole === UserRole.User
-                    ? " Your background, hobbies, and what you love to do"
+                    ? "Your background, hobbies, and interests"
                     : `Your shelter's mission and the animals you care for`}
                 </div>
               )}

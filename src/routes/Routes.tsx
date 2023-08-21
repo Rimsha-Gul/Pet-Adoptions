@@ -68,8 +68,8 @@ export const getRoutes = (
           <div className="flex">
             <Sidebar handleLogout={handleLogout} />
             <div
-              className={`flex-grow items-center ${
-                isSidebarOpen ? "ml-64" : ""
+              className={`flex-grow items-center mt-20 ${
+                isSidebarOpen ? "md:ml-64 " : ""
               }`}
             >
               <Component />
