@@ -11,6 +11,7 @@ import { getStatusIcon } from "../../utils/getStatusIcon";
 import { applicationGroups } from "../../constants/groups";
 import { Application } from "../../types/interfaces";
 import ApplicationGroupedFields from "./ApplicationDetails";
+import { BiLinkExternal } from "react-icons/bi";
 
 const ApplicationDetailsShelter = () => {
   const [application, setApplication] = useState<Application | null>(null);
@@ -108,66 +109,69 @@ const ApplicationDetailsShelter = () => {
             <img
               src={application.petImage}
               alt="Pet Image"
-              className="h-80 w-80 object-cover rounded-lg"
+              className="h-60 w-60 sm:h-80 sm:w-80 object-cover rounded-lg"
             />
             <Link
               to={`/pet/${application.microchipID}`}
-              className="text-3xl text-primary font-bold whitespace-pre-line hover:underline"
+              className="text-2xl sm:text-3xl text-primary font-bold whitespace-pre-line hover:underline"
             >
-              {application.petName}
+              <div className="flex flex-row items-end gap-2">
+                {application.petName}
+                <BiLinkExternal className="pb-0.5" />
+              </div>
             </Link>
           </div>
-          <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-center mt-10 gap-8">
-            <div className="flex flex-row gap-2">
-              <label className="text-gray-700 text-xl font-medium">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-center mt-10 gap-6 sm:gap-8">
+            <div className="flex flex flex-col sm:flex-row gap-2">
+              <label className="text-gray-700 text-md sm:text-xl font-medium">
                 Application ID:
               </label>
-              <div className="flex flex-row items-center gap-2">
-                <p className="text-xl text-gray-600 whitespace-pre-line">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
                   {application.id}
                 </p>
               </div>
             </div>
-            <div className="flex flex-row items-center gap-2">
-              <label className="text-gray-700 text-xl font-medium">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <label className="text-gray-700 text-md sm:text-xl font-medium">
                 Applicant Name:
               </label>
-              <p className="text-xl text-gray-600 whitespace-pre-line">
+              <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
                 {application.applicantName}
               </p>
             </div>
-            <div className="flex flex-row items-center gap-2">
-              <label className="text-gray-700 text-xl font-medium">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <label className="text-gray-700 text-md sm:text-xl font-medium">
                 Applicant Email:
               </label>
-              <p className="text-xl text-gray-600 whitespace-pre-line">
+              <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
                 {application.applicantEmail}
               </p>
             </div>
-            <div className="flex flex-row items-center gap-2">
-              <label className="text-gray-700 text-xl font-medium">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+              <label className="text-gray-700 text-md sm:text-xl font-medium">
                 Submission Date:
               </label>
-              <p className="text-xl text-gray-600 whitespace-pre-line">
+              <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
                 {new Date(application.submissionDate).toLocaleDateString()}
               </p>
             </div>
             {application.homeVisitDate && (
-              <div className="flex flex-row items-center gap-2">
-                <label className="text-gray-700 text-xl font-medium">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                <label className="text-gray-700 text-md sm:text-xl font-medium">
                   Home Visit Date:
                 </label>
-                <p className="text-xl text-gray-600 whitespace-pre-line">
+                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
                   {new Date(application.homeVisitDate).toLocaleString()}
                 </p>
               </div>
             )}
             {application.shelterVisitDate && (
-              <div className="flex flex-row items-center gap-2">
-                <label className="text-gray-700 text-xl font-medium">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                <label className="text-gray-700 text-md sm:text-xl font-medium">
                   Shelter Visit Date:
                 </label>
-                <p className="text-xl text-gray-600 whitespace-pre-line">
+                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
                   {new Date(application.shelterVisitDate).toLocaleString()}
                 </p>
               </div>
@@ -178,13 +182,13 @@ const ApplicationDetailsShelter = () => {
               groupedFields={groupedFields}
               application={application}
             />
-            <div className="flex flex-row gap-2 pt-8">
-              <label className="text-gray-700 text-xl font-medium">
+            <div className="flex flex-col sm:flex-row gap-2 pt-8">
+              <label className="text-gray-700 text-md sm:text-xl font-medium">
                 Application Status:
               </label>
               <div className="flex flex-row items-center gap-2">
                 {getStatusIcon(application.status)}
-                <p className="text-xl text-gray-600 whitespace-pre-line">
+                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
                   {application.status}
                 </p>
               </div>

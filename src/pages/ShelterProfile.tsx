@@ -179,15 +179,15 @@ const ShelterProfile = () => {
       )}
       {shelter && (
         <div className="w-full flex flex-col items-center justify-center py-2">
-          <div className="relative w-48 h-48 rounded-full mb-4">
+          <div className="relative w-36 h-36 sm:w-48 sm:h-48 rounded-full mb-4">
             {imageSrc ? (
               <img
                 src={imageSrc}
                 alt="Profile photo"
-                className="w-48 h-48 object-cover rounded-full mb-4 text-sm border-4 border-secondary shadow-md"
+                className=" w-36 h-36 sm:w-48 sm:h-48 object-cover rounded-full mb-4 text-sm border-4 border-secondary shadow-md"
               />
             ) : (
-              <div className="w-48 h-48 rounded-full mb-4 bg-gray-200 flex items-center justify-center border-4 border-secondary shadow-md">
+              <div className=" w-36 h-36 sm:w-48 sm:h-48 rounded-full mb-4 bg-gray-200 flex items-center justify-center border-4 border-secondary shadow-md">
                 <span className="text-gray-500 text-5xl font-medium">
                   {shelter.name.charAt(0)}
                 </span>
@@ -219,7 +219,7 @@ const ShelterProfile = () => {
                 <p className="text-lg text-gray-600">No reviews yet</p>
               )}
 
-              <p className="w-2/3 text-xl text-gray-600 whitespace-pre-line text-justify">
+              <p className="w-5/6 sm:w-2/3 text-md sm:text-xl text-gray-600 whitespace-pre-line text-justify">
                 {shelter.bio}
               </p>
               {shelter.canReview && userRole === UserRole.User && (

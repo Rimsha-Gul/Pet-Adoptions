@@ -178,7 +178,7 @@ const VerifyEmail = () => {
     <Loading />
   ) : appContext.verificationOperation !== "changeEmail" &&
     appContext.verificationOperation !== "changedEmail" ? (
-    <div className="bg-radial-gradient min-h-screen flex flex-col justify-center items-center p-16 lg:px-18 xl:px-32 2xl:px-72">
+    <div className="sm:bg-radial-gradient min-h-screen flex flex-col justify-center items-center p-8 sm:p-16 lg:px-18 xl:px-32 2xl:px-72">
       <div className="grid md:grid-cols-2 w-full">
         <LogoSection />
         <EmailVerificationForm
@@ -192,75 +192,8 @@ const VerifyEmail = () => {
           resendDisabled={resendDisabled}
           verificationCodeError={verificationCodeError}
           isCodeValid={isCodeValid}
-          customClassName="bg-white px-12 pb-12 md:py-12 md:px-4 "
+          customClassName="bg-white px-6 sm:px-12 pb-12 md:py-12 md:px-4 "
         />
-        {/* <div className="bg-white rounded-lg shadow-md px-12 pb-12 md:py-12 md:px-4 md:rounded-l-none">
-          <h1 className="text-3xl text-primary font-bold mb-4">
-            Verify Your Email Account
-          </h1>
-          <p className="text-lg mb-8">
-            Please enter the 6-digit code sent to your email.
-          </p>
-          <div className="flex flex-row mt-2 items-center justify-center">
-            <input
-              type="text"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-              pattern="\d{6}"
-              maxLength={6}
-              required
-              className="w-1/2 px-4 py-2 border border-primary focus:border-primary rounded mb-4"
-            />
-          </div>
-          <div className="flex flex-row gap-4 mt-2 items-center justify-center">
-            <button
-              className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer ${
-                !isCodeValid ? "opacity-50 cursor-not-allowed" : ""
-              } ${
-                isLoading
-                  ? "bg-primary text-white opacity-50 cursor-not-allowed"
-                  : ""
-              } `}
-              onClick={handleClick}
-              disabled={!isCodeValid}
-            >
-              {isLoading && (
-                <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
-              )}
-              Verify
-            </button>
-            <div>
-              {timer === 0 ? (
-                <button
-                  className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer 
-              ${
-                isResending
-                  ? "bg-primary text-white opacity-50 cursor-not-allowed"
-                  : ""
-              } `}
-                  onClick={handleResendClick}
-                  disabled={resendDisabled}
-                >
-                  {isResending && (
-                    <img
-                      src={loadingIcon}
-                      alt="Loading"
-                      className="mr-2 h-4 w-4"
-                    />
-                  )}
-                  Resend Code
-                </button>
-              ) : (
-                <div>Code will expire in {timer} seconds</div>
-              )}
-            </div>
-          </div>
-          {verificationCodeError && (
-            <p className="flex items-center justify-center mt-4 text-sm text-red-500">
-              {verificationCodeError}
-            </p>
-          )}
-        </div> */}
       </div>
     </div>
   ) : (
@@ -276,7 +209,7 @@ const VerifyEmail = () => {
         resendDisabled={resendDisabled}
         verificationCodeError={verificationCodeError}
         isCodeValid={isCodeValid}
-        customClassName="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 p-12"
+        customClassName="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 p-6 sm:p-12"
       />
     </div>
   );

@@ -31,10 +31,10 @@ const EmailVerificationForm = ({
     <div
       className={` ${customClassName} rounded-lg shadow-md md:rounded-l-none flex flex-col items-center justify-center`}
     >
-      <h1 className="text-3xl text-primary font-bold mb-4">
+      <h1 className="mt-6 sm:mt-0 text-xl sm:text-3xl text-primary font-bold mb-4">
         Verify Your Email Account
       </h1>
-      <p className="text-lg mb-8">
+      <p className="text-md sm:text-lg mb-8">
         Please enter the 6-digit code sent to your email.
       </p>
       <div className="flex flex-row mt-2 items-center justify-center">

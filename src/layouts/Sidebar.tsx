@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  FiArrowLeft,
   FiChevronDown,
   FiChevronLeft,
   FiChevronRight,
@@ -11,6 +10,7 @@ import { sidebarLinks } from "../constants/MenuOptions";
 import { SidebarContext } from "../context/SidebarContext";
 import { AppContext } from "../context/AppContext";
 import { useTransition, animated } from "@react-spring/web";
+import { MdHome } from "react-icons/md";
 
 interface HamburgerButtonProps {
   toggle: () => void;
@@ -63,6 +63,11 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
     if (label === "Logout") {
       handleLogout(); // Call handleLogout function for Logout option
     }
+
+    // Check for screen size
+    if (window.innerWidth <= 640) {
+      setIsSidebarOpen?.(false); // Close the sidebar if the screen size is small
+    }
   };
   console.log(location.pathname.substring(1));
 
@@ -86,7 +91,17 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
           // z-10 ensures the overlay is on top of content but below the sidebar
         ></div>
       ) : null}
-      <HamburgerButton toggle={toggleSidebar} />
+      <div className="flex flex-row md:hidden">
+        <HamburgerButton toggle={toggleSidebar} />
+        {isSidebarOpen && (
+          <Link
+            to="/homepage"
+            className="absolute top-2 left-12 md:top-5 p-3 my-2 mx-3 ounded-full hover:bg-secondary-100"
+          >
+            <MdHome className="md:hidden text-primary w-6 h-6" />
+          </Link>
+        )}
+      </div>
 
       <div
         className={`w-64 pt-4 bg-secondary-10 h-screen fixed top-0 left-0 z-20 md:z-0 transform transition-all duration-300 ease-in-out ${
@@ -94,12 +109,14 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
         } md:block`}
       >
         <div className="flex flex-col mt-10 md:mt-0 gap-2 items-center justify-center">
-          <Link
-            to="/homepage"
-            className="absolute top-14 md:top-5 left-5 p-3 my-2 mx-3 text-gray-700 rounded-full hover:bg-secondary-100"
-          >
-            <FiArrowLeft className="text-lg" />
-          </Link>
+          {isSidebarOpen && (
+            <Link
+              to="/homepage"
+              className="absolute top-1 left-48 md:left-0 p-3 my-2 mx-3 md:my-1 rounded-full hover:bg-secondary-100"
+            >
+              <MdHome className="text-primary w-7 h-7" />
+            </Link>
+          )}
           {userProfilePhoto ? (
             <img
               src={userProfilePhoto}
@@ -157,7 +174,10 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                                   key={option.to}
                                   to={option.to}
                                   className={`block px-6 py-3 text-md font-medium ${
-                                    selectedOption === option.to
+                                    option.to === location.pathname ||
+                                    option.to ===
+                                      location.pathname.substring(1) ||
+                                    selectedOption === link.to
                                       ? "text-white bg-secondary"
                                       : "text-gray-500 hover:bg-secondary-100 transition-colors"
                                   } ${isSidebarOpen ? "" : ""}`}

@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import moment, { Moment } from "moment";
 import api from "../api";
 import { useNavigate, useParams } from "react-router-dom";
-import { showSuccessAlert } from "../utils/alert";
+import { showErrorAlert, showSuccessAlert } from "../utils/alert";
 import { VisitType } from "../types/enums";
 
 export const useScheduleHomeVisit = (visitType: VisitType) => {
@@ -40,8 +40,9 @@ export const useScheduleHomeVisit = (visitType: VisitType) => {
       showSuccessAlert(response.data.message, undefined, () =>
         navigate(`/view/application/${id}`)
       );
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error scheduling visit:", error);
+      showErrorAlert(error.response.data);
     } finally {
       setIsLoading(false);
     }

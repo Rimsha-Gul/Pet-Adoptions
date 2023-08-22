@@ -10,13 +10,13 @@ const PrimaryLogo = () => {
 
   return (
     <div
-      className="flex items-center space-x-4 cursor-pointer"
+      className="flex items-center space-x-2 sm:space-x-4 cursor-pointer"
       onClick={handleLogoClick}
     >
       <div className="flex items-center">
-        <img alt="" className="h-12 w-12" src={logo} />
+        <img alt="" className="h-8 w-8 sm:h-12 sm:w-12" src={logo} />
       </div>
-      <h1 className="font-pacifico text-5xl font-extrabold italic text-primary">
+      <h1 className="font-pacifico text-2xl sm:text-5xl font-extrabold italic text-primary">
         Purrfect Adoptions
       </h1>
     </div>

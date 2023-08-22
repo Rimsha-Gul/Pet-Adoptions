@@ -14,13 +14,16 @@ const ApplicationGroupedFields = ({
     <>
       {groupedFields.map((group) => (
         <div key={group.label}>
-          <h2 className="text-2xl text-primary font-bold mb-4 mt-2">
+          <h2 className="text-xl sm:text-2xl text-primary font-bold mb-4 mt-2">
             {group.label}
           </h2>
           <div className="border-b-2 border-gray-200 my-2"></div>
-          <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-start gap-10">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-start gap-4 sm:gap-10">
             {group.fields.map((field) => {
-              const applicationField = field as keyof Application;
+              const applicationField = field as keyof Omit<
+                Application,
+                "shelterID"
+              >;
               if (
                 field === "petActivities" ||
                 field === "handlePetIssues" ||

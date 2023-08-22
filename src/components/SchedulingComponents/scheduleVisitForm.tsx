@@ -71,7 +71,6 @@ export const ScheduleForm = ({
       ? application?.homeVisitEmailSentDate
       : application?.shelterVisitEmailSentDate;
   const emailSentTime = moment(emailSentTimestamp);
-  const formattedSelectedTime = moment(selectedTime).format("HH:mm A");
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -279,8 +278,8 @@ export const ScheduleForm = ({
   } else {
     return (
       <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-        <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
-          <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
+        <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-4 sm:p-12">
+          <h2 className="mt-4 sm:mt-12 text-center text-3xl sm:text-4xl font-extrabold text-primary mb-12">
             {title}
           </h2>
           <p className="text-gray-700 text-xl font-medium text-center">
@@ -340,7 +339,7 @@ export const ScheduleForm = ({
                 Time:
               </label>
               <Select
-                className="w-52"
+                className="w-56 sm:w-52"
                 styles={customStyles}
                 options={formattedTimeSlots}
                 value={formattedTimeSlots.find(

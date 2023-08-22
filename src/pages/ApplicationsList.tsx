@@ -170,7 +170,7 @@ const ViewApplications = () => {
   return (
     <>
       <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-        <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
+        <h2 className="mt-12 text-center text-3xl sm:text-4xl font-extrabold text-primary sm:mb-12">
           Your Applications
         </h2>
         <div className="flex flex-wrap md:flex-row gap-6 mt-6 mb-6 justify-end ">
@@ -228,26 +228,27 @@ const ViewApplications = () => {
             ) : (
               applications &&
               !isLoading && (
-                <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12 mt-8">
+                <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 sm:px-4 md:px-8 2xl:px-12 p-12 mt-8">
                   <div className="flex flex-col justify-center gap-4">
                     <div className="flex flex-row justify-between px-4">
-                      <div className="w-full grid grid-cols-4 items-center justify-evenly gap-4">
+                      <div className="w-full grid grid-cols-1 sm:grid-cols-4 items-center sm:items-start md:items-center justify-evenly gap-4">
                         <h2 className="text-2xl text-gray-700 font-bold">
                           Application for
                         </h2>
-                        <h2 className="text-2xl text-gray-700 font-bold">
+
+                        <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
                           Status
                         </h2>
                         {userRole === "SHELTER" ? (
-                          <h2 className="text-2xl text-gray-700 font-bold">
+                          <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
                             Applicant
                           </h2>
                         ) : (
-                          <h2 className="text-2xl text-gray-700 font-bold">
+                          <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
                             Shelter Name
                           </h2>
                         )}
-                        <h2 className="text-2xl text-gray-700 font-bold">
+                        <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
                           Submitted on
                         </h2>
                       </div>
@@ -282,33 +283,34 @@ const ViewApplications = () => {
                               navigate(`/view/application/${application.id}`)
                             }
                           >
-                            <div className="w-full grid grid-cols-4 items-center justify-evenly gap-4">
-                              <div className="flex flex-col md:flex-row items-start md:items-center justify-start gap-2">
+                            <div className="w-full grid grid-cols-1 sm:grid-cols-4 items-center justify-evenly gap-4">
+                              <div className="flex flex-row sm:flex-col md:flex-row items-center justify-start gap-6 sm:gap-2">
                                 <img
                                   src={application.petImage}
                                   alt="Pet Image"
                                   className="h-20 w-20 object-cover rounded-lg"
                                 />
-                                <p className="text-xl text-gray-600 whitespace-pre-line">
+
+                                <p className="text-xl text-gray-600 text-center whitespace-pre-line">
                                   {application.petName}
                                 </p>
                               </div>
-                              <div className="flex flex-row items-center gap-1">
+                              <div className="hidden sm:flex flex-row items-center gap-2">
                                 {getStatusIcon(application.status)}
                                 <p className="text-xl text-gray-600 whitespace-pre-line">
                                   {application.status}
                                 </p>
                               </div>
                               {userRole === "SHELTER" ? (
-                                <p className="text-xl text-gray-600 whitespace-pre-line">
+                                <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
                                   {application.applicantName}
                                 </p>
                               ) : (
-                                <p className="text-xl text-gray-600 whitespace-pre-line">
+                                <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
                                   {application.shelterName}
                                 </p>
                               )}
-                              <p className="text-xl text-gray-600 whitespace-pre-line">
+                              <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
                                 {new Date(
                                   application.submissionDate
                                 ).toLocaleDateString()}

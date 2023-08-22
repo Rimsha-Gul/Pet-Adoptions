@@ -245,7 +245,7 @@ const AdoptionApplication = () => {
             <form className="flex flex-col mx-auto w-full space-y-8 mt-8 mb-8 g-12">
               {groups.map((group) => (
                 <div key={group.label}>
-                  <h2 className="text-2xl text-primary font-bold mb-4 ">
+                  <h2 className="text-xl sm:text-2xl text-primary font-bold mb-4 ">
                     {group.label}
                   </h2>
                   <div className="border-b-2 border-gray-200 my-2"></div>
@@ -271,7 +271,7 @@ const AdoptionApplication = () => {
                             type={field.type}
                             isRequired={field.isRequired}
                             placeholder={field.placeholder}
-                            labelClassName="text-gray-700 font-medium text-lg"
+                            labelClassName="text-gray-700 font-medium text-md sm:text-lg"
                             customClass=""
                             options={field.options}
                             validationError={errors[field.id]}
@@ -306,7 +306,7 @@ const AdoptionApplication = () => {
                                     type={dependentField.type}
                                     isRequired={dependentField.isRequired}
                                     placeholder={dependentField.placeholder}
-                                    labelClassName="text-gray-700 font-medium text-lg"
+                                    labelClassName="text-gray-700 font-medium text-md sm:text-lg"
                                     customClass=""
                                     options={dependentField.options}
                                     validationError={errors[dependentField.id]}
@@ -326,7 +326,7 @@ const AdoptionApplication = () => {
                 text="Apply for Adoption"
                 isLoading={isLoading}
                 disabled={!isFormValid}
-                customClass="w-1/3 mx-auto"
+                customClass="w-2/3 sm:w-1/3 mx-auto"
               />
             </form>
           </div>

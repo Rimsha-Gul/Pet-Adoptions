@@ -27,29 +27,27 @@ const PetAdoptionApply = ({
   const userRole = appContext.userRole;
 
   return (
-    <div className="flex flex-col gap-6 max-w-9xl p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
-      <p className="text-lg">
-        <span className="text-primary font-bold mr-1.5">Shelter Name:</span>{" "}
+    <div className="flex flex-col gap-6 max-w-9xl p-8 sm:p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
+      <span className="text-lg flex flex-wrap align-center gap-2">
+        <span className="text-primary font-bold">Shelter Name:</span>
         <Link
-          className="hover:underline text-lg text-gray-500 flex-1"
+          className="hover:underline text-gray-500"
           to={`/shelterProfile/${petShelterID}`}
         >
-          <div className="flex flex-row items-center gap-1">
+          <span className="flex items-center gap-1 font-medium">
             {petShelterName}
             <BiLinkExternal className="w-5 h-5" />
-          </div>
+          </span>
         </Link>
         {petShelterRating && (
-          <div className="flex items-center -mt-2">
-            <StarRatings
-              rating={petShelterRating}
-              starDimension="20px"
-              starSpacing="3px"
-              starRatedColor="gold"
-            />
-          </div>
+          <StarRatings
+            rating={petShelterRating}
+            starDimension="20px"
+            starSpacing="3px"
+            starRatedColor="gold"
+          />
         )}
-      </p>
+      </span>
       <p className="text-lg text-gray-500">
         <span className="text-primary font-bold">Adoption Fee:</span>{" "}
         {petAdoptionFee}
