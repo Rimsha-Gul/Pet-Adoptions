@@ -1,7 +1,10 @@
-import { BrowserRouter as Router, useRoutes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  useNavigate,
+  useRoutes,
+} from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "./context/AppContext";
-import { Navigate } from "react-router-dom";
 import api from "./api";
 import { errorMessages } from "./constants/errorMessages";
 import { SidebarContext } from "./context/SidebarContext";
@@ -23,6 +26,7 @@ function App() {
   const isAuthenticated = appContext.loggedIn;
   console.log(isAuthenticated);
 
+  const navigate = useNavigate();
   const handleLogout = async () => {
     try {
       const response = await api.delete("/logout");
@@ -33,17 +37,17 @@ function App() {
       appContext.setLoggedIn?.(false);
       appContext.setDisplayName?.("");
       appContext.setUserRole?.("");
-      <Navigate to="/" />;
+      navigate("/"); // Use navigate here
+
       console.log(response.status);
+      console.log(appContext.loggedIn);
     } catch (error: any) {
       console.error(error);
       if (error.response.status === 404) {
-        return (
-          <Navigate to="/pagenotfound" state={errorMessages.pageNotFound} />
-        );
+        navigate("/pagenotfound", { state: errorMessages.pageNotFound }); // And here
       }
       if (error.response.status === 401) {
-        return <Navigate to="/" />;
+        navigate("/"); // And here too
       }
     }
   };

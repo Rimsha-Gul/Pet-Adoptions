@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import loadingIcon from "../assets/loading.gif";
 import api from "../api";
-import { showErrorAlert, showSuccessAlert } from "../utils/alert";
-import { useNavigate } from "react-router-dom";
+import {
+  showErrorAlert,
+  showInfoAlert,
+  showSuccessAlert,
+} from "../utils/alert";
+import { AppContext } from "../context/AppContext";
 
 const InviteShelter = () => {
-  const navigate = useNavigate();
   const [shelterEmail, setShelterEmail] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const appContext = useContext(AppContext);
 
   const handleShelterInvite = async (e: any) => {
     e.preventDefault();
@@ -21,11 +25,45 @@ const InviteShelter = () => {
         email: shelterEmail,
       });
       if (response.status === 200) {
-        showSuccessAlert(response.data.message, undefined, () =>
-          navigate("/inviteShelter")
-        );
+        setShelterEmail("");
+        showSuccessAlert(response.data.message, undefined);
       }
     } catch (error: any) {
+      if (
+        error.response.status === 409 &&
+        error.response.data === "User already  exists, which is not a shelter"
+      ) {
+        console.log("hehehe");
+        showInfoAlert(
+          `The email you entered is already associated with a 'User' account. To proceed with the 'Shelter' invitation, kindly notify the owner of this email to provide a different email address for their 'Shelter' registration. Would you like to notify them now?
+`,
+          "Yes",
+          "No",
+          () => changeUserRole()
+        );
+      } else {
+        showErrorAlert(error.response.data);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const changeUserRole = async () => {
+    try {
+      console.log("trying");
+      setIsLoading(true);
+
+      console.log(appContext.userRole);
+      const response = await api.post("/auth/getAlternateEmail", {
+        email: shelterEmail,
+      });
+      if (response.status === 200) {
+        setShelterEmail("");
+        showSuccessAlert(response.data.message, undefined);
+      }
+    } catch (error: any) {
+      console.log(error.response);
       showErrorAlert(error.response.data);
     } finally {
       setIsLoading(false);

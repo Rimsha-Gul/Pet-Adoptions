@@ -42,12 +42,30 @@ export const showSuccessAlert = (
   });
 };
 
-export const showInfoAlert = (message: string) => {
+export const showInfoAlert = (
+  message: string,
+  yesText: string,
+  noText: string,
+  onConfirm?: () => void,
+  onCancel?: () => void
+) => {
   Swal.fire({
     title: "Attention!",
     text: message,
     icon: "info",
-    confirmButtonText: '<p class="px-8"></p> OK',
-    confirmButtonColor: "#ff5363", // Choose a neutral color
+    showDenyButton: true,
+    confirmButtonText: `<p class="px-8"></p> ${yesText}`,
+    denyButtonText: `<p class="px-8"></p> ${noText}`,
+    confirmButtonColor: "#ff5363",
+    denyButtonColor: "#aaa",
+  }).then((result) => {
+    console.log(onConfirm);
+    console.log(onCancel);
+    console.log(result);
+    if (result.isConfirmed && onConfirm) {
+      onConfirm();
+    } else if (result.isDenied && onCancel) {
+      onCancel();
+    }
   });
 };

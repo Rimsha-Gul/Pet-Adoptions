@@ -5,7 +5,7 @@ import loadingIcon from "../assets/loading.gif";
 import { AppContext } from "../context/AppContext";
 import { showInfoAlert } from "../utils/alert";
 
-const ShelterInvitation = () => {
+const ShelterInvitation = ({ handleLogout }: { handleLogout: () => void }) => {
   const appContext = useContext(AppContext);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -19,7 +19,11 @@ const ShelterInvitation = () => {
     console.log(appContext.loggedIn);
     if (appContext.loggedIn === true) {
       showInfoAlert(
-        "You are currently logged in from another account. Please log out and click the invitation link again to proceed further"
+        "You are currently logged in from another account. Please logout from that account and click the invitation link again to signup",
+        "Logout",
+        "Go to HomePage",
+        () => handleLogout(),
+        () => navigate("/homepage")
       );
       setIsLoading(false);
       return;
@@ -36,7 +40,8 @@ const ShelterInvitation = () => {
           state: { email: response.data.email, role: "SHELTER" },
         });
       } catch (error: any) {
-        setVerificationError(error.response.data);
+        console.log(error.response.data);
+        setVerificationError(error.response.data.message);
         if (error.response.status === 409 && error.response.data.email) {
           appContext.setUserEmail?.(error.response.data.email);
           navigate("/verifyemail");

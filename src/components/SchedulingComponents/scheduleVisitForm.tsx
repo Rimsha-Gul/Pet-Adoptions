@@ -58,11 +58,12 @@ export const ScheduleForm = ({
 
   const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState<boolean>(false);
   const [timeSlots, setTimeSlots] = useState<string[]>([]);
-  const [isDateValid, setDateValid] = useState<boolean>(true);
+  const [isDateValid, setDateValid] = useState<boolean>(false);
   const [isTimeValid, setTimeValid] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const [canSchedule, setCanSchedule] = useState<boolean>(true);
   const [application, setApplication] = useState<Application | null>(null);
+  const [dateValidityMessage, setDateValidityMessage] = useState<string>("");
   const [isLoadingApplication, setIsLoadingApplication] =
     useState<boolean>(true);
   const { id } = useParams();
@@ -99,13 +100,14 @@ export const ScheduleForm = ({
   }, [id, application]);
 
   useEffect(() => {
+    console.log("initial useeffect");
     // Get the current date and time
     const now = moment();
 
     // Set to the next day
     const initialSelectedDate = now.add(1, "days");
 
-    // Make sure the date is set to start of day to avoid time conflicts
+    // Set to start of day to avoid time conflicts
     initialSelectedDate.startOf("day");
 
     // Update the state with the new initialSelectedDate
@@ -117,6 +119,7 @@ export const ScheduleForm = ({
     if (isDateValid && application) {
       const fetchTimeSlots = async () => {
         try {
+          console.log("fetch slots");
           setIsLoadingTimeSlots(true);
           const response = await api.get("/application/timeSlots", {
             params: {
@@ -128,6 +131,10 @@ export const ScheduleForm = ({
           });
           console.log(response.data);
           setTimeSlots(response.data.availableTimeSlots);
+          if (response.data.availableTimeSlots.length === 0)
+            setDateValidityMessage(
+              "No slots are available for the selected date."
+            );
         } catch (error) {
           console.error(error);
         } finally {
@@ -205,6 +212,11 @@ export const ScheduleForm = ({
       .add(7, "days")
       .endOf("day");
 
+    console.log(dateMoment.isAfter(oneWeekFromEmailSent));
+    if (dateMoment.isAfter(oneWeekFromEmailSent))
+      setDateValidityMessage(
+        "The time to schedule this visit has passed. Please contact support to schedule a visit"
+      );
     return (
       dateMoment.isAfter(emailSentTime) &&
       dateMoment.isBefore(oneWeekFromEmailSent)
@@ -221,8 +233,8 @@ export const ScheduleForm = ({
 
   const validateTime = (time: string | Moment) => {
     const timeMoment = typeof time === "string" ? moment(time) : time;
-    console.log(time);
-    console.log(timeSlots);
+    // console.log(time);
+    //console.log(timeSlots);
     return timeSlots.includes(timeMoment.format("H:mm"));
   };
 
@@ -237,9 +249,9 @@ export const ScheduleForm = ({
     label: time,
     value: time,
   }));
-  console.log(isDisabled);
-  console.log(timeSlots);
-  console.log(timeSlots.length === 0 && isDateValid);
+  // console.log(isDisabled);
+  // console.log(timeSlots);
+  //console.log(timeSlots.length === 0 && isDateValid);
 
   if (isLoadingApplication) {
     return (
@@ -258,6 +270,19 @@ export const ScheduleForm = ({
           </h2>
           <p className="text-gray-700 text-xl font-medium text-center">
             You cannot schedule a visit for this application yet.
+          </p>
+        </div>
+      </div>
+    );
+  } else if (canSchedule && dateValidityMessage) {
+    return (
+      <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
+        <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
+          <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
+            {title}
+          </h2>
+          <p className="text-gray-700 text-xl font-medium text-center">
+            {dateValidityMessage}
           </p>
         </div>
       </div>
@@ -379,7 +404,7 @@ export const ScheduleForm = ({
             !isLoading &&
             !isLoadingTimeSlots ? (
               <div className="text-lg text-red-600 mt-4">
-                No slots are available for the selected date.
+                {dateValidityMessage}
               </div>
             ) : null}
           </form>
