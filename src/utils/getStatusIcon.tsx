@@ -1,7 +1,7 @@
 import { FiSearch } from "react-icons/fi";
 import { GoCalendar } from "react-icons/go";
-import { MdHome } from "react-icons/md";
-import { FaCheckCircle, FaLock, FaTimesCircle } from "react-icons/fa";
+import { MdHome, MdTimerOff } from "react-icons/md";
+import { FaCheckCircle, FaLock, FaRedo, FaTimesCircle } from "react-icons/fa";
 import { Status } from "../types/enums";
 
 export const statusIcons = [
@@ -18,6 +18,8 @@ export const statusIcons = [
   { name: Status.Approved, icon: FaCheckCircle, color: "green" },
   { name: Status.Rejected, icon: FaTimesCircle, color: "red" },
   { name: Status.Closed, icon: FaLock, color: "slategray" },
+  { name: Status.Expired, icon: MdTimerOff, color: "darkred" },
+  { name: Status.ReactivationRequested, icon: FaRedo, color: "blue" },
 ];
 
 export const getStatusIcon = (status: string) => {

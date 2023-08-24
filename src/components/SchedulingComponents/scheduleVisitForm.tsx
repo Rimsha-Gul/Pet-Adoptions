@@ -61,19 +61,22 @@ export const ScheduleForm = ({
   const [isDateValid, setDateValid] = useState<boolean>(false);
   const [isTimeValid, setTimeValid] = useState<boolean>(false);
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
-  const [canSchedule, setCanSchedule] = useState<boolean>(true);
+  const [canSchedule, setCanSchedule] = useState<boolean>(false);
   const [application, setApplication] = useState<Application | null>(null);
   const [dateValidityMessage, setDateValidityMessage] = useState<string>("");
   const [isLoadingApplication, setIsLoadingApplication] =
     useState<boolean>(true);
+  const [emailSentTime, setEmailSentTime] = useState<Moment | null>(null);
   const { id } = useParams();
-  const emailSentTimestamp =
-    visitType === VisitType.Home
-      ? application?.homeVisitEmailSentDate
-      : application?.shelterVisitEmailSentDate;
-  const emailSentTime = moment(emailSentTimestamp);
+  // const emailSentTimestamp =
+  //   visitType === VisitType.Home
+  //     ? application?.homeVisitEmailSentDate
+  //     : application?.shelterVisitEmailSentDate;
+  // setEmailSentTime(moment(emailSentTimestamp));
+  // console.log(emailSentTime);
 
   useEffect(() => {
+    console.log("1");
     const fetchApplication = async () => {
       try {
         setIsLoadingApplication(true);
@@ -100,6 +103,7 @@ export const ScheduleForm = ({
   }, [id, application]);
 
   useEffect(() => {
+    console.log("2");
     console.log("initial useeffect");
     // Get the current date and time
     const now = moment();
@@ -113,9 +117,10 @@ export const ScheduleForm = ({
     // Update the state with the new initialSelectedDate
     handleDateChange(initialSelectedDate);
     handleDateChangeValidated(initialSelectedDate);
-  }, []);
+  }, [emailSentTime]);
 
   useEffect(() => {
+    console.log("3");
     if (isDateValid && application) {
       const fetchTimeSlots = async () => {
         try {
@@ -147,15 +152,23 @@ export const ScheduleForm = ({
   }, [selectedDate, isDateValid, application]);
 
   useEffect(() => {
+    console.log("4");
     const canScheduleYet =
       visitType === VisitType.Home
         ? Boolean(application?.status === Status.HomeVisitRequested)
         : Boolean(application?.status === Status.HomeApproved);
     setCanSchedule(canScheduleYet);
     console.log(canScheduleYet);
+
+    const emailSentTimestamp =
+      visitType === VisitType.Home
+        ? application?.homeVisitEmailSentDate
+        : application?.shelterVisitEmailSentDate;
+    setEmailSentTime(moment(emailSentTimestamp));
   }, [application]);
 
   useEffect(() => {
+    console.log("5");
     setIsDisabled(!isDateValid || !isTimeValid || isLoading);
   }, [isDateValid, isTimeValid, isLoading]);
 
@@ -173,25 +186,25 @@ export const ScheduleForm = ({
     </div>
   );
 
-  const validateDateTime = (date: string | Moment, time: string | Moment) => {
-    console.log(time);
-    const dateMoment = typeof date === "string" ? moment(date) : date;
-    const timeMoment = typeof time === "string" ? moment(time) : time;
+  // const validateDateTime = (date: string | Moment, time: string | Moment) => {
+  //   console.log(time);
+  //   const dateMoment = typeof date === "string" ? moment(date) : date;
+  //   const timeMoment = typeof time === "string" ? moment(time) : time;
 
-    const oneWeekFromEmailSent = emailSentTime
-      .clone()
-      .add(7, "days")
-      .endOf("day");
+  //   const oneWeekFromEmailSent = emailSentTime
+  //     .clone()
+  //     .add(7, "days")
+  //     .endOf("day");
 
-    const isDateValid =
-      dateMoment.isAfter(emailSentTime) &&
-      dateMoment.isBefore(oneWeekFromEmailSent);
-    const isTimeValid = timeSlots.includes(timeMoment.toString());
+  //   const isDateValid =
+  //     dateMoment.isAfter(emailSentTime) &&
+  //     dateMoment.isBefore(oneWeekFromEmailSent);
+  //   const isTimeValid = timeSlots.includes(timeMoment.toString());
 
-    console.log("isDateValid", isDateValid);
-    console.log("isTimeValid", isTimeValid);
-    return isDateValid && isTimeValid;
-  };
+  //   console.log("isDateValid", isDateValid);
+  //   console.log("isTimeValid", isTimeValid);
+  //   return isDateValid && isTimeValid;
+  // };
 
   const handleDateChangeValidated = (date: string | Moment) => {
     const isThisDateValid = validateDate(date);
@@ -208,14 +221,14 @@ export const ScheduleForm = ({
   const validateDate = (date: string | Moment) => {
     const dateMoment = typeof date === "string" ? moment(date) : date;
     const oneWeekFromEmailSent = emailSentTime
-      .clone()
-      .add(7, "days")
-      .endOf("day");
-
+      ? emailSentTime.clone().add(7, "days").endOf("day")
+      : null;
+    console.log(dateMoment);
+    console.log(oneWeekFromEmailSent);
     console.log(dateMoment.isAfter(oneWeekFromEmailSent));
     if (dateMoment.isAfter(oneWeekFromEmailSent))
       setDateValidityMessage(
-        "The time to schedule this visit has passed. Please contact support to schedule a visit"
+        "The time to schedule this visit has passed. Your application has been marked as expired. If you are still interested in continuing the adoption process, please request a reactivation of your application on the application page. Thank you for your understanding and cooperation."
       );
     return (
       dateMoment.isAfter(emailSentTime) &&
@@ -252,7 +265,8 @@ export const ScheduleForm = ({
   // console.log(isDisabled);
   // console.log(timeSlots);
   //console.log(timeSlots.length === 0 && isDateValid);
-
+  console.log(canSchedule);
+  console.log(dateValidityMessage);
   if (isLoadingApplication) {
     return (
       <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
@@ -399,10 +413,7 @@ export const ScheduleForm = ({
               )}
               Schedule Visit
             </button>
-            {timeSlots.length === 0 &&
-            isDateValid &&
-            !isLoading &&
-            !isLoadingTimeSlots ? (
+            {timeSlots.length === 0 && !isLoading && !isLoadingTimeSlots ? (
               <div className="text-lg text-red-600 mt-4">
                 {dateValidityMessage}
               </div>

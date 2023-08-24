@@ -16,6 +16,8 @@ export const statusButtonText = (status: Status | null) => {
       return "Reject Applicant Home";
     case Status.Rejected:
       return "Reject Application";
+    case Status.ReactivationRequested:
+      return "Request for Reactivation";
     default:
       return null;
   }

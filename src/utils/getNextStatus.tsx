@@ -19,6 +19,8 @@ export const getNextUserStatus = (currentStatus: Status) => {
   switch (currentStatus) {
     case Status.HomeVisitRequested:
       return Status.HomeVisitScheduled;
+    case Status.Expired:
+      return Status.ReactivationRequested;
     default:
       return null;
   }
