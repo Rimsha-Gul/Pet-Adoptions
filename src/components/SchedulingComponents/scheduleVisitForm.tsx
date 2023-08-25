@@ -155,7 +155,10 @@ export const ScheduleForm = ({
     console.log("4");
     const canScheduleYet =
       visitType === VisitType.Home
-        ? Boolean(application?.status === Status.HomeVisitRequested)
+        ? Boolean(
+            application?.status === Status.HomeVisitRequested ||
+              application?.status === Status.Expired
+          )
         : Boolean(application?.status === Status.HomeApproved);
     setCanSchedule(canScheduleYet);
     console.log(canScheduleYet);
@@ -225,6 +228,7 @@ export const ScheduleForm = ({
       : null;
     console.log(dateMoment);
     console.log(oneWeekFromEmailSent);
+
     console.log(dateMoment.isAfter(oneWeekFromEmailSent));
     if (dateMoment.isAfter(oneWeekFromEmailSent))
       setDateValidityMessage(
@@ -275,7 +279,7 @@ export const ScheduleForm = ({
         </div>
       </div>
     );
-  } else if (!canSchedule && !visitScheduled) {
+  } else if (!canSchedule && !visitScheduled && !dateValidityMessage) {
     return (
       <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
         <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
@@ -288,7 +292,7 @@ export const ScheduleForm = ({
         </div>
       </div>
     );
-  } else if (canSchedule && dateValidityMessage) {
+  } else if (dateValidityMessage) {
     return (
       <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
         <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">

@@ -15,6 +15,8 @@ export enum Status {
   Closed = "Closed",
   Expired = "Expired",
   ReactivationRequested = "Reactivation Requested",
+  ReactivationRequestApproved = "Reactivation Request Approved",
+  ReactivationRequestDeclined = "Reactivation Request Declined",
 }
 
 export enum VisitType {

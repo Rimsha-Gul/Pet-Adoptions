@@ -57,3 +57,8 @@ export interface Review {
   rating: number;
   reviewText: string;
 }
+
+export interface ReactivationRequest {
+  reasonNotScheduled: string;
+  reasonToReactivate: string;
+}

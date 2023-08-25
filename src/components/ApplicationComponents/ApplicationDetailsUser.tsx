@@ -8,10 +8,11 @@ import { statusButtonText } from "../../utils/getStatusButtonText";
 import { getNextUserStatus } from "../../utils/getNextStatus";
 import { showErrorAlert, showSuccessAlert } from "../../utils/alert";
 import StatusButton from "./StatusButton";
-import { Application } from "../../types/interfaces";
+import { Application, ReactivationRequest } from "../../types/interfaces";
 import ApplicationGroupedFields from "./ApplicationDetails";
 import { applicationGroups } from "../../constants/groups";
 import { BiLinkExternal } from "react-icons/bi";
+import ReactivationRequestDetails from "./ReactivationRequestDetails";
 
 const accessToken = localStorage.getItem("accessToken");
 api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
@@ -25,6 +26,9 @@ const ApplicationDetailsUser = () => {
     useState<boolean>(false);
   const [reasonNotScheduled, setReasonNotScheduled] = useState<string>("");
   const [reasonToReactivate, setReasonToReactivate] = useState<string>("");
+  const [reactivationRequest, setReactivationRequest] =
+    useState<ReactivationRequest | null>(null);
+
   console.log(application);
 
   const { id } = useParams();
@@ -108,6 +112,29 @@ const ApplicationDetailsUser = () => {
   }, [id, application]);
   console.log(application);
 
+  useEffect(() => {
+    const fetchReactivationRequest = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.get("/reactivationRequest/", {
+          params: {
+            id: id,
+          },
+        });
+        console.log(response.data);
+        setReactivationRequest(response.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (application && application.status === Status.ReactivationRequested) {
+      fetchReactivationRequest();
+    }
+  }, [application]);
+
   const handleReview = () => {
     navigate(`/shelterProfile/${application?.shelterID}`);
   };
@@ -119,7 +146,7 @@ const ApplicationDetailsUser = () => {
     try {
       setIsLoading(true);
       // Adjust this API call according to your backend's needs
-      const response = await api.put("/application/requestReactivation", {
+      const response = await api.post("/reactivationRequest", {
         applicationID: id,
         reasonNotScheduled: reasonNotScheduled,
         reasonToReactivate: reasonToReactivate,
@@ -228,6 +255,11 @@ const ApplicationDetailsUser = () => {
               application={application}
             />
           </div>
+          {reactivationRequest && (
+            <ReactivationRequestDetails
+              reactivationRequest={reactivationRequest}
+            />
+          )}
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6 sm:pt-16">
             {statusButtonText(getNextUserStatus(application.status)) && (

@@ -9,9 +9,10 @@ import { statusButtonText } from "../../utils/getStatusButtonText";
 import StatusButton from "./StatusButton";
 import { getStatusIcon } from "../../utils/getStatusIcon";
 import { applicationGroups } from "../../constants/groups";
-import { Application } from "../../types/interfaces";
+import { Application, ReactivationRequest } from "../../types/interfaces";
 import ApplicationGroupedFields from "./ApplicationDetails";
 import { BiLinkExternal } from "react-icons/bi";
+import ReactivationRequestDetails from "./ReactivationRequestDetails";
 
 const ApplicationDetailsShelter = () => {
   const [application, setApplication] = useState<Application | null>(null);
@@ -19,6 +20,8 @@ const ApplicationDetailsShelter = () => {
   const [isRejecting, setIsRejecting] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [visitDate, setVisitDate] = useState<string>("");
+  const [reactivationRequest, setReactivationRequest] =
+    useState<ReactivationRequest | null>(null);
   const { id } = useParams();
 
   const groupedFields = useMemo(() => {
@@ -66,6 +69,29 @@ const ApplicationDetailsShelter = () => {
       fetchApplication();
     }
   }, [id, application]);
+
+  useEffect(() => {
+    const fetchReactivationRequest = async () => {
+      try {
+        setIsLoading(true);
+        const response = await api.get("/reactivationRequest/", {
+          params: {
+            id: id,
+          },
+        });
+        console.log(response.data);
+        setReactivationRequest(response.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (application && application.status === Status.ReactivationRequested) {
+      fetchReactivationRequest();
+    }
+  }, [application]);
 
   const updateApplicationStatus = async (action: string) => {
     const nextStatus = getNextShelterStatus(
@@ -193,10 +219,17 @@ const ApplicationDetailsShelter = () => {
                 </p>
               </div>
             </div>
+            {reactivationRequest && (
+              <ReactivationRequestDetails
+                reactivationRequest={reactivationRequest}
+              />
+            )}
+
             <div className="flex flex-row items-center justify-center gap-4">
               {application.status === Status.UnderReview ||
               application.status === Status.HomeVisitScheduled ||
-              application.status === Status.UserVisitScheduled ? (
+              application.status === Status.UserVisitScheduled ||
+              application.status === Status.ReactivationRequested ? (
                 <>
                   <StatusButton
                     status={application.status}
