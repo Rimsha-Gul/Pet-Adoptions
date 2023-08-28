@@ -67,6 +67,9 @@ export const ScheduleForm = ({
   const [isLoadingApplication, setIsLoadingApplication] =
     useState<boolean>(true);
   const [emailSentTime, setEmailSentTime] = useState<Moment | null>(null);
+  const [lastDateToschedule, setLastDateToschedule] = useState<Moment | null>(
+    null
+  );
   const { id } = useParams();
   // const emailSentTimestamp =
   //   visitType === VisitType.Home
@@ -153,21 +156,32 @@ export const ScheduleForm = ({
 
   useEffect(() => {
     console.log("4");
-    const canScheduleYet =
-      visitType === VisitType.Home
-        ? Boolean(
-            application?.status === Status.HomeVisitRequested ||
-              application?.status === Status.Expired
-          )
-        : Boolean(application?.status === Status.HomeApproved);
-    setCanSchedule(canScheduleYet);
-    console.log(canScheduleYet);
+    if (application) {
+      const canScheduleYet =
+        visitType === VisitType.Home
+          ? Boolean(
+              application?.status === Status.HomeVisitRequested ||
+                application?.status === Status.Expired
+            )
+          : Boolean(application?.status === Status.HomeApproved);
+      setCanSchedule(canScheduleYet);
+      console.log(canScheduleYet);
 
-    const emailSentTimestamp =
-      visitType === VisitType.Home
-        ? application?.homeVisitEmailSentDate
-        : application?.shelterVisitEmailSentDate;
-    setEmailSentTime(moment(emailSentTimestamp));
+      const emailSentTimestamp =
+        visitType === VisitType.Home
+          ? application?.homeVisitEmailSentDate
+          : application?.shelterVisitEmailSentDate;
+      setEmailSentTime(moment(emailSentTimestamp));
+
+      console.log(application?.homeVisitScheduleExpiryDate);
+      const lastDateVisitSchedule =
+        visitType === VisitType.Home
+          ? application?.homeVisitScheduleExpiryDate
+          : application?.shelterVisitScheduleExpiryDate;
+      console.log(lastDateVisitSchedule);
+      console.log(moment(lastDateVisitSchedule));
+      setLastDateToschedule(moment(lastDateVisitSchedule));
+    }
   }, [application]);
 
   useEffect(() => {
@@ -223,20 +237,20 @@ export const ScheduleForm = ({
 
   const validateDate = (date: string | Moment) => {
     const dateMoment = typeof date === "string" ? moment(date) : date;
-    const oneWeekFromEmailSent = emailSentTime
-      ? emailSentTime.clone().add(7, "days").endOf("day")
-      : null;
+    // const oneWeekFromEmailSent = emailSentTime
+    //   ? emailSentTime.clone().add(7, "days").endOf("day")
+    //   : null;
     console.log(dateMoment);
-    console.log(oneWeekFromEmailSent);
+    console.log(lastDateToschedule);
 
-    console.log(dateMoment.isAfter(oneWeekFromEmailSent));
-    if (dateMoment.isAfter(oneWeekFromEmailSent))
+    console.log(dateMoment.isAfter(lastDateToschedule));
+    if (dateMoment.isAfter(lastDateToschedule))
       setDateValidityMessage(
         "The time to schedule this visit has passed. Your application has been marked as expired. If you are still interested in continuing the adoption process, please request a reactivation of your application on the application page. Thank you for your understanding and cooperation."
       );
     return (
       dateMoment.isAfter(emailSentTime) &&
-      dateMoment.isBefore(oneWeekFromEmailSent)
+      dateMoment.isBefore(lastDateToschedule)
     );
   };
 
@@ -326,7 +340,10 @@ export const ScheduleForm = ({
             {title}
           </h2>
           <p className="text-gray-700 text-xl font-medium text-center">
-            Schedule a visit within the next week
+            Schedule a visit by{" "}
+            <span className="font-bold">
+              {lastDateToschedule?.format("dddd, MMMM Do YYYY")}
+            </span>
           </p>
           <form
             className="mx-auto sm:w-2/3 md:w-1/2 lg:w-1/3 2xl:w-1/4 space-y-8 mt-8 flex flex-col items-center"
@@ -350,13 +367,11 @@ export const ScheduleForm = ({
                   const today = moment().startOf("day");
                   const tomorrow = moment().add(1, "days").startOf("day");
                   const emailSentDate = moment(emailSentTime).startOf("day");
-                  const oneWeekAfterEmailSent = moment(emailSentDate)
-                    .add(7, "days")
-                    .endOf("day");
+                  // const oneWeekAfterEmailSent = moment(emailSentDate)
+                  //   .add(7, "days")
+                  //   .endOf("day");
 
-                  const isValidToday = today.isSameOrBefore(
-                    oneWeekAfterEmailSent
-                  );
+                  const isValidToday = today.isSameOrBefore(lastDateToschedule);
 
                   if (!isValidToday) {
                     // If today's date is more than one week after the emailSentDate,
@@ -367,7 +382,7 @@ export const ScheduleForm = ({
                   const isValid =
                     current.isSameOrAfter(tomorrow) &&
                     current.isSameOrAfter(emailSentDate) &&
-                    current.isBefore(oneWeekAfterEmailSent);
+                    current.isBefore(lastDateToschedule);
 
                   return isValid;
                 }}

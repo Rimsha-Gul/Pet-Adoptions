@@ -49,6 +49,8 @@ export interface Application {
   shelterVisitDate?: string;
   homeVisitEmailSentDate?: string;
   shelterVisitEmailSentDate?: string;
+  homeVisitScheduleExpiryDate?: string;
+  shelterVisitScheduleExpiryDate: string;
 }
 
 export interface Review {
