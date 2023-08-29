@@ -28,7 +28,7 @@ const PetAdoptionApply = ({
 
   return (
     <div className="flex flex-col gap-6 max-w-9xl p-8 sm:p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
-      <span className="text-lg flex flex-wrap align-center gap-2">
+      <p className="text-lg flex flex-wrap items-end gap-2">
         <span className="text-primary font-bold">Shelter Name:</span>
         <Link
           className="hover:underline text-gray-500"
@@ -40,14 +40,19 @@ const PetAdoptionApply = ({
           </span>
         </Link>
         {petShelterRating && (
-          <StarRatings
-            rating={petShelterRating}
-            starDimension="20px"
-            starSpacing="3px"
-            starRatedColor="gold"
-          />
+          <>
+            <StarRatings
+              rating={petShelterRating}
+              starDimension="20px"
+              starSpacing="3px"
+              starRatedColor="gold"
+            />
+            <span className="flex items-end justify-end text-lg text-gray-600">
+              {petShelterRating.toFixed(1)}
+            </span>
+          </>
         )}
-      </span>
+      </p>
       <p className="text-lg text-gray-500">
         <span className="text-primary font-bold">Adoption Fee:</span>{" "}
         {petAdoptionFee}

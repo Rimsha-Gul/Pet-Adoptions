@@ -148,8 +148,8 @@ const ReviewList = ({
           starRatedColor="gold"
         />
         <p className="text-lg text-gray-600">
-          {shelter.numberOfReviews}
-          {shelter.numberOfReviews > 1 ? " reviews" : " review"}
+          {shelter.rating.toFixed(1)} ({shelter.numberOfReviews}{" "}
+          {shelter.numberOfReviews > 1 ? " reviews" : " review"})
         </p>
       </div>
       <InfiniteScroll

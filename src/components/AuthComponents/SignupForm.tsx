@@ -87,6 +87,7 @@ const SignupForm = ({
   //Handle Signup API Integration
   const createAccount = async () => {
     try {
+      sessionStorage.setItem("userEmail", signupData.email);
       appContext.setUserEmail?.(signupData.email);
       setIsLoading(true);
       const response = await api.post("/auth/signup", signupData);

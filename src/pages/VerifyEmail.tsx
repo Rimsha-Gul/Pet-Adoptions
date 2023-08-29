@@ -12,17 +12,26 @@ const VerifyEmail = () => {
   const navigate = useNavigate();
   const [verificationCode, setVerificationCode] = useState<string>("");
   const appContext = useContext(AppContext);
-  const [timer, setTimer] = useState<number>(60);
+  const userEmail = sessionStorage.getItem("userEmail");
+  const remainingTimeStr = sessionStorage.getItem("remainingTime");
+  let remainingTime: number | (() => number);
+  if (remainingTimeStr) {
+    remainingTime = parseInt(remainingTimeStr, 10);
+  }
+
+  const [timer, setTimer] = useState<number>(
+    remainingTimeStr ? parseInt(remainingTimeStr, 10) : 0
+  );
   const [resendDisabled, setResendDisabled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isResending, setIsResending] = useState<boolean>(false);
   const [verificationCodeError, setVerificationCodeError] =
     useState<string>("");
   const [showBlankScreen, setShowBlankScreen] = useState(false);
-  const [emailForVerification] = useState<string>(appContext.userEmail);
+  const [emailForVerification] = useState<string | null>(userEmail);
 
   const accessToken = localStorage.getItem("accessToken");
-  console.log(accessToken);
+  // console.log(accessToken);
   api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
   const sendCodeData = {
@@ -31,27 +40,40 @@ const VerifyEmail = () => {
 
   useEffect(() => {
     const sendVerificationCode = async () => {
+      const isOTPSent = sessionStorage.getItem("isOTPSent");
+      // Check if usermail is not null
       if (emailForVerification) {
-        // Check if usermail is not null
-        try {
-          if (appContext.verificationOperation === "changedEmail") {
-            await api.post("/auth/sendVerificationCode", {
-              email: appContext.newEmail,
-              emailChangeRequest: true,
-            });
-          } else {
-            await api.post("/auth/sendVerificationCode", sendCodeData);
-          }
-        } catch (error: any) {
-          console.error(error);
-          if (error.response.status === 404) {
-            navigate("/pagenotfound", {
-              state: errorMessages.pageNotFound,
-            });
-          } else if (error.response.status === 500) {
-            navigate("/pagenotfound", {
-              state: errorMessages.emailSendingError,
-            });
+        if (!isOTPSent) {
+          try {
+            if (appContext.verificationOperation === "changedEmail") {
+              await api.post("/auth/sendVerificationCode", {
+                email: appContext.newEmail,
+                emailChangeRequest: true,
+              });
+            } else {
+              await api.post("/auth/sendVerificationCode", sendCodeData);
+            }
+            sessionStorage.setItem("isOTPSent", "true");
+
+            // Initialize timer if a previous timer exists in session storage
+            const remainingTimeStr = sessionStorage.getItem("remainingTime");
+            if (remainingTimeStr) {
+              const remainingTime = parseInt(remainingTimeStr, 10);
+              setTimer(remainingTime);
+            } else {
+              setTimer(60);
+            }
+          } catch (error: any) {
+            console.error(error);
+            if (error.response.status === 404) {
+              navigate("/pagenotfound", {
+                state: errorMessages.pageNotFound,
+              });
+            } else if (error.response.status === 500) {
+              navigate("/pagenotfound", {
+                state: errorMessages.emailSendingError,
+              });
+            }
           }
         }
       } else {
@@ -61,6 +83,21 @@ const VerifyEmail = () => {
 
     sendVerificationCode();
   }, [emailForVerification]);
+
+  // Storing the timer's remaining time in session storage
+  // useEffect(() => {
+  //   sessionStorage.setItem("remainingTime", timer.toString());
+  // }, [timer]);
+
+  // Retrieving the remaining time when the component mounts
+  useEffect(() => {
+    const remainingTimeStr = sessionStorage.getItem?.("remainingTime");
+    console.log(remainingTimeStr);
+    if (remainingTimeStr) {
+      const remainingTime = parseInt(remainingTimeStr, 10);
+      setTimer(remainingTime);
+    }
+  }, []);
 
   const handleClick = async () => {
     // VerifyEmail API integration
@@ -165,6 +202,7 @@ const VerifyEmail = () => {
       const countdown = setTimeout(() => {
         setTimer(timer - 1);
       }, 1000);
+      sessionStorage.setItem("remainingTime", timer.toString());
 
       return () => clearTimeout(countdown);
     } else {
