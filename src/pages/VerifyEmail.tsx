@@ -82,6 +82,14 @@ const VerifyEmail = () => {
     };
 
     sendVerificationCode();
+    // Initialize timer if a previous timer exists in session storage
+    const remainingTimeStr = sessionStorage.getItem("remainingTime");
+    if (remainingTimeStr) {
+      const remainingTime = parseInt(remainingTimeStr, 10);
+      setTimer(remainingTime);
+    } else {
+      setTimer(60);
+    }
   }, [emailForVerification]);
 
   // Storing the timer's remaining time in session storage

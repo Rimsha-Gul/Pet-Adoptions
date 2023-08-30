@@ -17,7 +17,7 @@ export const statusButtonText = (status: Status | null) => {
     case Status.Rejected:
       return "Reject Application";
     case Status.ReactivationRequested:
-      return "Request for Reactivation";
+      return "Request Reactivation";
     case Status.ReactivationRequestApproved:
       return "Approve Request";
     case Status.ReactivationRequestDeclined:
