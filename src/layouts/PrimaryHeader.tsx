@@ -3,6 +3,7 @@ import PrimaryLogo from "../icons/PrimaryLogo";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { headerLinks } from "../constants/MenuOptions";
+import { BsFillBellFill } from "react-icons/bs";
 
 interface HeaderProps {
   handleLogout: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -56,7 +57,8 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
   return (
     <div className="fixed top-0 w-full flex items-center justify-between p-4 shadow-md mb-12 z-20 bg-white">
       <PrimaryLogo />
-      <div className="flex items-center">
+      <div className="flex items-center gap-4">
+        <BsFillBellFill className="text-primary text-3xl" />
         <div className="relative">
           {userProfilePhoto ? (
             <img
