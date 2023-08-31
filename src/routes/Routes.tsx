@@ -52,8 +52,6 @@ export const getRoutes = (
 
   const renderProtectedRoute = (Component: any) => {
     if (isAuthenticated) {
-      console.log(sidebarRoutes);
-      console.log(sidebarRoutes.includes(Component));
       if (sidebarRoutes.includes(Component)) {
         // console.log("sidebar");
         if (adminAndShelterRoutes.includes(Component) && userRole === "USER") {
@@ -68,8 +66,8 @@ export const getRoutes = (
           <div className="flex">
             <Sidebar handleLogout={handleLogout} />
             <div
-              className={`flex-grow items-center ${
-                isSidebarOpen ? "ml-64" : ""
+              className={`flex-grow items-center mt-20 md:mt-4 ${
+                isSidebarOpen ? "md:ml-64 " : ""
               }`}
             >
               <Component />
@@ -112,6 +110,10 @@ export const getRoutes = (
     }
   };
 
+  const renderShelterInvitation = () => {
+    return <ShelterInvitation handleLogout={handleLogout} />;
+  };
+
   return [
     { path: "/", element: <LoginPage /> },
     { path: "/signup", element: <SignupPage /> },
@@ -150,7 +152,7 @@ export const getRoutes = (
     },
     {
       path: "/shelter/invitation/:invitationToken",
-      element: <ShelterInvitation />,
+      element: renderShelterInvitation(),
     },
     {
       path: "/resetPasswordRequest",

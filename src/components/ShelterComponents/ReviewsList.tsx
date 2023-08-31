@@ -138,7 +138,7 @@ const ReviewList = ({
   };
 
   return (
-    <div className="w-full lg:w-3/4 xl:w-2/3 mb-8 px-16">
+    <div className="w-full lg:w-3/4 xl:w-2/3 mb-8 px-8 sm:px-16">
       <h2 className="text-2xl font-bold mb-4">Reviews</h2>
       <div className="flex flex-row gap-4 mb-4">
         <StarRatings
@@ -148,8 +148,8 @@ const ReviewList = ({
           starRatedColor="gold"
         />
         <p className="text-lg text-gray-600">
-          {shelter.numberOfReviews}
-          {shelter.numberOfReviews > 1 ? " reviews" : " review"}
+          {shelter.rating.toFixed(1)} ({shelter.numberOfReviews}{" "}
+          {shelter.numberOfReviews > 1 ? " reviews" : " review"})
         </p>
       </div>
       <InfiniteScroll

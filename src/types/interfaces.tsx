@@ -49,6 +49,8 @@ export interface Application {
   shelterVisitDate?: string;
   homeVisitEmailSentDate?: string;
   shelterVisitEmailSentDate?: string;
+  homeVisitScheduleExpiryDate?: string;
+  shelterVisitScheduleExpiryDate: string;
 }
 
 export interface Review {
@@ -56,4 +58,9 @@ export interface Review {
   applicantEmail: string;
   rating: number;
   reviewText: string;
+}
+
+export interface ReactivationRequest {
+  reasonNotScheduled: string;
+  reasonToReactivate: string;
 }

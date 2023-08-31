@@ -6,6 +6,7 @@ import FormAction from "../components/AuthComponents/FormAction";
 import { validateField } from "../utils/formValidation";
 import api from "../api";
 import { showSuccessAlert } from "../utils/alert";
+import { formatTime } from "../utils/formatTime";
 
 const ResetPasswordRequest = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ const ResetPasswordRequest = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [isRequestSent, setIsRequestSent] = useState<boolean>(false);
+  const [timer, setTimer] = useState<number>(300);
   const [errors, setErrors] = useState<FieldsState>({
     email: "Email is required",
   });
@@ -40,6 +42,19 @@ const ResetPasswordRequest = () => {
     setEmail(e.target.value);
   };
 
+  // Implement the countdown timer logic using useEffect
+  useEffect(() => {
+    if (isRequestSent && timer > 0) {
+      const countdown = setTimeout(() => {
+        setTimer(timer - 1);
+      }, 1000);
+
+      return () => clearTimeout(countdown);
+    } else {
+      setIsRequestSent(false); // Enable the request button when timer reaches zero
+    }
+  }, [timer, isRequestSent]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     requestForPasswordReset();
@@ -57,7 +72,7 @@ const ResetPasswordRequest = () => {
         },
         { headers: { Authorization: "" } }
       );
-
+      setTimer(300);
       console.log(response.data);
       showSuccessAlert(
         "Please check your email inbox for a link to complete the reset.",
@@ -122,6 +137,12 @@ const ResetPasswordRequest = () => {
             />
           </form>
           {message && <p>{message}</p>}
+          {isRequestSent && (
+            <div className="flex mt-8 items-center justify-center">
+              A password reset request has been sent. You can resend the request
+              in {formatTime(timer)}.
+            </div>
+          )}
         </div>
       </div>
     </div>

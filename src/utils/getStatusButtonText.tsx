@@ -11,11 +11,17 @@ export const statusButtonText = (status: Status | null) => {
     case Status.UserVisitScheduled:
       return "Schedule Applicant's Visit to Shelter";
     case Status.Approved:
-      return "Approve Aplication";
+      return "Approve Application";
     case Status.HomeRejected:
       return "Reject Applicant Home";
     case Status.Rejected:
       return "Reject Application";
+    case Status.ReactivationRequested:
+      return "Request Reactivation";
+    case Status.ReactivationRequestApproved:
+      return "Approve Request";
+    case Status.ReactivationRequestDeclined:
+      return "Decline Request";
     default:
       return null;
   }

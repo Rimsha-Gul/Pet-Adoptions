@@ -95,7 +95,7 @@ const LoginForm = () => {
   };
 
   return (
-    <form className="mx-auto md:w-full px-8 lg:px-16 xl:px-4 xl:w-2/3 mt-8">
+    <form className="mx-auto md:w-full px-4 sm:px-8 lg:px-16 xl:px-4 xl:w-2/3 mt-8">
       <div className="space-y-6">
         {fields.map((field) => (
           <Input

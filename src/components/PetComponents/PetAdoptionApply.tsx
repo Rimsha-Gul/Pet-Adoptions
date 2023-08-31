@@ -2,6 +2,7 @@ import { FormEvent, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
 import StarRatings from "react-star-ratings";
+import { BiLinkExternal } from "react-icons/bi";
 
 interface PetAdoptionApplyProps {
   petShelterID: string;
@@ -26,22 +27,30 @@ const PetAdoptionApply = ({
   const userRole = appContext.userRole;
 
   return (
-    <div className="flex flex-col gap-6 max-w-9xl p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
-      <p className="text-lg text-gray-500">
-        <span className="text-primary font-bold">Shelter Name:</span>{" "}
+    <div className="flex flex-col gap-6 max-w-9xl p-8 sm:p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
+      <p className="text-lg flex flex-wrap items-end gap-2">
+        <span className="text-primary font-bold">Shelter Name:</span>
         <Link
-          className="hover:underline"
+          className="hover:underline text-gray-500"
           to={`/shelterProfile/${petShelterID}`}
         >
-          {petShelterName}
+          <span className="flex items-center gap-1 font-medium">
+            {petShelterName}
+            <BiLinkExternal className="w-5 h-5" />
+          </span>
         </Link>
         {petShelterRating && (
-          <StarRatings
-            rating={petShelterRating}
-            starDimension="20px"
-            starSpacing="3px"
-            starRatedColor="gold"
-          />
+          <>
+            <StarRatings
+              rating={petShelterRating}
+              starDimension="20px"
+              starSpacing="3px"
+              starRatedColor="gold"
+            />
+            <span className="flex items-end justify-end text-lg text-gray-600">
+              {petShelterRating.toFixed(1)}
+            </span>
+          </>
         )}
       </p>
       <p className="text-lg text-gray-500">

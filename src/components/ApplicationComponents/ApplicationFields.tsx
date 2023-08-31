@@ -1,7 +1,10 @@
 import { formatFieldValue } from "../../utils/formatFieldValue";
 import { Application } from "../../types/interfaces";
 
-const applicationFieldLabels: Record<keyof Application, string> = {
+const applicationFieldLabels: Record<
+  keyof Omit<Application, "shelterID">,
+  string
+> = {
   id: "Application ID",
   petImage: "Pet Image",
   petName: "Pet Name",
@@ -33,7 +36,7 @@ const applicationFieldLabels: Record<keyof Application, string> = {
 };
 
 interface FieldProps {
-  field: keyof Application;
+  field: keyof Omit<Application, "shelterID">;
   application: Application;
   className?: string;
 }
@@ -43,10 +46,10 @@ const fieldLabels: typeof applicationFieldLabels = applicationFieldLabels;
 export const TextualField = ({ field, application, className }: FieldProps) => {
   return (
     <div key={field} className={`flex items-start gap-2 ${className}`}>
-      <label className="text-gray-700 text-xl font-medium">
+      <label className="text-gray-700 text-md sm:text-xl font-medium">
         {fieldLabels[field]}:
       </label>
-      <p className="text-xl text-gray-600 whitespace-pre-line">
+      <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
         {formatFieldValue(field, application[field])}
       </p>
     </div>
@@ -59,10 +62,10 @@ export const BooleanField = ({ field, application, className }: FieldProps) => {
       key={field}
       className={`flex flex-row items-center gap-2 ${className}`}
     >
-      <label className="text-gray-700 text-xl font-medium">
+      <label className="text-gray-700 text-md sm:text-xl font-medium">
         {fieldLabels[field]}:
       </label>
-      <p className="text-xl text-gray-700 whitespace-pre-line">
+      <p className="text-md sm:text-xl text-gray-700 whitespace-pre-line">
         {formatFieldValue(field, application[field])}
       </p>
     </div>

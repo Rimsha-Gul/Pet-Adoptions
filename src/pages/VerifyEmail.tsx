@@ -12,17 +12,26 @@ const VerifyEmail = () => {
   const navigate = useNavigate();
   const [verificationCode, setVerificationCode] = useState<string>("");
   const appContext = useContext(AppContext);
-  const [timer, setTimer] = useState<number>(60);
+  const userEmail = sessionStorage.getItem("userEmail");
+  const remainingTimeStr = sessionStorage.getItem("remainingTime");
+  let remainingTime: number | (() => number);
+  if (remainingTimeStr) {
+    remainingTime = parseInt(remainingTimeStr, 10);
+  }
+
+  const [timer, setTimer] = useState<number>(
+    remainingTimeStr ? parseInt(remainingTimeStr, 10) : 0
+  );
   const [resendDisabled, setResendDisabled] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isResending, setIsResending] = useState<boolean>(false);
   const [verificationCodeError, setVerificationCodeError] =
     useState<string>("");
   const [showBlankScreen, setShowBlankScreen] = useState(false);
-  const [emailForVerification] = useState<string>(appContext.userEmail);
+  const [emailForVerification] = useState<string | null>(userEmail);
 
   const accessToken = localStorage.getItem("accessToken");
-  console.log(accessToken);
+  // console.log(accessToken);
   api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
   const sendCodeData = {
@@ -31,27 +40,40 @@ const VerifyEmail = () => {
 
   useEffect(() => {
     const sendVerificationCode = async () => {
+      const isOTPSent = sessionStorage.getItem("isOTPSent");
+      // Check if usermail is not null
       if (emailForVerification) {
-        // Check if usermail is not null
-        try {
-          if (appContext.verificationOperation === "changedEmail") {
-            await api.post("/auth/sendVerificationCode", {
-              email: appContext.newEmail,
-              emailChangeRequest: true,
-            });
-          } else {
-            await api.post("/auth/sendVerificationCode", sendCodeData);
-          }
-        } catch (error: any) {
-          console.error(error);
-          if (error.response.status === 404) {
-            navigate("/pagenotfound", {
-              state: errorMessages.pageNotFound,
-            });
-          } else if (error.response.status === 500) {
-            navigate("/pagenotfound", {
-              state: errorMessages.emailSendingError,
-            });
+        if (!isOTPSent) {
+          try {
+            if (appContext.verificationOperation === "changedEmail") {
+              await api.post("/auth/sendVerificationCode", {
+                email: appContext.newEmail,
+                emailChangeRequest: true,
+              });
+            } else {
+              await api.post("/auth/sendVerificationCode", sendCodeData);
+            }
+            sessionStorage.setItem("isOTPSent", "true");
+
+            // Initialize timer if a previous timer exists in session storage
+            const remainingTimeStr = sessionStorage.getItem("remainingTime");
+            if (remainingTimeStr) {
+              const remainingTime = parseInt(remainingTimeStr, 10);
+              setTimer(remainingTime);
+            } else {
+              setTimer(60);
+            }
+          } catch (error: any) {
+            console.error(error);
+            if (error.response.status === 404) {
+              navigate("/pagenotfound", {
+                state: errorMessages.pageNotFound,
+              });
+            } else if (error.response.status === 500) {
+              navigate("/pagenotfound", {
+                state: errorMessages.emailSendingError,
+              });
+            }
           }
         }
       } else {
@@ -60,7 +82,30 @@ const VerifyEmail = () => {
     };
 
     sendVerificationCode();
+    // Initialize timer if a previous timer exists in session storage
+    const remainingTimeStr = sessionStorage.getItem("remainingTime");
+    if (remainingTimeStr) {
+      const remainingTime = parseInt(remainingTimeStr, 10);
+      setTimer(remainingTime);
+    } else {
+      setTimer(60);
+    }
   }, [emailForVerification]);
+
+  // Storing the timer's remaining time in session storage
+  // useEffect(() => {
+  //   sessionStorage.setItem("remainingTime", timer.toString());
+  // }, [timer]);
+
+  // Retrieving the remaining time when the component mounts
+  useEffect(() => {
+    const remainingTimeStr = sessionStorage.getItem?.("remainingTime");
+    console.log(remainingTimeStr);
+    if (remainingTimeStr) {
+      const remainingTime = parseInt(remainingTimeStr, 10);
+      setTimer(remainingTime);
+    }
+  }, []);
 
   const handleClick = async () => {
     // VerifyEmail API integration
@@ -165,6 +210,7 @@ const VerifyEmail = () => {
       const countdown = setTimeout(() => {
         setTimer(timer - 1);
       }, 1000);
+      sessionStorage.setItem("remainingTime", timer.toString());
 
       return () => clearTimeout(countdown);
     } else {
@@ -178,7 +224,7 @@ const VerifyEmail = () => {
     <Loading />
   ) : appContext.verificationOperation !== "changeEmail" &&
     appContext.verificationOperation !== "changedEmail" ? (
-    <div className="bg-radial-gradient min-h-screen flex flex-col justify-center items-center p-16 lg:px-18 xl:px-32 2xl:px-72">
+    <div className="sm:bg-radial-gradient min-h-screen flex flex-col justify-center items-center p-8 sm:p-16 lg:px-18 xl:px-32 2xl:px-72">
       <div className="grid md:grid-cols-2 w-full">
         <LogoSection />
         <EmailVerificationForm
@@ -192,75 +238,8 @@ const VerifyEmail = () => {
           resendDisabled={resendDisabled}
           verificationCodeError={verificationCodeError}
           isCodeValid={isCodeValid}
-          customClassName="bg-white px-12 pb-12 md:py-12 md:px-4 "
+          customClassName="bg-white px-6 sm:px-12 pb-12 md:py-12 md:px-4 "
         />
-        {/* <div className="bg-white rounded-lg shadow-md px-12 pb-12 md:py-12 md:px-4 md:rounded-l-none">
-          <h1 className="text-3xl text-primary font-bold mb-4">
-            Verify Your Email Account
-          </h1>
-          <p className="text-lg mb-8">
-            Please enter the 6-digit code sent to your email.
-          </p>
-          <div className="flex flex-row mt-2 items-center justify-center">
-            <input
-              type="text"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-              pattern="\d{6}"
-              maxLength={6}
-              required
-              className="w-1/2 px-4 py-2 border border-primary focus:border-primary rounded mb-4"
-            />
-          </div>
-          <div className="flex flex-row gap-4 mt-2 items-center justify-center">
-            <button
-              className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer ${
-                !isCodeValid ? "opacity-50 cursor-not-allowed" : ""
-              } ${
-                isLoading
-                  ? "bg-primary text-white opacity-50 cursor-not-allowed"
-                  : ""
-              } `}
-              onClick={handleClick}
-              disabled={!isCodeValid}
-            >
-              {isLoading && (
-                <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
-              )}
-              Verify
-            </button>
-            <div>
-              {timer === 0 ? (
-                <button
-                  className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer 
-              ${
-                isResending
-                  ? "bg-primary text-white opacity-50 cursor-not-allowed"
-                  : ""
-              } `}
-                  onClick={handleResendClick}
-                  disabled={resendDisabled}
-                >
-                  {isResending && (
-                    <img
-                      src={loadingIcon}
-                      alt="Loading"
-                      className="mr-2 h-4 w-4"
-                    />
-                  )}
-                  Resend Code
-                </button>
-              ) : (
-                <div>Code will expire in {timer} seconds</div>
-              )}
-            </div>
-          </div>
-          {verificationCodeError && (
-            <p className="flex items-center justify-center mt-4 text-sm text-red-500">
-              {verificationCodeError}
-            </p>
-          )}
-        </div> */}
       </div>
     </div>
   ) : (
@@ -276,7 +255,7 @@ const VerifyEmail = () => {
         resendDisabled={resendDisabled}
         verificationCodeError={verificationCodeError}
         isCodeValid={isCodeValid}
-        customClassName="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 p-12"
+        customClassName="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 p-6 sm:p-12"
       />
     </div>
   );
