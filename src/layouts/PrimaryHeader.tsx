@@ -54,11 +54,18 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
     };
   }, []);
 
+  const handleBellClick = () => {
+    navigate("/notifications");
+  };
+
   return (
     <div className="fixed top-0 w-full flex items-center justify-between p-4 shadow-md mb-12 z-20 bg-white">
       <PrimaryLogo />
       <div className="flex items-center gap-4">
-        <BsFillBellFill className="text-primary text-3xl" />
+        <BsFillBellFill
+          className="text-primary text-3xl cursor-pointer"
+          onClick={handleBellClick}
+        />
         <div className="relative">
           {userProfilePhoto ? (
             <img

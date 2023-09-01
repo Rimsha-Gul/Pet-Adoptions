@@ -64,3 +64,13 @@ export interface ReactivationRequest {
   reasonNotScheduled: string;
   reasonToReactivate: string;
 }
+
+export interface Notification {
+  _id: string;
+  applicationID: string;
+  status: Status;
+  petImage: string;
+  isRead: boolean;
+  actionUrl: string;
+  date: string;
+}

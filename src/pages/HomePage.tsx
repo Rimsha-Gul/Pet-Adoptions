@@ -6,8 +6,6 @@ import Select from "react-select";
 import { FaSearch } from "react-icons/fa";
 import PetCard from "../components/PetComponents/PetCard";
 import InfiniteScroll from "react-infinite-scroll-component";
-import NotificationButton from "../components/NotificationsComponents/NotificationButton";
-import NotificationList from "../components/NotificationsComponents/NotificationsList";
 import socket from "../socket/socket";
 
 export interface Pet {
@@ -421,11 +419,6 @@ const HomePage = () => {
             </div>
           </div>
         )}
-        <div>
-          <h1>Notifications</h1>
-          <NotificationButton />
-          <NotificationList />
-        </div>
         {isLoading && (
           <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center">
             <img src={loadingIcon} alt="Loading" className="h-10 w-10" />

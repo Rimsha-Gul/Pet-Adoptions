@@ -27,6 +27,7 @@ import ShelterProfile from "../pages/ShelterProfile";
 import ShelterInvitation from "../pages/ShelterInvitation";
 import ResetPasswordRequest from "../pages/ResetPasswordRequest";
 import ResetPassword from "../pages/ResetPassword";
+import Notifications from "../pages/Notifications";
 
 export const getRoutes = (
   isAuthenticated: boolean,
@@ -159,5 +160,9 @@ export const getRoutes = (
       element: <ResetPasswordRequest />,
     },
     { path: "/resetPassword/:resetToken", element: <ResetPassword /> },
+    {
+      path: "/notifications",
+      element: renderProtectedRoute(Notifications),
+    },
   ];
 };
