@@ -19,7 +19,7 @@ export default {
           50: "#fed8d3",
           10: "#fef0e8",
         },
-        white: {
+        whiteCustom: {
           10: "#fefefe",
         },
       },

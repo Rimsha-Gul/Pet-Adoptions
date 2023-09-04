@@ -32,7 +32,7 @@ const NotificationCard = ({ notification }: NotificationCardProps) => {
     <div
       className={`p-4 cursor-pointer text-gray-600 ${
         notification.isRead
-          ? "bg-white-10 hover:bg-gray-100"
+          ? "bg-whiteCustom-10 hover:bg-gray-100"
           : "bg-secondary-10 hover:bg-secondary-50"
       }`}
       onClick={handdleNotificationClick}
