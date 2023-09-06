@@ -31,6 +31,7 @@ const SignupForm = ({
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [credentialsError, setCredentialsError] = useState<string>("");
   const navigate = useNavigate();
   const signupData = {
     name: signupState.name,
@@ -63,6 +64,7 @@ const SignupForm = ({
       [id]: value,
     }));
 
+    setCredentialsError("");
     setErrors((prevErrors) => ({
       ...prevErrors,
       [id]: fieldError,
@@ -71,13 +73,13 @@ const SignupForm = ({
 
   useEffect(() => {
     // Check if all fields are valid
-    const isAllFieldsValid = Object.values(errors).every(
-      (error) => error === ""
-    );
+    const isAllFieldsValid =
+      credentialsError === "" &&
+      Object.values(errors).every((error) => error === "");
 
     // Update the form validity state
     setIsFormValid(isAllFieldsValid);
-  }, [errors]);
+  }, [errors, credentialsError]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -87,6 +89,7 @@ const SignupForm = ({
   //Handle Signup API Integration
   const createAccount = async () => {
     try {
+      setCredentialsError("");
       sessionStorage.setItem("userEmail", signupData.email);
       appContext.setUserEmail?.(signupData.email);
       setIsLoading(true);
@@ -101,6 +104,8 @@ const SignupForm = ({
           ...prevErrors,
           email: "User already exists.",
         }));
+      } else if (error.response.status === 400) {
+        setCredentialsError(error.response.data.message);
       }
       console.error(error);
     } finally {
@@ -136,6 +141,12 @@ const SignupForm = ({
         disabled={!isFormValid}
         customClass="w-full"
       />
+      <p
+        data-cy="credentials-error"
+        className="text-center text-red-500 text-xs"
+      >
+        {credentialsError}
+      </p>
     </form>
   );
 };

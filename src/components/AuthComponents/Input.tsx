@@ -209,7 +209,9 @@ const Input = ({
           placeholder={placeholder}
         />
         {validationError && isTouched && (
-          <p className="text-red-500 text-xs mt-1">{validationError}</p>
+          <p data-cy="error-message" className="text-red-500 text-xs mt-1">
+            {validationError}
+          </p>
         )}
       </div>
     );
@@ -278,7 +280,9 @@ const Input = ({
       </div>
 
       {validationError && isTouched && (
-        <p className="text-red-500 text-xs mt-1">{validationError}</p>
+        <p data-cy="error-message" className="text-red-500 text-xs mt-1">
+          {validationError}
+        </p>
       )}
     </div>
   );

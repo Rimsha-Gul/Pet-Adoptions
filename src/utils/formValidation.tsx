@@ -29,6 +29,9 @@ export const validateField = (
       if (!value) {
         return "Confirm password is required";
       }
+      if (value.length < 6) {
+        return "Password should be at least 6 characters long";
+      }
       if (value != fieldsState?.password) {
         return "Passwords do not match";
       }

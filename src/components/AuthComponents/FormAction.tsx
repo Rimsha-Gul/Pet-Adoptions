@@ -32,7 +32,12 @@ const FormAction = ({
           disabled={isLoading || disabled}
         >
           {isLoading && (
-            <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
+            <img
+              src={loadingIcon}
+              alt="Loading"
+              data-cy="loadingIcon"
+              className="mr-2 h-4 w-4"
+            />
           )}
           {text}
         </button>

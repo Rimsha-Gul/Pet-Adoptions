@@ -130,7 +130,12 @@ const LoginForm = () => {
         disabled={!isFormValid}
         customClass="w-full"
       />
-      <p className="text-center text-red-500 text-xs">{credentialsError}</p>
+      <p
+        data-cy="credentials-error"
+        className="text-center text-red-500 text-xs"
+      >
+        {credentialsError}
+      </p>
     </form>
   );
 };

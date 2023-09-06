@@ -315,54 +315,7 @@ export const ScheduleForm = ({
   console.log(canSchedule);
   console.log(visitScheduled);
   console.log(dateValidityMessage);
-  // if (isLoadingApplication) {
-  //   return (
-  //     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-  //       <div className="flex items-center justify-center mb-8">
-  //         <img src={loadingIcon} alt="Loading" className="h-10 w-10" />
-  //       </div>
-  //     </div>
-  //   );
-  // } else if (!canSchedule && !visitScheduled && !dateValidityMessage) {
-  //   return (
-  //     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-  //       <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
-  //         <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
-  //           {title}
-  //         </h2>
-  //         <p className="text-gray-700 text-xl font-medium text-center">
-  //           You cannot schedule a visit for this application yet.
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // } else if (dateValidityMessage) {
-  //   return (
-  //     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-  //       <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
-  //         <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
-  //           {title}
-  //         </h2>
-  //         <p className="text-gray-700 text-xl font-medium text-center">
-  //           {dateValidityMessage}
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // } else if (visitScheduled) {
-  //   return (
-  //     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-  //       <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
-  //         <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
-  //           {title}
-  //         </h2>
-  //         <p className="text-gray-700 text-xl font-medium text-center">
-  //           The visit for this application has already been scheduled.
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // } else {
+
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
       {isLoadingApplication ? (
