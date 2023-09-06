@@ -53,7 +53,6 @@ export const AppContext = createContext<AppContextProps>({
 const AppContextProvider = (props: { children: ReactNode }) => {
   const { children } = props;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const [userEmail, setUserEmail] = useState<string>("");
   const [userRole, setUserRole] = useState<string>("");
   const [displayName, setDisplayName] = useState<string>("");
@@ -102,6 +101,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
               console.log(api);
               const res = await api.post("/auth/refresh");
               console.log("Refresh response: ", res);
+              // sessionStorage.setItem("userEmail", signupData.email);
               setLoggedIn(true);
               localStorage.setItem("accessToken", res.data.tokens.accessToken);
               localStorage.setItem(
@@ -141,6 +141,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
         .get("/session")
         .then((res) => res.data)
         .then((data: any) => {
+          sessionStorage.setItem("userEmail", data.email);
           setUserEmail(data.email);
           setDisplayName(data.name);
           setUserRole(data.role);

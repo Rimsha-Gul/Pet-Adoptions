@@ -6,6 +6,7 @@ import Select from "react-select";
 import { FaSearch } from "react-icons/fa";
 import PetCard from "../components/PetComponents/PetCard";
 import InfiniteScroll from "react-infinite-scroll-component";
+import socket from "../socket/socket";
 
 export interface Pet {
   shelterID: string;
@@ -112,6 +113,7 @@ const HomePage = () => {
   const [breedFilter, setBreedFilter] = useState<string>("");
   const [genderFilter, setGenderFilter] = useState<string>("");
   const [noPetsFound, setNoPetsFound] = useState<boolean>(false);
+  const userEmail = sessionStorage.getItem("userEmail");
 
   if (!appContext.loggedIn) {
     //console.log(localStorage.getItem("userEmail"));
@@ -148,6 +150,11 @@ const HomePage = () => {
 
   //   fetchSession();
   // }, []);
+
+  useEffect(() => {
+    console.log("userEmail", userEmail);
+    socket.emit("join_room", userEmail);
+  });
 
   useEffect(() => {
     // When category changes, reset all the filters
@@ -412,7 +419,6 @@ const HomePage = () => {
             </div>
           </div>
         )}
-
         {isLoading && (
           <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center">
             <img src={loadingIcon} alt="Loading" className="h-10 w-10" />

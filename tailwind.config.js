@@ -19,6 +19,9 @@ export default {
           50: "#fed8d3",
           10: "#fef0e8",
         },
+        whiteCustom: {
+          10: "#fefefe",
+        },
       },
       backgroundColor: {
         primary: "#ff5363",

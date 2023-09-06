@@ -3,6 +3,9 @@ import PrimaryLogo from "../icons/PrimaryLogo";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { headerLinks } from "../constants/MenuOptions";
+import { BsFillBellFill } from "react-icons/bs";
+import { NotificationsContext } from "../context/NotificationsContext";
+import socket from "../socket/socket";
 
 interface HeaderProps {
   handleLogout: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -11,6 +14,9 @@ interface HeaderProps {
 const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
   const appContext = useContext(AppContext);
   const userName = appContext.displayName;
+  const userEmail = sessionStorage.getItem("userEmail");
+
+  const { unseenCount } = useContext(NotificationsContext);
 
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -53,10 +59,26 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
     };
   }, []);
 
+  const handleBellClick = () => {
+    socket.emit("mark_notifications_as_seen", userEmail);
+    navigate("/notifications");
+  };
+
   return (
     <div className="fixed top-0 w-full flex items-center justify-between p-4 shadow-md mb-12 z-20 bg-white">
       <PrimaryLogo />
-      <div className="flex items-center">
+      <div className="flex items-center gap-4">
+        <div className="relative flex items-center">
+          <BsFillBellFill
+            className="text-primary text-3xl cursor-pointer"
+            onClick={handleBellClick}
+          />
+          {unseenCount > 0 && (
+            <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-primary rounded-full">
+              {unseenCount}
+            </span>
+          )}
+        </div>
         <div className="relative">
           {userProfilePhoto ? (
             <img
