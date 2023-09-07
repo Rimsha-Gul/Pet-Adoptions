@@ -35,3 +35,8 @@
 //     }
 //   }
 // }
+
+// Custom command to check the URL
+Cypress.Commands.add("checkUrlIs", (expectedPath: string) => {
+  cy.url().should("eq", `${Cypress.config("baseUrl")}${expectedPath}`);
+});

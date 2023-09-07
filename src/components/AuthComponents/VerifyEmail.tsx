@@ -50,6 +50,7 @@ const EmailVerificationForm = ({
       </div>
       <div className="flex flex-row gap-4 mt-2 items-center justify-center">
         <button
+          data-cy="verify-button"
           className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer ${
             !isCodeValid ? "opacity-50 cursor-not-allowed" : ""
           } ${
@@ -68,6 +69,7 @@ const EmailVerificationForm = ({
         <div>
           {timer === 0 ? (
             <button
+              data-cy="resend-button"
               className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer 
         ${
           isResending

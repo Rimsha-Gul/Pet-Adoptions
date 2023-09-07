@@ -2,18 +2,35 @@ describe("Login Flow", () => {
   // Successful Login Case
   describe("Successful Login", () => {
     it("should login with valid credentials", () => {
+      cy.task("db:seed");
       // Navigate to login page
       cy.visit("/");
 
       // Type username and password
-      cy.get("input[name=email]").type("rimshagulc@gmail.com");
+      cy.get("input[name=email]").type("test-user@example.com");
       cy.get("input[name=password]").type("123456");
 
       // Click login button
       cy.get("button[type=submit]").click();
 
+      // Verify email is stored in sessionStorage
+      cy.window()
+        .its("sessionStorage")
+        .invoke("getItem", "userEmail")
+        .should("eq", "test-user@example.com");
+
+      // Verify tokens are stored in localStorage
+      cy.window()
+        .its("localStorage")
+        .invoke("getItem", "accessToken")
+        .should("exist");
+      cy.window()
+        .its("localStorage")
+        .invoke("getItem", "refreshToken")
+        .should("exist");
+
       // Verify that we've been redirected to the homepage
-      cy.url().should("include", "/homepage");
+      cy.checkUrlIs("/homepage");
     });
   });
 
@@ -23,14 +40,30 @@ describe("Login Flow", () => {
       cy.visit("/");
 
       // Type username and password
-      cy.get("input[name=email]").type("rimshagul@gmail.com");
+      cy.get("input[name=email]").type("test-unverified-user@example.com");
       cy.get("input[name=password]").type("123456");
 
       // Click login button
       cy.get("button[type=submit]").click();
 
+      // Verify email is stored in sessionStorage
+      cy.window()
+        .its("sessionStorage")
+        .invoke("getItem", "userEmail")
+        .should("eq", "test-unverified-user@example.com");
+
+      // Verify tokens are not stored in localStorage
+      cy.window()
+        .its("localStorage")
+        .invoke("getItem", "accessToken")
+        .should("be.null");
+      cy.window()
+        .its("localStorage")
+        .invoke("getItem", "refreshToken")
+        .should("be.null");
+
       // Verify that we've been redirected to the verify email page
-      cy.url().should("include", "/verifyemail");
+      cy.checkUrlIs("/verifyemail");
     });
   });
 
@@ -41,7 +74,7 @@ describe("Login Flow", () => {
       cy.visit("/");
 
       // Type correct username and incorrect password
-      cy.get("input[name=email]").type("rimshagulc@gmail.com");
+      cy.get("input[name=email]").type("test-user@gmail.com");
       cy.get("input[name=password]").type("wrongPassword");
 
       // Click login button
@@ -94,7 +127,7 @@ describe("Login Flow", () => {
       cy.visit("/");
 
       // Type invalid email, then click outside to blur the input
-      cy.get("input[name=email]").type("rimshagul");
+      cy.get("input[name=email]").type("test-user");
       cy.get("input[name=email]").focus().blur();
 
       // Verify that an error message related to the email field is displayed
@@ -110,7 +143,6 @@ describe("Login Flow", () => {
       cy.visit("/");
 
       // Type nothing, then click outside to blur the input
-      cy.get("input[name=email]").type("rimshagulc@gmail.com");
       cy.get("input[name=password]").focus().blur();
 
       // Verify that an error message related to the email field is displayed
@@ -126,7 +158,6 @@ describe("Login Flow", () => {
       cy.visit("/");
 
       // Type invalid email, then click outside to blur the input
-      cy.get("input[name=email]").type("rimshagulc@gmail.com");
       cy.get("input[name=password]").type("12345");
       cy.get("input[name=password]").focus().blur();
 
@@ -157,7 +188,7 @@ describe("Login Flow", () => {
       cy.visit("/");
 
       // Fill in valid email and password
-      cy.get("input[name=email]").type("rimshagulc@gmail.com");
+      cy.get("input[name=email]").type("test-user@example.com");
       cy.get("input[name=password]").type("123456");
 
       // Click login button
@@ -180,7 +211,7 @@ describe("Login Flow", () => {
       cy.get('button[type="submit"]').should("be.disabled");
 
       // Filling only one field should still disable button
-      cy.get('input[name="email"]').type("rimshagulc@gmail.com");
+      cy.get('input[name="email"]').type("test-user@example.com");
       cy.get('button[type="submit"]').should("be.disabled");
 
       // Invalid email format should still disable button
@@ -188,7 +219,7 @@ describe("Login Flow", () => {
       cy.get('button[type="submit"]').should("be.disabled");
 
       // Filling both fields correctly should enable button
-      cy.get('input[name="email"]').clear().type("rimshagulc@gmail.com");
+      cy.get('input[name="email"]').clear().type("test-user@example.com");
       cy.get('input[name="password"]').type("123456");
       cy.get('button[type="submit"]').should("not.be.disabled");
     });
@@ -221,7 +252,7 @@ describe("Login Flow", () => {
       cy.contains("Signup").click();
 
       // Verify that the URL changes to /signup
-      cy.url().should("include", "/signup");
+      cy.checkUrlIs("/signup");
     });
 
     it("should navigate to the Reset Password Request page when clicking the Forgot Password link", () => {
@@ -232,7 +263,7 @@ describe("Login Flow", () => {
       cy.contains("Forgot password?").click();
 
       // Verify that the URL changes to /resetPasswordRequest
-      cy.url().should("include", "/resetPasswordRequest");
+      cy.checkUrlIs("/resetPasswordRequest");
     });
   });
 });
