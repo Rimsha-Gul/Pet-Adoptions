@@ -64,11 +64,15 @@ const VerifyEmail = () => {
               setTimer(60);
             }
           } catch (error: any) {
+            console.log(error.response.status);
             console.error(error);
             if (error.response.status === 404) {
               navigate("/pagenotfound", {
                 state: errorMessages.pageNotFound,
               });
+            } else if (error.response.status === 422) {
+              // user is already verified
+              navigate("/homepage");
             } else if (error.response.status === 500) {
               navigate("/pagenotfound", {
                 state: errorMessages.emailSendingError,
@@ -197,7 +201,15 @@ const VerifyEmail = () => {
         setTimer(60); // After a successful response, start the timer for 60 seconds
         setResendDisabled(true);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response.status === 422) {
+        // user is already verified
+        navigate("/homepage");
+      } else if (error.response.status === 404) {
+        navigate("/pagenotfound", {
+          state: errorMessages.pageNotFound,
+        });
+      }
       console.error(error);
     } finally {
       setIsResending(false);

@@ -1,12 +1,15 @@
 describe("Login Flow", () => {
+  beforeEach(() => {
+    // Navigate to login page
+    cy.visit("/");
+  });
+
   // Successful Login Case
   describe("Successful Login", () => {
     it("should login with valid credentials", () => {
       cy.task("db:seed");
-      // Navigate to login page
-      cy.visit("/");
 
-      // Type username and password
+      // Type user email and password
       cy.get("input[name=email]").type("test-user@example.com");
       cy.get("input[name=password]").type("123456");
 
@@ -36,10 +39,9 @@ describe("Login Flow", () => {
 
   describe("Unverified Email", () => {
     it("should go to verify email page when user exists but is not verified yet", () => {
-      // Navigate to login page
-      cy.visit("/");
+      cy.task("db:seed");
 
-      // Type username and password
+      // Type user mail and password
       cy.get("input[name=email]").type("test-unverified-user@example.com");
       cy.get("input[name=password]").type("123456");
 
@@ -70,11 +72,8 @@ describe("Login Flow", () => {
   // Error Cases
   describe("Error Handling", () => {
     it("should show an error message for invalid credentials", () => {
-      // Navigate to login page
-      cy.visit("/");
-
-      // Type correct username and incorrect password
-      cy.get("input[name=email]").type("test-user@gmail.com");
+      // Type correct user mail and incorrect password
+      cy.get("input[name=email]").type("test-user@example.com");
       cy.get("input[name=password]").type("wrongPassword");
 
       // Click login button
@@ -89,11 +88,8 @@ describe("Login Flow", () => {
     });
 
     it("should show an error message when user does not exist", () => {
-      // Navigate to login page
-      cy.visit("/");
-
-      // Type incorrect username and password
-      cy.get("input[name=email]").type("nonExistentUser@gmail.com");
+      // Type incorrect user mail and password
+      cy.get("input[name=email]").type("nonExistentUser@example.com");
       cy.get("input[name=password]").type("123456");
 
       // Click login button
@@ -108,9 +104,6 @@ describe("Login Flow", () => {
   // Form Validation Cases
   describe("Form Validations", () => {
     it("should show an error message when email field is empty", () => {
-      // Navigate to login page
-      cy.visit("/");
-
       // Type nothing, then click outside to blur the input
       cy.get("input[name=email]").focus().blur();
 
@@ -123,9 +116,6 @@ describe("Login Flow", () => {
     });
 
     it("should show an error message when email is invalid", () => {
-      // Navigate to login page
-      cy.visit("/");
-
       // Type invalid email, then click outside to blur the input
       cy.get("input[name=email]").type("test-user");
       cy.get("input[name=email]").focus().blur();
@@ -139,9 +129,6 @@ describe("Login Flow", () => {
     });
 
     it("should show an error message when password field is empty", () => {
-      // Navigate to login page
-      cy.visit("/");
-
       // Type nothing, then click outside to blur the input
       cy.get("input[name=password]").focus().blur();
 
@@ -154,9 +141,6 @@ describe("Login Flow", () => {
     });
 
     it("should show an error message when password is less than 6 characters long", () => {
-      // Navigate to login page
-      cy.visit("/");
-
       // Type invalid email, then click outside to blur the input
       cy.get("input[name=password]").type("12345");
       cy.get("input[name=password]").focus().blur();
@@ -184,9 +168,6 @@ describe("Login Flow", () => {
         },
       });
 
-      // Navigate to login page
-      cy.visit("/");
-
       // Fill in valid email and password
       cy.get("input[name=email]").type("test-user@example.com");
       cy.get("input[name=password]").type("123456");
@@ -196,6 +177,7 @@ describe("Login Flow", () => {
 
       // Assert that a loading indicator is visible
       cy.get("[data-cy=loadingIcon]").should("be.visible");
+
       // Check that the button is disabled
       cy.get('button[type="submit"]').should("be.disabled");
 
@@ -204,9 +186,6 @@ describe("Login Flow", () => {
     });
 
     it('should disable the "Login" button when the form is invalid', () => {
-      // Navigate to login page
-      cy.visit("/");
-
       // Empty form should disable button
       cy.get('button[type="submit"]').should("be.disabled");
 
@@ -225,9 +204,6 @@ describe("Login Flow", () => {
     });
 
     it('should toggle password visibility when clicking "Show password"', () => {
-      // Navigate to the login page
-      cy.visit("/");
-
       // Type a password into the password field
       cy.get('input[type="password"]').type("secretPassword");
 
@@ -245,9 +221,6 @@ describe("Login Flow", () => {
   // Navigation Cases
   describe("Navigation", () => {
     it("should navigate to the Signup page when clicking the Signup link", () => {
-      // Visit the login page
-      cy.visit("/");
-
       // Click the Signup link
       cy.contains("Signup").click();
 
@@ -256,9 +229,6 @@ describe("Login Flow", () => {
     });
 
     it("should navigate to the Reset Password Request page when clicking the Forgot Password link", () => {
-      // Visit the login page
-      cy.visit("/");
-
       // Click the Signup link
       cy.contains("Forgot password?").click();
 

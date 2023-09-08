@@ -82,16 +82,15 @@ const ResetPasswordRequest = () => {
         }
       );
     } catch (error: any) {
+      console.log(error.response);
       if (error.response.status === 404) {
         setErrors((prevErrors) => ({
           ...prevErrors,
           email: "User not found.",
         }));
-      } else if (error.response.status === 400) {
-        setMessage(
-          "Your password reset token is invalid or has expired. Please request a new one."
-        );
-      } else console.log(error);
+      } else {
+        setMessage(error.response.data.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -136,7 +135,14 @@ const ResetPasswordRequest = () => {
               customClass="w-full"
             />
           </form>
-          {message && <p>{message}</p>}
+          {message && (
+            <p
+              data-cy="error-message"
+              className="text-red-500 text-xs mt-4 px-8"
+            >
+              {message}
+            </p>
+          )}
           {isRequestSent && (
             <div className="flex mt-8 items-center justify-center">
               A password reset request has been sent. You can resend the request

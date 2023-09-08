@@ -1,11 +1,13 @@
 describe("Signup Flow", () => {
+  beforeEach(() => {
+    // Navigate to signup page
+    cy.visit("/signup");
+  });
+
   // Successful Signup Case
   describe("Successful Signup", () => {
     it("should go to verify email page with valid credentials", () => {
       cy.task("db:clear");
-
-      // Navigate to signup page
-      cy.visit("/signup");
 
       // Type email, username, password and confirm password
       cy.get("input[name=name]").type("Test User");
@@ -37,9 +39,6 @@ describe("Signup Flow", () => {
         body: { message: "User already exists" },
       });
 
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type existing user email, username, password and confirm password
       cy.get("input[name=name]").type("Test User");
       cy.get("input[name=email]").type("test-user@example.com");
@@ -69,9 +68,6 @@ describe("Signup Flow", () => {
         });
       });
 
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type existing user email, username, password and confirm password
       cy.get("input[name=name]").type("Test User");
       cy.get("input[name=email]").type("uninvitedUser@example.com");
@@ -93,9 +89,6 @@ describe("Signup Flow", () => {
   // Form Validation Cases
   describe("Form Validations", () => {
     it("should show an error message when name field is empty", () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type nothing, then click outside to blur the input
       cy.get("input[name=name]").focus().blur();
 
@@ -105,9 +98,6 @@ describe("Signup Flow", () => {
     });
 
     it("should show an error message when name is less than 3 characters long", () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type invalid email, then click outside to blur the input
       cy.get("input[name=name]").type("Te");
       cy.get("input[name=name]").focus().blur();
@@ -121,9 +111,6 @@ describe("Signup Flow", () => {
     });
 
     it("should show an error message when email field is empty", () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type nothing, then click outside to blur the input
       cy.get("input[name=email]").focus().blur();
 
@@ -136,9 +123,6 @@ describe("Signup Flow", () => {
     });
 
     it("should show an error message when email is invalid", () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type invalid email, then click outside to blur the input
       cy.get("input[name=email]").type("test-user");
       cy.get("input[name=email]").focus().blur();
@@ -152,9 +136,6 @@ describe("Signup Flow", () => {
     });
 
     it("should show an error message when password field is empty", () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type nothing, then click outside to blur the input
       cy.get("input[name=password]").focus().blur();
 
@@ -167,9 +148,6 @@ describe("Signup Flow", () => {
     });
 
     it("should show an error message when password is less than 6 characters long", () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type invalid email, then click outside to blur the input
       cy.get("input[name=password]").type("12345");
       cy.get("input[name=password]").focus().blur();
@@ -183,9 +161,6 @@ describe("Signup Flow", () => {
     });
 
     it("should show an error message when confirm password field is empty", () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type nothing, then click outside to blur the input
       cy.get("input[name=confirmPassword]").focus().blur();
 
@@ -198,9 +173,6 @@ describe("Signup Flow", () => {
     });
 
     it("should show an error message when confirm password is less than 6 characters long", () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type invalid email, then click outside to blur the input
       cy.get("input[name=confirmPassword]").type("12345");
       cy.get("input[name=confirmPassword]").focus().blur();
@@ -214,9 +186,6 @@ describe("Signup Flow", () => {
     });
 
     it("should show an error message when confirm password does not match with password", () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Type invalid email, then click outside to blur the input
       cy.get("input[name=password]").type("123456");
       cy.get("input[name=confirmPassword]").type("123457");
@@ -244,9 +213,6 @@ describe("Signup Flow", () => {
         },
       });
 
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Fill in valid email, username, password and confirm password
       cy.get("input[name=name]").type("Test User");
       cy.get("input[name=email]").type("test-user@example.com");
@@ -269,9 +235,6 @@ describe("Signup Flow", () => {
     });
 
     it('should toggle password visibility when clicking "Show password"', () => {
-      // Navigate to the signup page
-      cy.visit("/signup");
-
       // Type a password into the password field
       cy.get('input[name="password"]').type("secretPassword");
       cy.get('input[name="confirmPassword"]').type("secretPassword");
@@ -297,9 +260,6 @@ describe("Signup Flow", () => {
     });
 
     it('should disable the "Signup" button when the form is invalid', () => {
-      // Navigate to signup page
-      cy.visit("/signup");
-
       // Empty form should disable button
       cy.get('button[type="submit"]').should("be.disabled");
 
@@ -334,9 +294,6 @@ describe("Signup Flow", () => {
   // Navigation Cases
   describe("Navigation", () => {
     it("should navigate to the Login page when clicking the Login link", () => {
-      // Visit the signup page
-      cy.visit("/signup");
-
       // Click the Signup link
       cy.contains("Login").click();
 

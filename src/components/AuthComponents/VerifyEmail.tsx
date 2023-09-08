@@ -62,7 +62,12 @@ const EmailVerificationForm = ({
           disabled={!isCodeValid}
         >
           {isLoading && (
-            <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
+            <img
+              data-cy="loadingIcon"
+              src={loadingIcon}
+              alt="Loading"
+              className="mr-2 h-4 w-4"
+            />
           )}
           Verify
         </button>
@@ -80,17 +85,25 @@ const EmailVerificationForm = ({
               disabled={resendDisabled}
             >
               {isResending && (
-                <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
+                <img
+                  data-cy="loadingIcon"
+                  src={loadingIcon}
+                  alt="Loading"
+                  className="mr-2 h-4 w-4"
+                />
               )}
               Resend Code
             </button>
           ) : (
-            <div>Code will expire in {timer} seconds</div>
+            <div data-cy="timer">Code will expire in {timer} seconds</div>
           )}
         </div>
       </div>
       {verificationCodeError && (
-        <p className="flex items-center justify-center mt-4 text-sm text-red-500">
+        <p
+          data-cy="error-message"
+          className="flex items-center justify-center mt-4 text-sm text-red-500"
+        >
           {verificationCodeError}
         </p>
       )}
