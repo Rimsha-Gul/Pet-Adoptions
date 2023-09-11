@@ -32,12 +32,8 @@ describe("Signup Flow", () => {
   // Error Cases
   describe("Error Handling", () => {
     it("should show an error message when user already exists", () => {
+      // Seed the database with initial data
       cy.task("db:seed");
-      // Stub the API call to simulate an error
-      cy.intercept("POST", "/auth/signup", {
-        statusCode: 409,
-        body: { message: "User already exists" },
-      });
 
       // Type existing user email, username, password and confirm password
       cy.get("input[name=name]").type("Test User");
@@ -54,6 +50,9 @@ describe("Signup Flow", () => {
         "have.text",
         "User already exists."
       );
+
+      // Clear the database
+      cy.task("db:clear");
     });
 
     it("should show an error message when user signs up as shelter but was not invited", () => {
@@ -64,7 +63,7 @@ describe("Signup Flow", () => {
 
         req.reply({
           statusCode: 400,
-          body: { message: "Invalid invitation" },
+          body: "Invalid invitation",
         });
       });
 

@@ -105,7 +105,7 @@ const SignupForm = ({
           email: "User already exists.",
         }));
       } else if (error.response.status === 400) {
-        setCredentialsError(error.response.data.message);
+        setCredentialsError(error.response.data);
       }
       console.error(error);
     } finally {

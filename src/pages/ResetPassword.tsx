@@ -26,9 +26,14 @@ const ResetPassword = () => {
         setEmail(email);
         setIsTokenVerified(true);
       } catch (error: any) {
-        setVerificationError(
-          "Your password reset token is invalid or has expired. Please request a new one."
-        );
+        if (error.response.status === 404)
+          setVerificationError(error.response.data.message);
+        else if (error.response.status === 400)
+          setVerificationError(
+            "Your password reset token is invalid or has expired. Please request a new one."
+          );
+        else if (error.response.status === 500)
+          setVerificationError(error.response.data.message);
       } finally {
         setIsLoading(false);
       }
@@ -49,7 +54,7 @@ const ResetPassword = () => {
       {verificationError && (
         <div className="w-full flex flex-col items-center justify-center min-h-screen py-2">
           <div className="flex items-center justify-center h-full">
-            <p>{verificationError}</p>
+            <p data-cy="error-message">{verificationError}</p>
           </div>
         </div>
       )}

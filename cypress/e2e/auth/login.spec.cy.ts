@@ -7,6 +7,7 @@ describe("Login Flow", () => {
   // Successful Login Case
   describe("Successful Login", () => {
     it("should login with valid credentials", () => {
+      // Seed the database with initial data
       cy.task("db:seed");
 
       // Type user email and password
@@ -34,11 +35,15 @@ describe("Login Flow", () => {
 
       // Verify that we've been redirected to the homepage
       cy.checkUrlIs("/homepage");
+
+      // Clear the database
+      cy.task("db:clear");
     });
   });
 
   describe("Unverified Email", () => {
     it("should go to verify email page when user exists but is not verified yet", () => {
+      // Seed the database with initial data
       cy.task("db:seed");
 
       // Type user mail and password
@@ -66,11 +71,23 @@ describe("Login Flow", () => {
 
       // Verify that we've been redirected to the verify email page
       cy.checkUrlIs("/verifyemail");
+
+      // Clear the database
+      cy.task("db:clear");
     });
   });
 
   // Error Cases
   describe("Error Handling", () => {
+    beforeEach(() => {
+      // Seed the database with initial data
+      cy.task("db:seed");
+    });
+
+    afterEach(() => {
+      // Clear the database
+      cy.task("db:clear");
+    });
     it("should show an error message for invalid credentials", () => {
       // Type correct user mail and incorrect password
       cy.get("input[name=email]").type("test-user@example.com");

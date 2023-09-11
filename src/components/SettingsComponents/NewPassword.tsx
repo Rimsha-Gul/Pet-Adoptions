@@ -129,9 +129,7 @@ const NewPassword = ({
 
       setShowBlankScreen(true);
       // show success alert
-      showSuccessAlert(response.data.message, undefined, () =>
-        navigate("/userProfile")
-      );
+      showSuccessAlert(response.data.message, undefined, () => navigate("/"));
     } catch (error: any) {
       setErrors((prevErrors) => ({
         ...prevErrors,

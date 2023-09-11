@@ -40,3 +40,51 @@
 Cypress.Commands.add("checkUrlIs", (expectedPath: string) => {
   cy.url().should("eq", `${Cypress.config("baseUrl")}${expectedPath}`);
 });
+
+// Custom command to set session storage
+Cypress.Commands.add("setSessionStorage", (key: string, value: string) => {
+  cy.window().then((win) => {
+    win.sessionStorage.setItem(key, value);
+  });
+});
+
+// Custom command to intercept the sendVerificationCode api
+Cypress.Commands.add(
+  "interceptSendVerificationCodeApi",
+  (
+    statusCode: number = 200,
+    message: string = "Signup email sent successfully"
+  ) => {
+    cy.intercept(
+      {
+        method: "POST",
+        url: "/auth/sendVerificationCode",
+      },
+      {
+        statusCode,
+        body: {
+          message,
+        },
+      }
+    ).as("sendVerificationCode");
+  }
+);
+
+// Custom command to intercept the verifyResetToken api
+Cypress.Commands.add(
+  "interceptVerifyResetTokenApi",
+  (statusCode: number = 200, email: string = "test-user@example.com") => {
+    cy.intercept(
+      {
+        method: "GET",
+        url: "/auth/verifyResetToken*",
+      },
+      {
+        statusCode,
+        body: {
+          email,
+        },
+      }
+    ).as("verifyResetToken");
+  }
+);

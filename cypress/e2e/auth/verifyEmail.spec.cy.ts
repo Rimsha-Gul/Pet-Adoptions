@@ -3,27 +3,11 @@ describe("Email Verification Flow", () => {
   describe("Successful Verification", () => {
     beforeEach(() => {
       // Set user's email in sessionStorage
-      cy.window().then((win) => {
-        win.sessionStorage.setItem(
-          "userEmail",
-          "test-unverified-user@example.com"
-        );
-      });
+      cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
 
       cy.task("db:seed");
 
-      cy.intercept(
-        {
-          method: "POST",
-          url: "/auth/sendVerificationCode",
-        },
-        {
-          body: {
-            code: 200,
-            message: "Signup email sent successfully",
-          },
-        }
-      ).as("sendVerificationCode");
+      cy.interceptSendVerificationCodeApi();
     });
 
     afterEach(() => {
@@ -42,6 +26,9 @@ describe("Email Verification Flow", () => {
         .its("sessionStorage")
         .invoke("getItem", "isOTPSent")
         .should("equal", "true");
+
+      // Clear the database
+      cy.task("db:clear");
     });
 
     it("should go to homepage after successful validation", () => {
@@ -63,9 +50,7 @@ describe("Email Verification Flow", () => {
 
     it("should go to homepage after successful validation after resending code", () => {
       // Set user's email in sessionStorage
-      cy.window().then((win) => {
-        win.sessionStorage.setItem("remainingTime", "0");
-      });
+      cy.setSessionStorage("remainingTime", "0");
 
       // Navigate to verifyEmail page
       cy.visit("/verifyemail");
@@ -98,25 +83,17 @@ describe("Email Verification Flow", () => {
     beforeEach(() => {
       cy.task("db:seed");
 
-      cy.intercept(
-        {
-          method: "POST",
-          url: "/auth/sendVerificationCode",
-        },
-        {
-          body: {
-            code: 200,
-            message: "Signup email sent successfully",
-          },
-        }
-      ).as("sendVerificationCode");
+      cy.interceptSendVerificationCodeApi();
+    });
+
+    afterEach(() => {
+      // Clear the database
+      cy.task("db:clear");
     });
 
     it("should show an error message when user does not exist", () => {
       // Set user's email in sessionStorage
-      cy.window().then((win) => {
-        win.sessionStorage.setItem("userEmail", "nonExistentUser@example.com");
-      });
+      cy.setSessionStorage("userEmail", "nonExistentUser@example.com");
 
       // Navigate to verifyEmail page
       cy.visit("/verifyemail");
@@ -133,12 +110,7 @@ describe("Email Verification Flow", () => {
 
     it("should show an error message when user enters expired verification code", () => {
       // Set user's email in sessionStorage
-      cy.window().then((win) => {
-        win.sessionStorage.setItem(
-          "userEmail",
-          "test-expired-code-user@example.com"
-        );
-      });
+      cy.setSessionStorage("userEmail", "test-expired-code-user@example.com");
 
       // Navigate to verifyEmail page
       cy.visit("/verifyemail");
@@ -159,12 +131,7 @@ describe("Email Verification Flow", () => {
 
     it("should show an error message when user enters incorrect verification code", () => {
       // Set user's email in sessionStorage
-      cy.window().then((win) => {
-        win.sessionStorage.setItem(
-          "userEmail",
-          "test-unverified-user@example.com"
-        );
-      });
+      cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
 
       // Navigate to verifyEmail page
       cy.visit("/verifyemail");
@@ -188,12 +155,9 @@ describe("Email Verification Flow", () => {
   describe("Input Verification", () => {
     beforeEach(() => {
       // Set user's email in sessionStorage
-      cy.window().then((win) => {
-        win.sessionStorage.setItem(
-          "userEmail",
-          "test-unverified-user@example.com"
-        );
-      });
+      cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
+
+      cy.interceptSendVerificationCodeApi();
 
       // Navigate to verifyEmail page
       cy.visit("/verifyemail");
@@ -219,12 +183,9 @@ describe("Email Verification Flow", () => {
   describe("UI Behavior", () => {
     beforeEach(() => {
       // Set user's email in sessionStorage
-      cy.window().then((win) => {
-        win.sessionStorage.setItem(
-          "userEmail",
-          "test-unverified-user@example.com"
-        );
-      });
+      cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
+
+      cy.interceptSendVerificationCodeApi();
 
       // Navigate to verifyEmail page
       cy.visit("/verifyemail");
@@ -278,13 +239,9 @@ describe("Email Verification Flow", () => {
 
   // Navigation Cases
   describe("Navigation", () => {
-    beforeEach(() => {});
-
     it("should redirect the user to the login page if they are already verified, but not logged in", () => {
       // Set user's email in sessionStorage
-      cy.window().then((win) => {
-        win.sessionStorage.setItem("userEmail", "test-user@example.com");
-      });
+      cy.setSessionStorage("userEmail", "test-user@example.com");
 
       cy.intercept(
         {
