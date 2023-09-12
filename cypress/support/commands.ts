@@ -48,6 +48,13 @@ Cypress.Commands.add("setSessionStorage", (key: string, value: string) => {
   });
 });
 
+// Custom command to set local storage
+Cypress.Commands.add("setLocalStorage", (key: string, value: string) => {
+  cy.window().then((win) => {
+    win.localStorage.setItem(key, value);
+  });
+});
+
 // Custom command to intercept the sendVerificationCode api
 Cypress.Commands.add(
   "interceptSendVerificationCodeApi",

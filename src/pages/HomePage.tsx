@@ -448,7 +448,10 @@ const HomePage = () => {
                   )
                 }
               >
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-0.5 sm:p-10 gap-16 mt-6 sm:m-0 md:m-12">
+                <div
+                  data-cy="pet-grid"
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-0.5 sm:p-10 gap-16 mt-6 sm:m-0 md:m-12"
+                >
                   {pets.map((pet) => (
                     <PetCard key={pet.microchipID} pet={pet} />
                   ))}

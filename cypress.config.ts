@@ -17,6 +17,10 @@ const setupNodeEvents = (on) => {
       );
       return data.resetToken;
     },
+    async "db:seedPets"() {
+      const { data } = await axios.post("http://localhost:8080/test/seedPets");
+      return data;
+    },
   });
 };
 

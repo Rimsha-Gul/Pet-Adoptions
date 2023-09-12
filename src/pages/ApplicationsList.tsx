@@ -235,19 +235,14 @@ const ViewApplications = () => {
                         <h2 className="text-2xl text-gray-700 font-bold">
                           Application for
                         </h2>
-
                         <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
                           Status
                         </h2>
-                        {userRole === "SHELTER" ? (
-                          <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
-                            Applicant
-                          </h2>
-                        ) : (
-                          <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
-                            Shelter Name
-                          </h2>
-                        )}
+                        <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
+                          {userRole === "SHELTER"
+                            ? "Applicant"
+                            : "Shelter Name"}
+                        </h2>
                         <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
                           Submitted on
                         </h2>
@@ -301,15 +296,11 @@ const ViewApplications = () => {
                                   {application.status}
                                 </p>
                               </div>
-                              {userRole === "SHELTER" ? (
-                                <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
-                                  {application.applicantName}
-                                </p>
-                              ) : (
-                                <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
-                                  {application.shelterName}
-                                </p>
-                              )}
+                              <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
+                                {userRole === "SHELTER"
+                                  ? application.applicantName
+                                  : application.shelterName}
+                              </p>
                               <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
                                 {new Date(
                                   application.submissionDate

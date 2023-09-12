@@ -18,6 +18,7 @@ const PetCard = ({ pet }: PetCardProps) => {
   const navigate = useNavigate();
   return (
     <div
+      data-cy="pet-card"
       className="bg-gray-100 rounded-lg shadow-lg flex flex-col gap-4 justify-center items-center hover:cursor-pointer hover:shadow-primary transform transition-all duration-300 hover:scale-105"
       onClick={() =>
         navigate(`/pet/${pet.microchipID}`, {
