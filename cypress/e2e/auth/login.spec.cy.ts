@@ -8,7 +8,7 @@ describe("Login Flow", () => {
   describe("Successful Login", () => {
     it("should login with valid credentials", () => {
       // Seed the database with initial data
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       // Type user email and password
       cy.get("input[name=email]").type("test-user@example.com");
@@ -37,14 +37,14 @@ describe("Login Flow", () => {
       cy.checkUrlIs("/homepage");
 
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
   });
 
   describe("Unverified Email", () => {
     it("should go to verify email page when user exists but is not verified yet", () => {
       // Seed the database with initial data
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       // Type user mail and password
       cy.get("input[name=email]").type("test-unverified-user@example.com");
@@ -73,7 +73,7 @@ describe("Login Flow", () => {
       cy.checkUrlIs("/verifyemail");
 
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
   });
 
@@ -81,12 +81,12 @@ describe("Login Flow", () => {
   describe("Error Handling", () => {
     beforeEach(() => {
       // Seed the database with initial data
-      cy.task("db:seed");
+      cy.task("seedDB");
     });
 
     afterEach(() => {
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
     it("should show an error message for invalid credentials", () => {
       // Type correct user mail and incorrect password

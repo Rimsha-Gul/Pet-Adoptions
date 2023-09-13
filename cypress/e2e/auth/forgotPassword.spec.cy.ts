@@ -8,7 +8,7 @@ describe("Forgot Password Flow", () => {
   describe("Successful Reset Password Request", () => {
     it("should successfully send reset password request", () => {
       // Seed the database with initial data
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       // Type user email
       cy.get("input[name=email]").type("test-user@example.com");
@@ -27,7 +27,7 @@ describe("Forgot Password Flow", () => {
       cy.get(".swal2-confirm").click();
 
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
   });
 
@@ -35,7 +35,7 @@ describe("Forgot Password Flow", () => {
   describe("Error Handling", () => {
     it("should show an error message when user does not exist", () => {
       // Seed the database with initial data
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       // Type user email
       cy.get("input[name=email]").type("nonExistentUser@example.com");
@@ -48,7 +48,7 @@ describe("Forgot Password Flow", () => {
       cy.get("[data-cy=error-message]").should("have.text", "User not found.");
 
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
 
     it("should show an error message when there is error in creating request", () => {
@@ -126,7 +126,7 @@ describe("Forgot Password Flow", () => {
 
     it('should enable email input and "Request" button 5 minutes after the request is made', () => {
       // Seed the database with initial data
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       // Initialize the clock to control time behavior
       cy.clock();
@@ -159,7 +159,7 @@ describe("Forgot Password Flow", () => {
       cy.get("input[name=email]").should("not.have.attr", "readonly");
 
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
   });
 });

@@ -52,6 +52,7 @@ const NewEmailForm = () => {
               <label>
                 New Email:
                 <input
+                  name="email"
                   type="email"
                   value={userNewEmail}
                   onChange={(e) => setuserNewEmail(e.target.value)}
@@ -61,6 +62,7 @@ const NewEmailForm = () => {
               </label>
             </div>
             <button
+              data-cy="verify-new-email-button"
               className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer ${
                 isLoading ? "bg-primary text-white cursor-not-allowed" : ""
               } `}

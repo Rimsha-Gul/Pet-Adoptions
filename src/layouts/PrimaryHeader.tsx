@@ -82,6 +82,7 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
         <div className="relative">
           {userProfilePhoto ? (
             <img
+              data-cy="profile-photo"
               src={userProfilePhoto}
               alt="Profile Photo"
               className="w-14 h-14 rounded-full cursor-pointer text-sm border-2 border-secondary shadow-md"
@@ -89,6 +90,7 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
             />
           ) : (
             <button
+              data-cy="profile-photo"
               className="flex items-center justify-center w-14 h-14 rounded-full bg-gray-200 border-2 border-secondary shadow-md"
               onClick={handleUserOptionsClick}
             >
@@ -108,6 +110,10 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
               <div className="flex flex-col px-4 py-2">
                 {headerLinks.map((link, index) => (
                   <button
+                    data-cy={`${link.label
+                      .toLowerCase()
+                      .replace(/&/g, "and")
+                      .replace(/ /g, "-")}-link`}
                     key={index}
                     className="mb-2 text-md text-gray-600 hover:text-primary text-left"
                     onClick={() => handleLinkClick(link.to)}

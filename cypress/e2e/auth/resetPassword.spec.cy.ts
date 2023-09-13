@@ -6,7 +6,7 @@ describe("Reset Password Flow", () => {
       cy.visit("/resetPasswordRequest");
 
       // Seed the database with initial data
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       // Type user email
       cy.get("input[name=email]").type("test-user@example.com");
@@ -17,7 +17,7 @@ describe("Reset Password Flow", () => {
       // Click OK button on the success alert
       cy.get(".swal2-confirm").click();
 
-      cy.task("db:getResetToken").then((resetToken) => {
+      cy.task("getResetToken").then((resetToken) => {
         // Navigate to the reset password page and use the token
         cy.visit(`/resetPassword/${resetToken}/`);
 
@@ -42,7 +42,7 @@ describe("Reset Password Flow", () => {
         cy.checkUrlIs("/");
 
         // Clear the database
-        cy.task("db:clear");
+        cy.task("clearDB");
       });
     });
   });
@@ -304,7 +304,7 @@ describe("Reset Password Flow", () => {
 
     it("should show an error message when user has not requested password reset", () => {
       // Seed the database with initial data
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       cy.intercept(
         {
@@ -331,7 +331,7 @@ describe("Reset Password Flow", () => {
       );
 
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
 
     it("should show an error message when reset token expires before user resets the password", () => {

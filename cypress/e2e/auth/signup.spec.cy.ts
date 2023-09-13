@@ -7,7 +7,7 @@ describe("Signup Flow", () => {
   // Successful Signup Case
   describe("Successful Signup", () => {
     it("should go to verify email page with valid credentials", () => {
-      cy.task("db:clear");
+      cy.task("clearDB");
 
       // Type email, username, password and confirm password
       cy.get("input[name=name]").type("Test User");
@@ -33,7 +33,7 @@ describe("Signup Flow", () => {
   describe("Error Handling", () => {
     it("should show an error message when user already exists", () => {
       // Seed the database with initial data
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       // Type existing user email, username, password and confirm password
       cy.get("input[name=name]").type("Test User");
@@ -52,7 +52,7 @@ describe("Signup Flow", () => {
       );
 
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
 
     it("should show an error message when user signs up as shelter but was not invited", () => {

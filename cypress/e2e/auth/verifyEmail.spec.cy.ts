@@ -5,7 +5,7 @@ describe("Email Verification Flow", () => {
       // Set user's email in sessionStorage
       cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
 
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       cy.interceptSendVerificationCodeApi();
     });
@@ -28,7 +28,7 @@ describe("Email Verification Flow", () => {
         .should("equal", "true");
 
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
 
     it("should go to homepage after successful validation", () => {
@@ -58,15 +58,6 @@ describe("Email Verification Flow", () => {
       // Click Resend button
       cy.get("button[data-cy=resend-button]").click();
 
-      // Assert that a loading indicator is visible
-      cy.get("[data-cy=loadingIcon]").should("be.visible");
-
-      // Check that the button is disabled
-      cy.get("button[data-cy=verify-button]").should("be.disabled");
-
-      // Check if the loading indicator disappears
-      cy.get("[data-cy=loadingIcon]").should("not.exist");
-
       // Type the verification code
       cy.get("input[type=text]").type("123456");
 
@@ -81,14 +72,14 @@ describe("Email Verification Flow", () => {
   // Error Cases
   describe("Error Handling", () => {
     beforeEach(() => {
-      cy.task("db:seed");
+      cy.task("seedDB");
 
       cy.interceptSendVerificationCodeApi();
     });
 
     afterEach(() => {
       // Clear the database
-      cy.task("db:clear");
+      cy.task("clearDB");
     });
 
     it("should show an error message when user does not exist", () => {

@@ -150,6 +150,7 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                 <div>
                   <div className="flex flex-row items-center">
                     <div
+                      data-cy="settings-button"
                       className={`flex items-center block px-6 py-3 text-md font-medium cursor-pointer w-full ${
                         selectedOption === link.to
                           ? "text-white bg-secondary"
@@ -171,6 +172,9 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                             <animated.div style={style}>
                               {link.options.map((option) => (
                                 <Link
+                                  data-cy={`${option.label
+                                    .toLowerCase()
+                                    .replace(" ", "-")}-option`}
                                   key={option.to}
                                   to={option.to}
                                   className={`block px-6 py-3 text-md font-medium ${

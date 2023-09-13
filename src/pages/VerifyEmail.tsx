@@ -48,7 +48,12 @@ const VerifyEmail = () => {
             if (appContext.verificationOperation === "changedEmail") {
               await api.post("/auth/sendVerificationCode", {
                 email: appContext.newEmail,
-                emailChangeRequest: true,
+                emailChangeRequest: "newEmailStep",
+              });
+            } else if (appContext.verificationOperation === "changeEmail") {
+              await api.post("/auth/sendVerificationCode", {
+                email: emailForVerification,
+                emailChangeRequest: "currentEmailStep",
               });
             } else {
               await api.post("/auth/sendVerificationCode", sendCodeData);

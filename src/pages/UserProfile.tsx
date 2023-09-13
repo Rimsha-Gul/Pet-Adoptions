@@ -264,7 +264,10 @@ const UserProfile = () => {
             )}
           </div>
 
-          <div className="text-lg mb-20 bg-gray-100 rounded-full px-4 py-2">
+          <div
+            data-cy="user-email"
+            className="text-lg mb-20 bg-gray-100 rounded-full px-4 py-2"
+          >
             {user.email}
           </div>
 

@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import axios from "axios";
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -95,3 +96,22 @@ Cypress.Commands.add(
     ).as("verifyResetToken");
   }
 );
+
+// Cypress.Commands.add("login", async () => {
+//   await axios
+//     .post("/auth/login", {
+//       email: "test-user@example.com",
+//       password: "123456",
+//     })
+//     .then((response) => {
+//       expect(response.status).to.eq(200);
+
+//       const { accessToken, refreshToken } = response.data.tokens; // Make sure to navigate through the response correctly
+
+//       cy.setLocalStorage("accessToken", accessToken);
+//       cy.setLocalStorage("refreshToken", refreshToken);
+//       cy.setSessionStorage("userEmail", "test-user@example.com");
+
+//       cy.visit("/homepage");
+//     });
+// });
