@@ -212,7 +212,7 @@ const AdoptionApplication = () => {
           // Check whether the current page is the application page
           if (!path.includes(`/view/application/${id}`)) {
             // If it's not, navigate to the pet page
-            navigate(`/pet/${encodeURIComponent(id)}`);
+            navigate(`/pet/${pet?.microchipID}`);
           }
         },
         '<a href id="navigateApplication">View your application and its status</a><style>#navigateApplication:hover { text-decoration: underline; }</style>',
@@ -322,6 +322,7 @@ const AdoptionApplication = () => {
               ))}
 
               <FormAction
+                data-cy="apply-button"
                 handleSubmit={handleSubmit}
                 text="Apply for Adoption"
                 isLoading={isLoading}

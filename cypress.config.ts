@@ -4,8 +4,9 @@ dotenv.config();
 import { defineConfig } from "cypress";
 import axios from "axios";
 import { MongoClient, Db } from "mongodb";
-import bcrypt from "bcrypt";
 import { hashPassword } from "./cypress/utils/hashPassword";
+import FormData from "form-data";
+import fs from "fs";
 
 let client: MongoClient;
 let db: Db;
@@ -48,18 +49,15 @@ const setupNodeEvents = async (on) => {
       return null;
     },
 
-    async createUser({ name, email }) {
+    async createUser({ role, name, email }) {
       if (!db) {
         throw new Error("DB not connected");
       }
-      await db.collection("users").deleteMany({});
 
       const hashedPassword = hashPassword("123456");
 
-      const oneMinuteAgo = new Date(Date.now() - 60000); // 60000 milliseconds = 1 minute
-
       const user = {
-        role: "USER",
+        role: role,
         name: name,
         email: email,
         password: hashedPassword,
@@ -76,11 +74,28 @@ const setupNodeEvents = async (on) => {
       return null;
     },
 
-    async clearDB() {
-      if (!db) {
-        throw new Error("DB not connected");
+    async getAccessToken({ email }) {
+      const user = await db.collection("users").findOne({ email: email });
+
+      if (!user) {
+        throw new Error("User not found");
       }
-      await db.collection("users").deleteMany({});
+      return user.tokens.accessToken;
+    },
+
+    async inviteShelter({ shelterEmail, accessToken }) {
+      await axios.post(
+        `${process.env.API_BASE_URL}/shelter/invite`,
+        {
+          email: shelterEmail,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
       return null;
     },
 
@@ -100,11 +115,14 @@ const setupNodeEvents = async (on) => {
       return user.passwordResetToken;
     },
 
-    async login() {
-      const response = await axios.post("http://localhost:8080/auth/login", {
-        email: "test-user@example.com",
-        password: "123456",
-      });
+    async login({ email }) {
+      const response = await axios.post(
+        `${process.env.API_BASE_URL}/auth/login`,
+        {
+          email: email,
+          password: "123456",
+        }
+      );
 
       if (response.status !== 200) {
         throw new Error("Failed to log in");
@@ -113,6 +131,35 @@ const setupNodeEvents = async (on) => {
       const { accessToken, refreshToken } = response.data.tokens;
 
       return { accessToken, refreshToken };
+    },
+
+    async deleteMany({ collection, params }) {
+      const query = await db.collection(collection).deleteMany(params);
+      return query;
+    },
+
+    async addPet({ accessToken, petData }) {
+      const form = new FormData();
+      for (const [key, value] of Object.entries(petData)) {
+        form.append(key, value);
+      }
+
+      const stream = fs.createReadStream(
+        "./cypress/fixtures/addingPet/snowball-1.jpg"
+      );
+      form.append("images", stream);
+
+      const response = await axios.post(
+        `${process.env.API_BASE_URL}/pet`,
+        form,
+        {
+          headers: {
+            ...form.getHeaders(),
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      return response.data;
     },
 
     async "after:run"() {

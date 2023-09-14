@@ -1,4 +1,4 @@
-import { Application } from "../components/ApplicationComponents/ApplicationDetailsShelter";
+import { Application } from "../types/interfaces";
 
 export const formatFieldValue = (field: keyof Application, value: any) => {
   if (field === "petAloneTime") {
