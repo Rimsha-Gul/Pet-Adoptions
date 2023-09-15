@@ -214,7 +214,10 @@ const ApplicationDetailsShelter = () => {
               </label>
               <div className="flex flex-row items-center gap-2">
                 {getStatusIcon(application.status)}
-                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+                <p
+                  data-cy="application-status"
+                  className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+                >
                   {application.status}
                 </p>
               </div>

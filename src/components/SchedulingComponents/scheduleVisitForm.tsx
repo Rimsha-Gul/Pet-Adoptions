@@ -403,6 +403,8 @@ export const ScheduleForm = ({
                     Time:
                   </label>
                   <Select
+                    name="time"
+                    id="time"
                     className="w-56 sm:w-52"
                     styles={customStyles}
                     options={formattedTimeSlots}

@@ -11,6 +11,6 @@ declare namespace Cypress {
       statusCode?: number,
       email?: string
     ): Chainable<void>;
-    login(): Chainable<void>;
+    getApplicationIdFromUrl(): Chainable<void>;
   }
 }

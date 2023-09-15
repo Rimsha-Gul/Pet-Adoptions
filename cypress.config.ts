@@ -3,10 +3,11 @@ dotenv.config();
 
 import { defineConfig } from "cypress";
 import axios from "axios";
-import { MongoClient, Db } from "mongodb";
+import { MongoClient, Db, ObjectId } from "mongodb";
 import { hashPassword } from "./cypress/utils/hashPassword";
 import FormData from "form-data";
 import fs from "fs";
+import { VisitType } from "./src/types/enums";
 
 let client: MongoClient;
 let db: Db;
@@ -160,6 +161,40 @@ const setupNodeEvents = async (on) => {
         }
       );
       return response.data;
+    },
+
+    async setVisitDateToPast({ applicationID, visitType }) {
+      if (!db) {
+        throw new Error("DB not connected");
+      }
+
+      const application = await db
+        .collection("applications")
+        .findOne({ _id: new ObjectId(applicationID) });
+
+      if (!application) {
+        throw new Error(`Application with ID ${applicationID} not found`);
+      }
+
+      const existingVisitDate = new Date(
+        visitType === VisitType.Home
+          ? application.homeVisitDate
+          : application.shelterVisitDate
+      );
+      existingVisitDate.setDate(existingVisitDate.getDate() - 2);
+
+      await db.collection("applications").updateOne(
+        { _id: new ObjectId(applicationID) },
+        {
+          $set: {
+            [visitType === VisitType.Home
+              ? "homeVisitDate"
+              : "shelterVisitDate"]: existingVisitDate,
+          },
+        }
+      );
+
+      return null;
     },
 
     async "after:run"() {

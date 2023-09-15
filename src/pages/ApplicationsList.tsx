@@ -272,6 +272,7 @@ const ViewApplications = () => {
                       <div>
                         {applications.map((application, index) => (
                           <div
+                            data-cy="application-card"
                             key={index}
                             className="flex flex-row hover:bg-gray-100 shadow-md p-4 flex flex-col justify-center items-center hover:cursor-pointer hover:shadow-primary transform transition-all duration-300 hover:scale-[1.01] rounded-lg"
                             onClick={() =>

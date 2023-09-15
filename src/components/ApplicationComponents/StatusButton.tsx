@@ -82,8 +82,17 @@ export const StatusButton = ({
     return null;
   }
 
+  const buttonText = statusButtonText(
+    visitType === VisitType.Home
+      ? getNextShelterStatus(status, action)
+      : getNextUserStatus(status)
+  );
   return (
     <button
+      data-cy={`${buttonText!
+        .toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/'/g, "-")}-button`}
       className={`group relative w-full sm:w-1/3 lg:w-1/5 2xl:w-1/6 flex justify-center py-2 px-4 border border-transparent text-sm sm:text-md uppercase font-medium rounded-md text-white ${buttonColor} hover:bg-white hover:ring-2 ${ringColor} hover:ring-offset-2 ${hoverColor} ${
         isLoading
           ? `${buttonColor} text-white cursor-not-allowed items-center`
@@ -96,11 +105,7 @@ export const StatusButton = ({
       isLoading ? (
         <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
       ) : null}
-      {statusButtonText(
-        visitType === VisitType.Home
-          ? getNextShelterStatus(status, action)
-          : getNextUserStatus(status)
-      )}
+      {buttonText}
     </button>
   );
 };

@@ -97,21 +97,10 @@ Cypress.Commands.add(
   }
 );
 
-// Cypress.Commands.add("login", async () => {
-//   await axios
-//     .post("/auth/login", {
-//       email: "test-user@example.com",
-//       password: "123456",
-//     })
-//     .then((response) => {
-//       expect(response.status).to.eq(200);
-
-//       const { accessToken, refreshToken } = response.data.tokens; // Make sure to navigate through the response correctly
-
-//       cy.setLocalStorage("accessToken", accessToken);
-//       cy.setLocalStorage("refreshToken", refreshToken);
-//       cy.setSessionStorage("userEmail", "test-user@example.com");
-
-//       cy.visit("/homepage");
-//     });
-// });
+Cypress.Commands.add("getApplicationIdFromUrl", () => {
+  cy.url().then((url) => {
+    const parts = url.split("/");
+    const applicationId = parts[parts.length - 1];
+    return cy.wrap(applicationId);
+  });
+});
