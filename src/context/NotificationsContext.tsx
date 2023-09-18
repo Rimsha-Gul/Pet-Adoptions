@@ -49,24 +49,14 @@ const NotificationsProvider = (props: { children: ReactNode }) => {
       socket.off("notification_marked_as_read");
       socket.off("notifications_marked_as_seen");
     };
-  }, []); // Empty dependency array, this effect runs only once
+  }, []);
 
-  // Second useEffect for data-related tasks
-  // useEffect(() => {
-  //   console.log("notifications useeffect called");
-
-  //   // Fetch existing notifications from the server
-  //   if (notifications.length === 0) {
-  //     const userEmail = sessionStorage.getItem("userEmail");
-  //     socket.emit("get_notifications", userEmail);
-  //   }
-  // }, [notifications]); // Runs when notifications changes
-
-  // Third useEffect for setting up socket listeners related to notifications
+  // Second useEffect for setting up socket listeners related to notifications
   useEffect(() => {
     // Listen for new notifications
     socket.on("new_notification", (data: any) => {
-      const notification = data._doc;
+      console.log("new notification: ", data);
+      const notification = data;
       setNotifications((prevState) => [{ ...notification }, ...prevState]);
 
       if (!data.isSeen) {
@@ -74,18 +64,17 @@ const NotificationsProvider = (props: { children: ReactNode }) => {
       }
     });
 
-    // Populate notifications
-    socket.on("notifications", (existingNotifications: Notification[]) => {
-      setNotifications(existingNotifications);
-    });
-
     // Handle notification marked as read
     socket.on("notification_marked_as_read", (notificationID: string) => {
+      console.log("notification is read");
       setNotifications((prevNotifications) =>
         prevNotifications.map((notif) =>
-          notif._id === notificationID ? { ...notif, isRead: true } : notif
+          notif.id === notificationID
+            ? { ...notif, isRead: true, isSeen: true }
+            : notif
         )
       );
+      setUnseenCount((prevCount) => prevCount - 1);
     });
 
     socket.on("notifications_marked_as_seen", () => {

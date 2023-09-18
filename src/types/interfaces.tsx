@@ -66,7 +66,7 @@ export interface ReactivationRequest {
 }
 
 export interface Notification {
-  _id: string;
+  id: string;
   applicationID: string;
   status: Status;
   petImage: string;

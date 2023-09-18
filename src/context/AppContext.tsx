@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import api from "../api";
+import { Navigate } from "react-router-dom";
 
 interface AppContextProps {
   isLoading: boolean;
@@ -50,6 +51,8 @@ export const AppContext = createContext<AppContextProps>({
   setNewEmail: null,
 });
 
+const MAX_RETRIES = 3;
+
 const AppContextProvider = (props: { children: ReactNode }) => {
   const { children } = props;
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -80,7 +83,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
           return Promise.reject(error);
         }
       );
-
+      let retryCount = 0;
       api.interceptors.response.use(
         function (response) {
           return response;
@@ -88,8 +91,9 @@ const AppContextProvider = (props: { children: ReactNode }) => {
         async function (error) {
           const originalConfig = error.config;
           console.log("Try to refresh");
-          if (error.response?.status === 401 && !originalConfig._retry) {
+          if (error.response?.status === 401 && retryCount < MAX_RETRIES) {
             originalConfig._retry = true;
+            retryCount++;
             const refreshToken = localStorage.getItem("refreshToken");
 
             api.defaults.headers.common[
@@ -120,10 +124,24 @@ const AppContextProvider = (props: { children: ReactNode }) => {
                   headers: originalConfig.headers.toJSON(),
                 },
               });
-            } catch (err) {
-              setLoggedIn(false);
+            } catch (err: any) {
+              console.log("expired refresh tokennnnnnnnnnnnnnnnnnnnn");
+              console.log(err);
+              if (err.response?.data?.message === "Refresh token has expired") {
+                setLoggedIn(false);
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                <Navigate to="/" />;
+              }
             }
+          } else if (retryCount >= MAX_RETRIES) {
+            console.log("ran out of retries");
+            setLoggedIn(false);
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            <Navigate to="/" />;
           }
+
           return Promise.reject(error);
         }
       );

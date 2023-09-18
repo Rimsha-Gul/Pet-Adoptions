@@ -10,19 +10,20 @@ interface NotificationCardProps {
 const NotificationCard = ({ notification }: NotificationCardProps) => {
   const navigate = useNavigate();
 
-  const handdleNotificationClick = () => {
-    MarkAsRead();
-    navigate(`${notification.actionUrl}`);
+  const handdleNotificationClick = async () => {
+    try {
+      await MarkAsRead();
+      navigate(`${notification.actionUrl}`);
+    } catch (error) {
+      console.error("Failed in handleNotificationClick:", error);
+    }
   };
 
   const MarkAsRead = async () => {
     try {
-      console.log(notification);
-      const response = await api.put("/notification/markAsRead", {
-        id: notification._id.toString(),
+      await api.put("/notification/markAsRead", {
+        id: notification.id,
       });
-      console.log(response.data);
-      //notification.isRead = true;
     } catch (error) {
       console.error("Failed to mark as read:", error);
     }

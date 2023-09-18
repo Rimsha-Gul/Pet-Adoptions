@@ -1,14 +1,21 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import NotificationList from "../components/NotificationsComponents/NotificationsList";
-import socket from "../socket/socket";
+import api from "../api";
+import { NotificationsContext } from "../context/NotificationsContext";
 
 const Notifications = () => {
+  const notificationsContext = useContext(NotificationsContext);
   useEffect(() => {
-    console.log("notifications useeffect called");
+    const fetchNotifications = async () => {
+      try {
+        const response = await api.get("/notification/");
+        notificationsContext.setNotifications?.(response.data);
+      } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+      }
+    };
 
-    // Fetch existing notifications from the server
-    const userEmail = sessionStorage.getItem("userEmail");
-    socket.emit("get_notifications", userEmail);
+    fetchNotifications();
   }, []);
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
