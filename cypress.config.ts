@@ -100,6 +100,28 @@ const setupNodeEvents = async (on) => {
       return null;
     },
 
+    async getVerificationCode({ email }) {
+      const user = await db.collection("users").findOne({ email: email });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+      console.log(user.verificationCode);
+      return { verificationCode: user.verificationCode.code };
+    },
+
+    async getInvitationToken({ email }) {
+      const invitation = await db
+        .collection("invitations")
+        .findOne({ shelterEmail: email });
+
+      if (!invitation) {
+        throw new Error("Invitation not found");
+      }
+      console.log("inv t: ", invitation.invitationToken);
+      return { invitationToken: invitation.invitationToken };
+    },
+
     async getResetToken() {
       if (!db) {
         throw new Error("DB not connected");

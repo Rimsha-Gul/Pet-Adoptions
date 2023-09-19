@@ -174,7 +174,7 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                                 <Link
                                   data-cy={`${option.label
                                     .toLowerCase()
-                                    .replace(" ", "-")}-option`}
+                                    .replace(/ /g, "-")}-option`}
                                   key={option.to}
                                   to={option.to}
                                   className={`block px-6 py-3 text-md font-medium ${
@@ -201,6 +201,9 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
               ) : (
                 link.to && (
                   <Link
+                    data-cy={`${link.label
+                      .toLowerCase()
+                      .replace(/ /g, "-")}-button`}
                     key={index}
                     to={link.to}
                     className={`block px-6 py-3 text-md font-medium ${

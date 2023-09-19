@@ -119,6 +119,7 @@ export const FileInput = ({
         Images
       </label>
       <div
+        data-cy="image-upload"
         {...getRootProps()}
         className="w-full mt-2 h-28 border-2 border-dashed border-gray-400 rounded-md flex justify-center items-center mb-5"
       >
