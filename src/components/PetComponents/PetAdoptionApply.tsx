@@ -31,6 +31,7 @@ const PetAdoptionApply = ({
       <p className="text-lg flex flex-wrap items-end gap-2">
         <span className="text-primary font-bold">Shelter Name:</span>
         <Link
+          data-cy="shelter-link"
           className="hover:underline text-gray-500"
           to={`/shelterProfile/${petShelterID}`}
         >

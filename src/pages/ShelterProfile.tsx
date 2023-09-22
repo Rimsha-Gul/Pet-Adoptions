@@ -224,6 +224,7 @@ const ShelterProfile = () => {
               </p>
               {shelter.canReview && userRole === UserRole.User && (
                 <button
+                  data-cy="review-button"
                   className={`mt-8 group relative w-1/3 lg:w-1/5 2xl:w-1/6 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white bg-primary hover:bg-white hover:text-primary hover:ring-2 hover:ring-primary hover:ring-offset-2" ${
                     isLoading
                       ? `bg-primary text-white cursor-not-allowed items-center`
@@ -286,6 +287,7 @@ const ShelterProfile = () => {
                           ) : (
                             <div className="mt-4">
                               <textarea
+                                name="reviewText"
                                 className="p-2 border resize rounded-md w-full"
                                 placeholder={field.placeholder}
                                 value={review}
