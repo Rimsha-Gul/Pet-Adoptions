@@ -304,6 +304,7 @@ const ShelterProfile = () => {
                   </div>
                   <div className="bg-secondary-10 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                     <button
+                      data-cy="submit-review-button"
                       type="button"
                       className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-md px-4 py-2 bg-primary text-base font-medium text-white hover:ring-2 hover:ring-primary hover:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                         isLoading

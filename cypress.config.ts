@@ -57,7 +57,7 @@ const setupNodeEvents = async (on) => {
 
       const hashedPassword = hashPassword("123456");
 
-      const user = {
+      const user: any = {
         role: role,
         name: name,
         email: email,
@@ -69,6 +69,11 @@ const setupNodeEvents = async (on) => {
           updatedAt: new Date(),
         },
       };
+
+      if (role === "SHELTER") {
+        user.rating = 0;
+        user.numberOfReviews = 0;
+      }
 
       await db.collection("users").insertOne(user);
 
@@ -204,6 +209,7 @@ const setupNodeEvents = async (on) => {
           : application.shelterVisitDate
       );
       existingVisitDate.setDate(existingVisitDate.getDate() - 2);
+      const updatedVisitDate = existingVisitDate.toISOString();
 
       await db.collection("applications").updateOne(
         { _id: new ObjectId(applicationID) },
@@ -211,11 +217,28 @@ const setupNodeEvents = async (on) => {
           $set: {
             [visitType === VisitType.Home
               ? "homeVisitDate"
-              : "shelterVisitDate"]: existingVisitDate,
+              : "shelterVisitDate"]: updatedVisitDate,
           },
         }
       );
 
+      const visit = await db.collection("visits").findOne({
+        applicationID: new ObjectId(applicationID),
+        visitType: visitType,
+      });
+      if (!visit) {
+        throw new Error(`Visit with ID ${applicationID} not found`);
+      }
+
+      await db.collection("visits").updateOne(
+        {
+          applicationID: new ObjectId(applicationID),
+          visitType: visitType,
+        },
+        {
+          $set: { visitDate: updatedVisitDate },
+        }
+      );
       return null;
     },
 

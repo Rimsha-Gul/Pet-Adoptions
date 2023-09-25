@@ -165,9 +165,13 @@ const ReviewList = ({
         }
         className="overflow-hidden py-2"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div
+          data-cy="reviews-grid"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
           {reviews.map((review) => (
             <div
+              data-cy="review"
               key={review.applicantEmail}
               className="border rounded-lg p-4 mb-4 bg-secondary-10 shadow-lg rounded-md"
             >
@@ -177,7 +181,10 @@ const ReviewList = ({
                 </h3>
                 {review.applicantEmail === userEmail && (
                   <div className="relative" ref={editReviewRef}>
-                    <button onClick={handleShowEditClick}>
+                    <button
+                      data-cy="review-options"
+                      onClick={handleShowEditClick}
+                    >
                       <FiMoreVertical />
                     </button>
                     {showReviewOption && (
@@ -192,6 +199,7 @@ const ReviewList = ({
                           aria-labelledby="options-menu"
                         >
                           <button
+                            data-cy="edit-review"
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             role="menuitem"
                             onClick={() => {
@@ -267,6 +275,7 @@ const ReviewList = ({
                       ) : (
                         <div className="mt-4">
                           <textarea
+                            name="reviewText"
                             className="p-2 border resize rounded-md w-full"
                             placeholder={field.placeholder}
                             value={review}
@@ -283,6 +292,7 @@ const ReviewList = ({
               </div>
               <div className="bg-secondary-10 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
+                  data-cy="review-button"
                   type="button"
                   className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-md px-4 py-2 bg-primary text-base font-medium text-white hover:ring-2 hover:ring-primary hover:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                     isLoading

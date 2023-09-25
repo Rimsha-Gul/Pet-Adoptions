@@ -213,5 +213,15 @@ describe("Successfully write review of shelter", () => {
     cy.get("[data-cy=submit-review-button]").click();
     cy.get(".swal2-confirm").click();
     cy.get("[data-cy=reviews-grid]").find("[data-cy=review]").should("exist");
+    cy.get("[data-cy=review-options]").click();
+    cy.get("[data-cy=edit-review]").click();
+    cy.get("textarea[name=reviewText]")
+      .clear()
+      .type(
+        "The adoption process at this shelter was truly exceptional. The team was well-informed, the environment was spotless, and it's evident that they deeply care about the animals' welfare. If you're considering adopting a pet, this place is top-notch."
+      );
+    cy.get("[data-cy=review-button]").click();
+    cy.get(".swal2-confirm").click();
+    cy.get("[data-cy=reviews-grid]").find("[data-cy=review]").should("exist");
   });
 });
