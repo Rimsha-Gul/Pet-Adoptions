@@ -1,6 +1,6 @@
 import { petData } from "../../fixtures/addingPet/petData";
 
-describe("Adoption Application Approval", () => {
+describe("Adoption Application Rejection", () => {
   after(() => {
     cy.task("deleteMany", {
       collection: "users",

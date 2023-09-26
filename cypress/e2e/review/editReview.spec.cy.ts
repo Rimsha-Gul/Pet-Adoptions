@@ -193,7 +193,7 @@ describe("Successfully write review of shelter", () => {
     });
   });
 
-  it("login user and write review of shelter", () => {
+  it("login user, and write and edit review of shelter", () => {
     cy.task("login", { email: "test-user@example.com" }).then(
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);
@@ -222,6 +222,7 @@ describe("Successfully write review of shelter", () => {
       );
     cy.get("[data-cy=review-button]").click();
     cy.get(".swal2-confirm").click();
+    cy.reload();
     cy.get("[data-cy=reviews-grid]").find("[data-cy=review]").should("exist");
   });
 });
