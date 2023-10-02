@@ -38,9 +38,10 @@ const setupNodeEvents = async (on) => {
           updatedAt: new Date(),
         },
       };
-      await db.collection("users").insertOne(user);
 
-      return null;
+      const result = await db.collection("users").insertOne(user);
+
+      return result.insertedId;
     },
 
     async disconnectDB() {
@@ -75,9 +76,9 @@ const setupNodeEvents = async (on) => {
         user.numberOfReviews = 0;
       }
 
-      await db.collection("users").insertOne(user);
+      const result = await db.collection("users").insertOne(user);
 
-      return null;
+      return result.insertedId;
     },
 
     async getAccessToken({ email }) {
@@ -251,8 +252,9 @@ const setupNodeEvents = async (on) => {
 };
 
 export default defineConfig({
+  numTestsKeptInMemory: 100,
   e2e: {
-    baseUrl: "http://127.0.0.1:5173",
+    baseUrl: "http://localhost:5173",
     setupNodeEvents,
   },
 });

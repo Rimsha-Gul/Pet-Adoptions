@@ -109,14 +109,17 @@ const Input = ({
         </label>
         <Datetime
           value={value}
-          onChange={(date) =>
-            handleChange({
-              target: {
-                id: id,
-                value: (date as moment.Moment).toDate().toISOString(),
-              },
-            })
-          }
+          onChange={(date) => {
+            try {
+              const newDate = date as moment.Moment;
+              handleChange({
+                target: {
+                  id: id,
+                  value: newDate.toDate().toISOString(),
+                },
+              });
+            } catch (e) {}
+          }}
           timeFormat={false} // don't need time selection
           closeOnSelect
           inputProps={inputProps}
