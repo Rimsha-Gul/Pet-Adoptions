@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import StarRatings from "react-star-ratings";
 import { validateField } from "../../utils/formValidation";
 import { FieldsState } from "../../types/common";
@@ -16,12 +16,12 @@ interface Props {
   isLoading: boolean;
 }
 
-const ReviewModal: React.FC<Props> = ({
+const ReviewModal = ({
   show,
   onClose,
   onSubmit,
   isLoading,
-}) => {
+}:Props) => {
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>("");
   const [errors, setErrors] = useState({

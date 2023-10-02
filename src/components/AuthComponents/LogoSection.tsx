@@ -17,7 +17,7 @@ const LogoSection = ({ paragraph, linkName, linkUrl }: HeaderProps) => {
           src={logo}
         />
       </div>
-      <h1 className="font-pacifico text-center text-2xl sm:text-6xl font-extrabold italic text-primary">
+      <h1 className="font-pacifico text-center text-2xl sm:text-6xl italic text-primary">
         Purrfect Adoptions
       </h1>
       {paragraph && linkName && linkUrl && (

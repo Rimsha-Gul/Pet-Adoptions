@@ -4,11 +4,7 @@ describe("Successfully add pet", () => {
       collection: "users",
       params: {
         email: {
-          $in: [
-            "admin-user@example.com",
-            "test-shelter@example.com",
-            "test-user@example.com",
-          ],
+          $in: ["test-shelter@example.com", "test-user@example.com"],
         },
       },
     });
