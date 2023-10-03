@@ -69,7 +69,6 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
       setIsSidebarOpen?.(false); // Close the sidebar if the screen size is small
     }
   };
-  console.log(location.pathname.substring(1));
 
   const HamburgerButton = ({ toggle }: HamburgerButtonProps) => (
     <button

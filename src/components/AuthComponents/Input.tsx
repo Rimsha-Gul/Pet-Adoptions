@@ -1,7 +1,6 @@
-import moment from "moment";
 import { useState } from "react";
-import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
+import DatePicker from "react-tailwindcss-datepicker";
 import Select from "react-select";
 import Switch from "react-switch";
 
@@ -99,37 +98,33 @@ const Input = ({
   }
 
   if (type === "date") {
-    let inputProps = {
-      placeholder: "Birth date",
+    const [value, setValue] = useState({
+      startDate: null,
+      endDate: null,
+    });
+    const handleValueChange = (newValue: any) => {
+      setValue(newValue);
+      handleChange({
+        target: {
+          id: id,
+          value: newValue.startDate,
+        },
+      });
     };
+
     return (
       <div className="my-5">
         <label htmlFor={labelFor} className={`not-sr-only  ${labelClassName}`}>
           {labelText}
         </label>
-        <Datetime
+        <DatePicker
+          useRange={false}
+          asSingle={true}
           value={value}
-          onChange={(date) => {
-            try {
-              const newDate = date as moment.Moment;
-              handleChange({
-                target: {
-                  id: id,
-                  value: newDate.toDate().toISOString(),
-                },
-              });
-            } catch (e) {}
-          }}
-          timeFormat={false} // don't need time selection
-          closeOnSelect
-          inputProps={inputProps}
-          isValidDate={(current) => {
-            return current.isBefore(moment());
-          }}
-          className={`${fixedInputClass} cursor-pointer bg-white ${customClass} ${
-            validationError && isTouched ? "border-red-500" : ""
-          }`}
+          onChange={handleValueChange}
+          maxDate={new Date()}
         />
+
         {validationError && isTouched && (
           <p className="text-red-500 text-xs mt-1">{validationError}</p>
         )}

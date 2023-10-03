@@ -53,7 +53,7 @@ describe("Successfully add pet", () => {
     cy.get("input[name=breed]").type("Mini Rex");
     cy.get("input[name=color]").type("White");
     cy.get("#activityNeeds").click();
-    cy.get('[id="react-select-11-listbox"]').contains("Low").click();
+    cy.get('[id="react-select-11-listbox"]').contains("Very Low").click();
     cy.get("#levelOfGrooming").click();
     cy.get('[id="react-select-13-listbox"]').contains("Medium").click();
     cy.get(".react-switch-handle").click({ multiple: true });

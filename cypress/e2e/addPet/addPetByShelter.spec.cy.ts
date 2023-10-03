@@ -71,7 +71,7 @@ describe("Successfully add pet", () => {
     cy.get("input[name=color]").type("White");
 
     cy.get("#activityNeeds").click();
-    cy.get('[id="react-select-9-listbox"]').contains("Low").click();
+    cy.get('[id="react-select-9-listbox"]').contains("Very Low").click();
 
     cy.get("#levelOfGrooming").click();
     cy.get('[id="react-select-11-listbox"]').contains("Medium").click();
