@@ -14,7 +14,7 @@ interface HeaderProps {
 const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
   const appContext = useContext(AppContext);
   const userName = appContext.displayName;
-  const userEmail = sessionStorage.getItem("userEmail");
+  const userEmail = localStorage.getItem("userEmail");
 
   const { unseenCount } = useContext(NotificationsContext);
 

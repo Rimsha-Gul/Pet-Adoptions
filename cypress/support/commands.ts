@@ -45,7 +45,7 @@ Cypress.Commands.add("checkUrlIs", (expectedPath: string) => {
 // Custom command to set session storage
 Cypress.Commands.add("setSessionStorage", (key: string, value: string) => {
   cy.window().then((win) => {
-    win.sessionStorage.setItem(key, value);
+    win.localStorage.setItem(key, value);
   });
 });
 

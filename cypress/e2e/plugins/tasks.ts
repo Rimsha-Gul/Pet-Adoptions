@@ -62,7 +62,7 @@ interface SetVisitDateToPastProps {
 const connectDB = async () => {
   if (!client) {
     client = await MongoClient.connect(process.env.MONGO_URI_TEST || "");
-    db = client.db("test2");
+    db = client.db("test");
   }
 };
 

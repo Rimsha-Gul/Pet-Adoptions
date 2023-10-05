@@ -90,7 +90,7 @@ const SignupForm = ({
   const createAccount = async () => {
     try {
       setCredentialsError("");
-      sessionStorage.setItem("userEmail", signupData.email);
+      localStorage.setItem("userEmail", signupData.email);
       appContext.setUserEmail?.(signupData.email);
       setIsLoading(true);
       const response = await api.post("/auth/signup", signupData);

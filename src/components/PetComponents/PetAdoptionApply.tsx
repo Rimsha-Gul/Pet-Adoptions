@@ -35,12 +35,15 @@ const PetAdoptionApply = ({
           className="hover:underline text-gray-500"
           to={`/shelterProfile/${petShelterID}`}
         >
-          <span className="flex items-center gap-1 font-medium">
+          <span
+            data-cy="shelter-name"
+            className="flex items-center gap-1 font-medium"
+          >
             {petShelterName}
             <BiLinkExternal className="w-5 h-5" />
           </span>
         </Link>
-        {petShelterRating && (
+        {petShelterRating !== 0 && (
           <>
             <StarRatings
               rating={petShelterRating}
@@ -56,7 +59,7 @@ const PetAdoptionApply = ({
       </p>
       <p className="text-lg text-gray-500">
         <span className="text-primary font-bold">Adoption Fee:</span>{" "}
-        {petAdoptionFee}
+        <span data-cy="adoption-fee">{petAdoptionFee}</span>
       </p>
       <div className="flex items-center justify-center">
         {userRole === "USER" &&

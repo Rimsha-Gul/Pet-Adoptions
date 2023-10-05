@@ -97,7 +97,7 @@ const PetProfile = () => {
                 text={
                   pet.hasAdoptionRequest
                     ? "View Application Status"
-                    : "Apply for adoption"
+                    : "Apply for Adoption"
                 }
                 isAdopted={pet.isAdopted}
               />

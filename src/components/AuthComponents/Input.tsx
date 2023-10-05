@@ -118,6 +118,7 @@ const Input = ({
           {labelText}
         </label>
         <DatePicker
+          data-cy="date-of-birth"
           useRange={false}
           asSingle={true}
           value={value}
@@ -217,7 +218,10 @@ const Input = ({
 
   if (type === "toggle") {
     return (
-      <div className="flex flex-row my-5 justify-between">
+      <div
+        data-cy={`${name}-div`}
+        className="flex flex-row my-5 justify-between"
+      >
         <label className={` ${labelClassName}`}>{labelText}</label>
 
         <Switch

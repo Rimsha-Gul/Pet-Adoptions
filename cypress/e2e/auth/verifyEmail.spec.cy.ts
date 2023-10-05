@@ -23,7 +23,7 @@ describe("Email Verification Flow", () => {
 
       // Verify OTP variable to be updated in localStorage
       cy.window()
-        .its("sessionStorage")
+        .its("localStorage")
         .invoke("getItem", "isOTPSent")
         .should("equal", "true");
 

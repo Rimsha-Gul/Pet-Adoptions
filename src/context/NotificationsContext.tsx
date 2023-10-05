@@ -34,7 +34,7 @@ const NotificationsProvider = (props: { children: ReactNode }) => {
 
     // Socket connection established
     socket.on("connect", () => {
-      const userEmail = sessionStorage.getItem("userEmail");
+      const userEmail = localStorage.getItem("userEmail");
       if (userEmail) {
         socket.emit("join_room", userEmail);
       }

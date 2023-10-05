@@ -62,7 +62,7 @@ const LoginForm = () => {
 
   //Handle Login API Integration
   const authenticateUser = async () => {
-    sessionStorage.setItem("userEmail", loginData.email);
+    localStorage.setItem("userEmail", loginData.email);
     console.log(loginData);
     try {
       setCredentialsError("");

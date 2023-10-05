@@ -20,7 +20,7 @@ describe("Signup Flow", () => {
 
       // Verify email is stored in sessionStorage
       cy.window()
-        .its("sessionStorage")
+        .its("localStorage")
         .invoke("getItem", "userEmail")
         .should("eq", "test-user@example.com");
 

@@ -150,10 +150,6 @@ const AddPet = () => {
             );
           }
         } catch (error: any) {
-          // if (error.response.status === 401) {
-          //   console.error(error.response.status);
-          //   navigate("/");
-          // }
           if (error.response.status === 500) {
             console.error("Server error:", error.response.data.message);
             setServerError(
@@ -254,14 +250,7 @@ const AddPet = () => {
               state: pet,
             }),
           () => {
-            // Get the current URL path
-            const path = window.location.pathname;
-
-            // Check whether the current page is the application page
-            if (!path.includes(`/pet/${addPetData.microchipID}`)) {
-              // If it's not, navigate to the pet page
-              navigate("/addpet");
-            }
+            window.location.reload();
           },
           '<a href id="navigatePet">View the pet\'s profile page</a><style>#navigatePet:hover { text-decoration: underline; }</style>',
           "navigatePet"

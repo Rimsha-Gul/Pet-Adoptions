@@ -36,9 +36,16 @@ const PetBaseStats = ({
         <p className="text-lg text-gray-500" key={name}>
           <span className="text-secondary font-bold">{name}:</span>{" "}
           {isLowercase ? (
-            <span className="capitalize">{value.toLowerCase()}</span>
+            <span
+              data-cy={`${name.toLowerCase().replace(/ /g, "-")}-stat`}
+              className="capitalize"
+            >
+              {value.toLowerCase()}
+            </span>
           ) : (
-            value
+            <span data-cy={`${name.toLowerCase().replace(/ /g, "-")}-stat`}>
+              {value.replace(/_/g, " ")}
+            </span>
           )}
         </p>
       ))}

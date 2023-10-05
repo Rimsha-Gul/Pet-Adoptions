@@ -12,12 +12,8 @@ const VerifyEmail = () => {
   const navigate = useNavigate();
   const [verificationCode, setVerificationCode] = useState<string>("");
   const appContext = useContext(AppContext);
-  const userEmail = sessionStorage.getItem("userEmail");
-  const remainingTimeStr = sessionStorage.getItem("remainingTime");
-  let remainingTime: number | (() => number);
-  if (remainingTimeStr) {
-    remainingTime = parseInt(remainingTimeStr, 10);
-  }
+  const userEmail = localStorage.getItem("userEmail");
+  const remainingTimeStr = localStorage.getItem("remainingTime");
 
   const [timer, setTimer] = useState<number>(
     remainingTimeStr ? parseInt(remainingTimeStr, 10) : 0
@@ -40,7 +36,7 @@ const VerifyEmail = () => {
 
   useEffect(() => {
     const sendVerificationCode = async () => {
-      const isOTPSent = sessionStorage.getItem("isOTPSent");
+      const isOTPSent = localStorage.getItem("isOTPSent");
       // Check if usermail is not null
       if (emailForVerification) {
         if (!isOTPSent) {
@@ -58,10 +54,10 @@ const VerifyEmail = () => {
             } else {
               await api.post("/auth/sendVerificationCode", sendCodeData);
             }
-            sessionStorage.setItem("isOTPSent", "true");
+            localStorage.setItem("isOTPSent", "true");
 
             // Initialize timer if a previous timer exists in session storage
-            const remainingTimeStr = sessionStorage.getItem("remainingTime");
+            const remainingTimeStr = localStorage.getItem("remainingTime");
             if (remainingTimeStr) {
               const remainingTime = parseInt(remainingTimeStr, 10);
               setTimer(remainingTime);
@@ -92,7 +88,7 @@ const VerifyEmail = () => {
 
     sendVerificationCode();
     // Initialize timer if a previous timer exists in session storage
-    const remainingTimeStr = sessionStorage.getItem("remainingTime");
+    const remainingTimeStr = localStorage.getItem("remainingTime");
     if (remainingTimeStr) {
       const remainingTime = parseInt(remainingTimeStr, 10);
       setTimer(remainingTime);
@@ -108,7 +104,7 @@ const VerifyEmail = () => {
 
   // Retrieving the remaining time when the component mounts
   useEffect(() => {
-    const remainingTimeStr = sessionStorage.getItem?.("remainingTime");
+    const remainingTimeStr = localStorage.getItem?.("remainingTime");
     console.log(remainingTimeStr);
     if (remainingTimeStr) {
       const remainingTime = parseInt(remainingTimeStr, 10);
@@ -227,7 +223,7 @@ const VerifyEmail = () => {
       const countdown = setTimeout(() => {
         setTimer(timer - 1);
       }, 1000);
-      sessionStorage.setItem("remainingTime", timer.toString());
+      localStorage.setItem("remainingTime", timer.toString());
 
       return () => clearTimeout(countdown);
     } else {

@@ -113,7 +113,7 @@ const HomePage = () => {
   const [breedFilter, setBreedFilter] = useState<string>("");
   const [genderFilter, setGenderFilter] = useState<string>("");
   const [noPetsFound, setNoPetsFound] = useState<boolean>(false);
-  const userEmail = sessionStorage.getItem("userEmail");
+  const userEmail = localStorage.getItem("userEmail");
 
   if (!appContext.loggedIn) {
     //console.log(localStorage.getItem("userEmail"));

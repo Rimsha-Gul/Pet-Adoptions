@@ -49,7 +49,7 @@ describe("Invitation Acceptance", () => {
     cy.get("button[type=submit]").click();
 
     cy.window()
-      .its("sessionStorage")
+      .its("localStorage")
       .invoke("getItem", "userEmail")
       .should("eq", "test-shelter@example.com");
 

@@ -15,7 +15,12 @@ const PetTraits = ({ petCategory, petTraits }: PetTraitsProps) => {
             <div className="max-w-3xl flex flex-wrap gap-2 mt-4">
               {petTraits.map((trait, index) => (
                 <div key={index} className="bg-secondary-10 px-3 py-1 rounded">
-                  <p className="text-lg text-primary">{trait}</p>
+                  <p
+                    data-cy={`trait-${index}`}
+                    className="text-lg text-primary"
+                  >
+                    {trait}
+                  </p>
                 </div>
               ))}
             </div>

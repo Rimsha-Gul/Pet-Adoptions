@@ -7,7 +7,10 @@ const PetBasicInfo = ({ petBio }: PetBasicInfoProps) => {
       <div className="flex flex-col items-center justify-center">
         <div className="mt-2 md:ml-44 flex flex-col gap-4">
           <div className="max-w-4xl">
-            <p className="text-md sm:text-lg text-gray-500 text-justify whitespace-pre-line">
+            <p
+              data-cy="bio"
+              className="text-md sm:text-lg text-gray-500 text-justify whitespace-pre-line"
+            >
               {petBio}
             </p>
           </div>

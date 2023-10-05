@@ -159,7 +159,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
         .get("/session")
         .then((res) => res.data)
         .then((data: any) => {
-          sessionStorage.setItem("userEmail", data.email);
+          localStorage.setItem("userEmail", data.email);
           setUserEmail(data.email);
           setDisplayName(data.name);
           setUserRole(data.role);

@@ -37,7 +37,7 @@ function App() {
       appContext.setLoggedIn?.(false);
       appContext.setDisplayName?.("");
       appContext.setUserRole?.("");
-      navigate("/"); // Use navigate here
+      navigate("/");
 
       console.log(response.status);
       console.log(appContext.loggedIn);
@@ -47,7 +47,7 @@ function App() {
         navigate("/pagenotfound", { state: errorMessages.pageNotFound }); // And here
       }
       if (error.response.status === 401) {
-        navigate("/"); // And here too
+        navigate("/");
       }
     }
   };
