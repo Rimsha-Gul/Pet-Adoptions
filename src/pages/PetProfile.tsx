@@ -81,7 +81,7 @@ const PetProfile = () => {
           </div>
           <div className="md:bg-white flex flex-col md:flex-row justify-start w-full px-8 space-y-8 md:space-y-0 md:space-x-8">
             <div className="w-full md:w-3/4 mx-auto max-w-6xl">
-              <PetTraits petCategory={pet.category} petTraits={pet.traits} />
+              <PetTraits petTraits={pet.traits} />
             </div>
             <div className="w-full md:w-1/4">
               <PetAdoptionApply

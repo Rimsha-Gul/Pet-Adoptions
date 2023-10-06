@@ -33,7 +33,6 @@ const InviteShelter = () => {
         error.response.status === 409 &&
         error.response.data === "User already  exists, which is not a shelter"
       ) {
-        console.log("hehehe");
         showInfoAlert(
           `The email you entered is already associated with a 'User' account. To proceed with the 'Shelter' invitation, kindly notify the owner of this email to provide a different email address for their 'Shelter' registration. Would you like to notify them now?
 `,
@@ -51,7 +50,6 @@ const InviteShelter = () => {
 
   const changeUserRole = async () => {
     try {
-      console.log("trying");
       setIsLoading(true);
 
       console.log(appContext.userRole);
@@ -63,7 +61,6 @@ const InviteShelter = () => {
         showSuccessAlert(response.data.message, undefined);
       }
     } catch (error: any) {
-      console.log(error.response);
       showErrorAlert(error.response.data);
     } finally {
       setIsLoading(false);

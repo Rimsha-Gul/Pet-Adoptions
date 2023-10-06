@@ -58,13 +58,14 @@ const ageRange = (ages: number[]): string[] => {
 const HomePage = () => {
   const options = [
     { value: "", label: "All" },
-    { value: "CAT", label: "Cats" },
-    { value: "DOG", label: "Dogs" },
-    { value: "HORSE", label: "Horses" },
-    { value: "RABBIT", label: "Rabbits" },
-    { value: "SMALL_AND_FURRY", label: "Small & Furry" },
-    { value: "SCALES_FINS_AND_OTHERS", label: "Scales, fins & others" },
-    { value: "BARNYARD", label: "Barnyard" },
+    { value: "Cat", label: "Cat" },
+    { value: "Dog", label: "Dog" },
+    { value: "Horse", label: "Horse" },
+    { value: "Rabbit", label: "Rabbit" },
+    { value: "Bird", label: "Bird" },
+    { value: "Small and Furry", label: "Small & Furry" },
+    { value: "Scales, Fins and Others", label: "Scales, fins & others" },
+    { value: "Barnyard", label: "Barnyard" },
   ];
   const customStyles = {
     control: (provided: any, state: any) => ({

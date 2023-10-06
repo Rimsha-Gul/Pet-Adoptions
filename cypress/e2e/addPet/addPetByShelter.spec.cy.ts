@@ -46,7 +46,7 @@ describe("Successfully add pet", () => {
     cy.get("[data-cy=add-a-pet-button]").click();
 
     cy.get("#category").click();
-    cy.get('[id="react-select-5-listbox"]').contains("Rabbit").click();
+    cy.get('[id="react-select-5-listbox"]').contains("Small & Furry").click();
 
     cy.get("input[name=microchipID]").type("A123456789");
 
@@ -79,7 +79,7 @@ describe("Successfully add pet", () => {
     cy.get('[id="react-select-13-listbox"]').contains("USD").click();
 
     cy.get("textarea[name=bio]").type(
-      "Snowball, an alluring male Mini Lop rabbit, boasts a pristine white coat that perfectly mirrors his name. Born in 2021, his vibrant curiosity and playful energy are well-balanced by a gentle, sociable nature, which is a hallmark of his breed. His dark, expressive eyes add to his endearing charm."
+      "Snowball, an alluring male Mini Lop rabbit, boasts a pristine white coat that perfectly mirrors his name. Born in 2020, his vibrant curiosity and playful energy are well-balanced by a gentle, sociable nature, which is a hallmark of his breed. His dark, expressive eyes add to his endearing charm."
     );
 
     cy.get("[data-cy=image-upload] input").then((input) => {
@@ -130,14 +130,14 @@ describe("Successfully add pet", () => {
 
     cy.get("[data-cy=bio]").should(
       "have.text",
-      "Snowball, an alluring male Mini Lop rabbit, boasts a pristine white coat that perfectly mirrors his name. Born in 2021, his vibrant curiosity and playful energy are well-balanced by a gentle, sociable nature, which is a hallmark of his breed. His dark, expressive eyes add to his endearing charm."
+      "Snowball, an alluring male Mini Lop rabbit, boasts a pristine white coat that perfectly mirrors his name. Born in 2020, his vibrant curiosity and playful energy are well-balanced by a gentle, sociable nature, which is a hallmark of his breed. His dark, expressive eyes add to his endearing charm."
     );
     cy.get("[data-cy=age-stat]").should("have.text", "3 years old");
     cy.get("[data-cy=color-stat]").should("have.text", "White");
-    cy.get("[data-cy=gender-stat]").should("have.text", "male");
+    cy.get("[data-cy=gender-stat]").should("have.text", "Male");
     cy.get("[data-cy=breed-stat]").should("have.text", "Mini Rex");
-    cy.get("[data-cy=activity-needs-stat]").should("have.text", "very_low");
-    cy.get("[data-cy=level-of-grooming-stat]").should("have.text", "medium");
+    cy.get("[data-cy=activity-needs-stat]").should("have.text", "Very Low");
+    cy.get("[data-cy=level-of-grooming-stat]").should("have.text", "Medium");
     cy.get("[data-cy=house-trained-stat]").should("have.text", "Yes");
 
     const healthInfoItems = [

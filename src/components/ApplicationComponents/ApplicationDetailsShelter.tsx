@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import loadingIcon from "../../assets/loading.gif";
 import { Status, VisitType } from "../../types/enums";
 import { getNextShelterStatus } from "../../utils/getNextStatus";
@@ -137,15 +137,18 @@ const ApplicationDetailsShelter = () => {
               alt="Pet Image"
               className="h-60 w-60 sm:h-80 sm:w-80 object-cover rounded-lg"
             />
-            <Link
-              to={`/pet/${application.microchipID}`}
+            <a
+              data-cy="shelter-link"
               className="text-2xl sm:text-3xl text-primary font-bold whitespace-pre-line hover:underline"
+              href={`/pet/${application.microchipID}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <div className="flex flex-row items-end gap-2">
                 {application.petName}
                 <BiLinkExternal className="pb-0.5" />
               </div>
-            </Link>
+            </a>
           </div>
           <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-center mt-10 gap-6 sm:gap-8">
             <div className="flex flex flex-col sm:flex-row gap-2">

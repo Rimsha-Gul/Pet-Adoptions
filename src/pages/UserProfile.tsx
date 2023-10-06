@@ -159,6 +159,7 @@ const UserProfile = () => {
       updates.profilePhoto = newProfilePhoto;
     }
 
+    if (user.name !== prevUser.name) updates.name = user.name;
     if (user.address !== prevUser.address) updates.address = user.address;
     if (user.bio !== prevUser.bio) updates.bio = user.bio;
     console.log(updates);

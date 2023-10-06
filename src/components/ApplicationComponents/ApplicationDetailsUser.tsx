@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getStatusIcon } from "../../utils/getStatusIcon";
 import api from "../../api";
 import { useEffect, useMemo, useState } from "react";
@@ -28,8 +28,6 @@ const ApplicationDetailsUser = () => {
   const [reasonToReactivate, setReasonToReactivate] = useState<string>("");
   const [reactivationRequest, setReactivationRequest] =
     useState<ReactivationRequest | null>(null);
-
-  console.log(application);
 
   const { id } = useParams();
 
@@ -180,15 +178,18 @@ const ApplicationDetailsUser = () => {
               alt="Pet Image"
               className="h-60 w-60 sm:h-80 sm:w-80 object-cover rounded-lg"
             />
-            <Link
-              to={`/pet/${application.microchipID}`}
+            <a
+              data-cy="shelter-link"
               className="text-2xl sm:text-3xl text-primary font-bold whitespace-pre-line hover:underline"
+              href={`/pet/${application.microchipID}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <div className="flex flex-row items-end gap-2">
                 {application.petName}
                 <BiLinkExternal className="pb-0.5" />
               </div>
-            </Link>
+            </a>
           </div>
           <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-center mt-10 gap-6 sm:gap-8">
             <div className="flex flex-col sm:flex-row gap-2">

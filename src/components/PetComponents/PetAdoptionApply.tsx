@@ -1,6 +1,5 @@
 import { FormEvent, useContext } from "react";
 import { AppContext } from "../../context/AppContext";
-import { Link } from "react-router-dom";
 import StarRatings from "react-star-ratings";
 import { BiLinkExternal } from "react-icons/bi";
 
@@ -30,10 +29,12 @@ const PetAdoptionApply = ({
     <div className="flex flex-col gap-6 max-w-9xl p-8 sm:p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
       <p className="text-lg flex flex-wrap items-end gap-2">
         <span className="text-primary font-bold">Shelter Name:</span>
-        <Link
+        <a
           data-cy="shelter-link"
           className="hover:underline text-gray-500"
-          to={`/shelterProfile/${petShelterID}`}
+          href={`/shelterProfile/${petShelterID}`}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <span
             data-cy="shelter-name"
@@ -42,7 +43,7 @@ const PetAdoptionApply = ({
             {petShelterName}
             <BiLinkExternal className="w-5 h-5" />
           </span>
-        </Link>
+        </a>
         {petShelterRating !== 0 && (
           <>
             <StarRatings
