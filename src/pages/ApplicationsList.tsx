@@ -93,7 +93,7 @@ const ViewApplications = () => {
       setApplicationsLoadingError("");
 
       setIsLoading(true);
-      const response = await api.get("/application/applications", {
+      const response = await api.get("/application/all", {
         params: {
           page: 1,
           limit: 5,
@@ -130,7 +130,7 @@ const ViewApplications = () => {
         //console.log("nextPage", nextPage);
 
         // Fetch the next page of data
-        const response = await api.get("/application/applications", {
+        const response = await api.get("/application/all", {
           params: {
             page: nextPage,
             limit: 5,

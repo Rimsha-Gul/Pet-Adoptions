@@ -133,7 +133,7 @@ export const ScheduleForm = ({
           setIsLoadingTimeSlots(true);
           const response = await api.get("/application/timeSlots", {
             params: {
-              id: application.shelterID,
+              shelterID: application.shelterID,
               petID: application.microchipID,
               visitDate: moment(selectedDate).format("YYYY-MM-DD"),
               visitType: visitType,

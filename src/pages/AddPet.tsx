@@ -139,7 +139,7 @@ const AddPet = () => {
     if (userRole === "ADMIN") {
       const fetchShelters = async () => {
         try {
-          const response = await api.get("/auth/shelters");
+          const response = await api.get("/shelter/all");
           if (response.status === 200) {
             console.log(response.data);
             setShelters(
