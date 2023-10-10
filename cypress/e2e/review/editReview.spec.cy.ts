@@ -107,7 +107,7 @@ describe("Successfully write review of shelter", () => {
 
   // Request Home Visit/Inspection
   it("login shelter and request home visit", () => {
-    cy.intercept("PUT", "/application/updateStatus").as("statusApiCall");
+    cy.intercept("PUT", "/application/status").as("statusApiCall");
     cy.task("login", { email: "test-shelter@example.com" }).then(
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);
@@ -127,7 +127,7 @@ describe("Successfully write review of shelter", () => {
 
   // Schedule Home Visit/Inspection
   it("login user and schedule home visit", () => {
-    cy.intercept("POST", "/application/scheduleHomeVisit").as("visitApiCall");
+    cy.intercept("POST", "/application/homeVisit").as("visitApiCall");
     cy.task("login", { email: "test-user@example.com" }).then(
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);
@@ -158,10 +158,8 @@ describe("Successfully write review of shelter", () => {
 
   // Approve Home Visit and Schedule Shelter Visit
   it("login shelter, approve home visit, and schedule applicant's visit to shelter", () => {
-    cy.intercept("PUT", "/application/updateStatus").as("statusApiCall");
-    cy.intercept("POST", "/application/scheduleShelterVisit").as(
-      "visitApiCall"
-    );
+    cy.intercept("PUT", "/application/status").as("statusApiCall");
+    cy.intercept("POST", "/application/shelterVisit").as("visitApiCall");
     cy.task("login", { email: "test-shelter@example.com" }).then(
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);

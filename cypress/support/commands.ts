@@ -56,9 +56,9 @@ Cypress.Commands.add("setLocalStorage", (key: string, value: string) => {
   });
 });
 
-// Custom command to intercept the sendVerificationCode api
+// Custom command to intercept the verificationCode api
 Cypress.Commands.add(
-  "interceptSendVerificationCodeApi",
+  "interceptverificationCodeApi",
   (
     statusCode: number = 200,
     message: string = "Signup email sent successfully"
@@ -66,7 +66,7 @@ Cypress.Commands.add(
     cy.intercept(
       {
         method: "POST",
-        url: "/auth/sendVerificationCode",
+        url: "/auth/verificationCode",
       },
       {
         statusCode,
@@ -74,7 +74,7 @@ Cypress.Commands.add(
           message,
         },
       }
-    ).as("sendVerificationCode");
+    ).as("verificationCode");
   }
 );
 

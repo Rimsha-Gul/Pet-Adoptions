@@ -56,7 +56,7 @@ const ShelterProfile = () => {
         setShelter(response.data);
         const reviewsResponse = await api.get("/review/all", {
           params: {
-            id: id,
+            shelterID: id,
             page: 1,
             limit: 3,
           },
@@ -88,7 +88,7 @@ const ShelterProfile = () => {
         // Fetch the next page of data
         const response = await api.get("/review/all", {
           params: {
-            id: id,
+            shelterID: id,
             page: nextPage,
             limit: 3,
           },

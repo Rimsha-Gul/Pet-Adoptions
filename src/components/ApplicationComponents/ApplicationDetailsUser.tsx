@@ -62,7 +62,7 @@ const ApplicationDetailsUser = () => {
       if (nextStatus) {
         try {
           setIsLoading(true);
-          const response = await api.put("/application/updateStatus", {
+          const response = await api.put("/application/status", {
             id: id,
             status: nextStatus,
           });
@@ -116,7 +116,7 @@ const ApplicationDetailsUser = () => {
         setIsLoading(true);
         const response = await api.get("/reactivationRequest/", {
           params: {
-            id: id,
+            applicationID: id,
           },
         });
         console.log(response.data);

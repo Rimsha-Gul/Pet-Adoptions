@@ -32,7 +32,7 @@ const groups = [
       "handlePetIssues",
       "moveWithPet",
       "canAffordPetsNeeds",
-      "canAffordPetsMediacal",
+      "canAffordPetsMedical",
       "petTravelPlans",
       "petOutlivePlans",
     ],
@@ -113,7 +113,7 @@ const AdoptionApplication = () => {
       id === "hasOtherPets" ||
       id === "hasPlayTimeParks" ||
       id === "canAffordPetsNeeds" ||
-      id === "canAffordPetsMediacal"
+      id === "canAffordPetsMedical"
     ) {
       setAdoptPetState((prevAdoptPetState) => ({
         ...prevAdoptPetState,
@@ -189,7 +189,7 @@ const AdoptionApplication = () => {
     handlePetIssues: adoptPetState.handlePetIssues,
     moveWithPet: adoptPetState.moveWithPet,
     canAffordPetsNeeds: adoptPetState.canAffordPetsNeeds === "true",
-    canAffordPetsMediacal: adoptPetState.canAffordPetsMediacal === "true",
+    canAffordPetsMedical: adoptPetState.canAffordPetsMedical === "true",
     petTravelPlans: adoptPetState.petTravelPlans,
     petOutlivePlans: adoptPetState.petOutlivePlans,
   };

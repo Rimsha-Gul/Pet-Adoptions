@@ -42,17 +42,17 @@ const VerifyEmail = () => {
         if (!isOTPSent) {
           try {
             if (appContext.verificationOperation === "changedEmail") {
-              await api.post("/auth/sendVerificationCode", {
+              await api.post("/auth/verificationCode", {
                 email: appContext.newEmail,
                 emailChangeRequest: "newEmailStep",
               });
             } else if (appContext.verificationOperation === "changeEmail") {
-              await api.post("/auth/sendVerificationCode", {
+              await api.post("/auth/verificationCode", {
                 email: emailForVerification,
                 emailChangeRequest: "currentEmailStep",
               });
             } else {
-              await api.post("/auth/sendVerificationCode", sendCodeData);
+              await api.post("/auth/verificationCode", sendCodeData);
             }
             localStorage.setItem("isOTPSent", "true");
 
@@ -190,12 +190,12 @@ const VerifyEmail = () => {
       setIsResending(true);
       let response;
       if (appContext.verificationOperation === "changedEmail") {
-        response = await api.post("/auth/sendVerificationCode", {
+        response = await api.post("/auth/verificationCode", {
           email: appContext.newEmail,
           emailChangeRequest: true,
         });
       } else {
-        response = await api.post("/auth/sendVerificationCode", resendCodeData);
+        response = await api.post("/auth/verificationCode", resendCodeData);
       }
 
       if (response.status === 200) {

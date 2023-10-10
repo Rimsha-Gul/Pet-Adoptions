@@ -457,9 +457,9 @@ export const adoptPetFields = [
   {
     labelText:
       "If the pet falls ill or has a medical emergency, are you financially prepared to provide the necessary care?",
-    labelFor: "canAffordPetsMediacal",
-    id: "canAffordPetsMediacal",
-    name: "canAffordPetsMediacal",
+    labelFor: "canAffordPetsMedical",
+    id: "canAffordPetsMedical",
+    name: "canAffordPetsMedical",
     type: "toggle",
     autoComplete: "off",
     isRequired: true,

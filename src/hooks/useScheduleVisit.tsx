@@ -33,11 +33,11 @@ export const useScheduleHomeVisit = (visitType: VisitType) => {
       setIsLoading(true);
       const endpoint =
         visitType === VisitType.Home
-          ? "/application/scheduleHomeVisit"
-          : "/application/scheduleShelterVisit";
+          ? "/application/homeVisit"
+          : "/application/shelterVisit";
       const response = await api.post(endpoint, {
+        applicationID: id,
         visitDate: dateTimeInUTC,
-        id: id,
       });
       showSuccessAlert(response.data.message, undefined, () =>
         navigate(`/view/application/${id}`)

@@ -26,13 +26,15 @@ const applicationFieldLabels: Record<
   handlePetIssues: "How Applicant Will Handle Pet Issues",
   moveWithPet: "Plans for Pet if Applicant has to Move",
   canAffordPetsNeeds: "Can Afford Pet Needs",
-  canAffordPetsMediacal: "Can Afford Pet Medical Costs",
+  canAffordPetsMedical: "Can Afford Pet Medical Costs",
   petTravelPlans: "Travel Plans With Pet",
   petOutlivePlans: "Plans incase Pet Outlives Applicant",
   homeVisitDate: "Home Visit Date",
   shelterVisitDate: "Shelter Visit Date",
   homeVisitEmailSentDate: "",
   shelterVisitEmailSentDate: "",
+  homeVisitScheduleExpiryDate: "",
+  shelterVisitScheduleExpiryDate: "",
 };
 
 interface FieldProps {

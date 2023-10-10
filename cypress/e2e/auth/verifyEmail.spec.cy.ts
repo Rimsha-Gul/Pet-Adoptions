@@ -7,7 +7,7 @@ describe("Email Verification Flow", () => {
 
       cy.task("seedDB");
 
-      cy.interceptSendVerificationCodeApi();
+      cy.interceptverificationCodeApi();
     });
 
     afterEach(() => {
@@ -74,7 +74,7 @@ describe("Email Verification Flow", () => {
     beforeEach(() => {
       cy.task("seedDB");
 
-      cy.interceptSendVerificationCodeApi();
+      cy.interceptverificationCodeApi();
     });
 
     afterEach(() => {
@@ -148,7 +148,7 @@ describe("Email Verification Flow", () => {
       // Set user's email in sessionStorage
       cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
 
-      cy.interceptSendVerificationCodeApi();
+      cy.interceptverificationCodeApi();
 
       // Navigate to verifyEmail page
       cy.visit("/verifyemail");
@@ -176,7 +176,7 @@ describe("Email Verification Flow", () => {
       // Set user's email in sessionStorage
       cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
 
-      cy.interceptSendVerificationCodeApi();
+      cy.interceptverificationCodeApi();
 
       // Navigate to verifyEmail page
       cy.visit("/verifyemail");
@@ -237,7 +237,7 @@ describe("Email Verification Flow", () => {
       cy.intercept(
         {
           method: "POST",
-          url: "/auth/sendVerificationCode",
+          url: "/auth/verificationCode",
         },
         {
           statusCode: 422,
@@ -245,13 +245,13 @@ describe("Email Verification Flow", () => {
             message: "User already verified",
           },
         }
-      ).as("sendVerificationCode");
+      ).as("verificationCode");
 
       // Navigate to verifyEmail page
       cy.visit("/verifyemail");
 
       // Wait for the API call to be made and intercepted
-      cy.wait("@sendVerificationCode");
+      cy.wait("@verificationCode");
 
       // Expect to be redirected to the login page
       cy.checkUrlIs("/");

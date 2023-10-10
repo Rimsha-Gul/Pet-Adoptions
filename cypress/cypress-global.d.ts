@@ -3,7 +3,7 @@ declare namespace Cypress {
     checkUrlIs(expectedPath: string): Chainable<void>;
     setSessionStorage(key: string, value: string): Chainable<void>;
     setLocalStorage(key: string, value: string): Chainable<void>;
-    interceptSendVerificationCodeApi(
+    interceptverificationCodeApi(
       statusCode?: number,
       message?: string
     ): Chainable<void>;

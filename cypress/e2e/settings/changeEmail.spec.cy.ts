@@ -28,7 +28,7 @@ describe("Change Email", () => {
     cy.get("[data-cy=settings-button]").click();
     cy.get("[data-cy=change-email-option]").click();
 
-    cy.interceptSendVerificationCodeApi();
+    cy.interceptverificationCodeApi();
   });
 
   it("should successfully change user's email", () => {

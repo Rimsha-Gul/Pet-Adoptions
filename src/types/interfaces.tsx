@@ -40,7 +40,7 @@ export interface Application {
   handlePetIssues: string;
   moveWithPet: string;
   canAffordPetsNeeds: boolean;
-  canAffordPetsMediacal: boolean;
+  canAffordPetsMedical: boolean;
   petTravelPlans: string;
   petOutlivePlans: string;
   applicantEmail: string;

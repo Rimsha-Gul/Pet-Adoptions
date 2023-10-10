@@ -35,7 +35,7 @@ describe("Invitation Acceptance", () => {
   });
 
   it("verifies the invitation token and takes shelter to signup page", () => {
-    cy.intercept("POST", "/auth/sendVerificationCode").as("codeApiCall");
+    cy.intercept("POST", "/auth/verificationCode").as("codeApiCall");
     cy.task("getInvitationToken", { email: "test-shelter@example.com" }).then(
       ({ invitationToken }: any) => {
         cy.log("inv tokennnnnnnnnnnnnnnn:", invitationToken);
