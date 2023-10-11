@@ -23,7 +23,7 @@ describe("Successfully add pet", () => {
   });
 
   it("login admin and add a pet for a shelter", () => {
-    cy.intercept("POST", "/pet").as("petApiCall");
+    cy.intercept("POST", "/pets").as("petApiCall");
     cy.task("login", { email: "admin-user@example.com" }).then(
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);

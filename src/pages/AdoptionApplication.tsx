@@ -81,11 +81,7 @@ const AdoptionApplication = () => {
       console.log("fetch pet");
       try {
         setIsLoading(true);
-        const response = await api.get("/pet", {
-          params: {
-            id: petID,
-          },
-        });
+        const response = await api.get(`/pets/${petID}`);
         setPet(response.data.pet);
       } catch (error) {
         console.error(error);
@@ -198,7 +194,7 @@ const AdoptionApplication = () => {
     console.log(adoptPetData);
     try {
       setIsLoading(true);
-      const response = await api.post("/application/", adoptPetData);
+      const response = await api.post("/applications/", adoptPetData);
       console.log(response);
       const id = response.data.application.id;
       console.log(id);

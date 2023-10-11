@@ -102,7 +102,7 @@ const ApplicationDetailsShelter = () => {
     if (nextStatus) {
       try {
         action === "approve" ? setIsApproving(true) : setIsRejecting(true);
-        const response = await api.put("/application/status", {
+        const response = await api.put("/applications/status", {
           id: id,
           status: nextStatus,
         });

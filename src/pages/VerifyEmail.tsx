@@ -120,7 +120,10 @@ const VerifyEmail = () => {
     };
     try {
       setIsLoading(true);
-      const response = await api.post("/auth/verifyEmail", verificationData);
+      const response = await api.post(
+        "/auth/email/verification",
+        verificationData
+      );
       console.log(appContext.verificationOperation);
 
       console.log(response);
@@ -144,7 +147,7 @@ const VerifyEmail = () => {
           api.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${accessToken}`;
-          const response = await api.put("/auth/changeEmail", {
+          const response = await api.put("/auth/email", {
             email: appContext.newEmail,
           });
           const { tokens } = response.data;

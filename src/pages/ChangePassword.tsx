@@ -29,7 +29,7 @@ const ChangePassword = () => {
       console.log(accessToken);
 
       api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      const response = await api.post("/auth/checkPassword", {
+      const response = await api.post("/auth/password/verify", {
         password: userCurrentPassword,
       });
       console.log(response.data);

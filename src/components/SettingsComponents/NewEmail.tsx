@@ -28,7 +28,7 @@ const NewEmailForm = () => {
       console.log(accessToken);
 
       api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      const response = await api.get("/auth/checkEmail", {
+      const response = await api.get("/auth/email/availability", {
         params: {
           email: appContext.newEmail,
         },

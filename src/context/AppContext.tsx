@@ -103,7 +103,7 @@ const AppContextProvider = (props: { children: ReactNode }) => {
               console.log("Refresh the tokens");
               console.log(refreshToken);
               console.log(api);
-              const res = await api.post("/auth/refresh");
+              const res = await api.post("/auth/token/refresh");
               console.log("Refresh response: ", res);
               // sessionStorage.setItem("userEmail", signupData.email);
               setLoggedIn(true);

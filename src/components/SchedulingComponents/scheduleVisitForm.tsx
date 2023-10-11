@@ -87,7 +87,7 @@ export const ScheduleForm = ({
         setIsLoadingApplication(true);
         const endpoint =
           visitType === VisitType.Home
-            ? "/application/"
+            ? "/applications/"
             : "/shelter/application/";
         const response = await api.get(endpoint, {
           params: {
@@ -131,7 +131,7 @@ export const ScheduleForm = ({
         try {
           console.log("fetch slots");
           setIsLoadingTimeSlots(true);
-          const response = await api.get("/application/timeSlots", {
+          const response = await api.get("/applications/timeSlots", {
             params: {
               shelterID: application.shelterID,
               petID: application.microchipID,

@@ -53,7 +53,7 @@ describe("Reset Password Flow", () => {
       cy.intercept(
         {
           method: "GET",
-          url: "/auth/verifyResetToken*",
+          url: "/auth/password/reset/token/verify*",
         },
         {
           statusCode: 404,
@@ -74,7 +74,7 @@ describe("Reset Password Flow", () => {
       cy.intercept(
         {
           method: "GET",
-          url: "/auth/verifyResetToken",
+          url: "/auth/password/reset/token/verify",
         },
         {
           statusCode: 400,
@@ -98,7 +98,7 @@ describe("Reset Password Flow", () => {
       cy.intercept(
         {
           method: "GET",
-          url: "/auth/verifyResetToken*",
+          url: "/auth/password/reset/token/verify*",
         },
         {
           statusCode: 500,
@@ -214,7 +214,7 @@ describe("Reset Password Flow", () => {
 
     it('should show a loading indicator when "Reset Password" button is clicked', () => {
       // Stub the API call to delay it, to test the loading state
-      cy.intercept("PUT", "/auth/resetPassword", {
+      cy.intercept("PUT", "/auth/password/reset", {
         delayMs: 1000, // adding a delay,
         statusCode: 200,
         body: {
@@ -283,7 +283,7 @@ describe("Reset Password Flow", () => {
       cy.intercept(
         {
           method: "PUT",
-          url: "/auth/resetPassword*",
+          url: "/auth/password/reset*",
         },
         (req) => {
           req.body.email = "nonExistentUser@example.com";
@@ -309,7 +309,7 @@ describe("Reset Password Flow", () => {
       cy.intercept(
         {
           method: "PUT",
-          url: "/auth/resetPassword*",
+          url: "/auth/password/reset*",
         },
         (req) => {
           req.body.email = "test-user@example.com";
@@ -338,7 +338,7 @@ describe("Reset Password Flow", () => {
       cy.intercept(
         {
           method: "PUT",
-          url: "/auth/resetPassword*",
+          url: "/auth/password/reset*",
         },
         {
           statusCode: 400,
@@ -365,7 +365,7 @@ describe("Reset Password Flow", () => {
       cy.intercept(
         {
           method: "PUT",
-          url: "/auth/resetPassword*",
+          url: "/auth/password/reset*",
         },
         {
           statusCode: 500,

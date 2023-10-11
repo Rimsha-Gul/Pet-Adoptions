@@ -21,9 +21,7 @@ const NotificationCard = ({ notification }: NotificationCardProps) => {
 
   const MarkAsRead = async () => {
     try {
-      await api.put("/notification/markAsRead", {
-        id: notification.id,
-      });
+      await api.put(`/notifications/${notification.id}/read`);
     } catch (error) {
       console.error("Failed to mark as read:", error);
     }

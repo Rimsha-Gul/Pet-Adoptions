@@ -53,7 +53,7 @@ const InviteShelter = () => {
       setIsLoading(true);
 
       console.log(appContext.userRole);
-      const response = await api.post("/auth/getAlternateEmail", {
+      const response = await api.post("/auth/email/alternate", {
         email: shelterEmail,
       });
       if (response.status === 200) {

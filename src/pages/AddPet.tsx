@@ -233,7 +233,7 @@ const AddPet = () => {
         }
       }
       console.log("formdata: ", formData);
-      const response = await api.post("/pet", formData, {
+      const response = await api.post("/pets", formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Set the correct content type for FormData
         },

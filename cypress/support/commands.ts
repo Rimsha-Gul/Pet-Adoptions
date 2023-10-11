@@ -85,7 +85,7 @@ Cypress.Commands.add(
     cy.intercept(
       {
         method: "GET",
-        url: "/auth/verifyResetToken*",
+        url: "/auth/password/reset/token/verify*",
       },
       {
         statusCode,

@@ -55,7 +55,7 @@ describe("Forgot Password Flow", () => {
       cy.intercept(
         {
           method: "POST",
-          url: "/auth/requestPasswordReset",
+          url: "/auth/password/reset/request",
         },
         {
           statusCode: 500,

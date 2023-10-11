@@ -215,7 +215,7 @@ const HomePage = () => {
         setPrevFilterOption(filterOption);
         setPrevSearchQuery(searchQuery);
       }
-      const response = await api.get("/pet/all", {
+      const response = await api.get("/pets", {
         params: {
           page,
           limit: 6,
@@ -274,7 +274,7 @@ const HomePage = () => {
         const nextPage = currentPage + 1;
 
         // Fetch the next page of data
-        const response = await api.get("/pet/all", {
+        const response = await api.get("/pets", {
           params: {
             page: nextPage,
             limit: 6,

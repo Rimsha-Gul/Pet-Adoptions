@@ -237,7 +237,7 @@ export const plugins = async (on: any) => {
       form.append("images", stream);
 
       const response = await axios.post(
-        `${process.env.API_BASE_URL}/pet`,
+        `${process.env.API_BASE_URL}/pets`,
         form,
         {
           headers: {

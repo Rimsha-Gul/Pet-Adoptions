@@ -16,17 +16,13 @@ const PetProfile = () => {
   const navigate = useNavigate();
   const [pet, setPet] = useState<Pet | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { id } = useParams();
+  const { petID } = useParams();
 
   useEffect(() => {
     const fetchPet = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("/pet", {
-          params: {
-            id: id,
-          },
-        });
+        const response = await api.get(`/pets/${petID}`);
         setPet(response.data.pet);
       } catch (error) {
         console.error(error);
@@ -35,10 +31,10 @@ const PetProfile = () => {
       }
     };
 
-    if (id && !pet) {
+    if (petID && !pet) {
       fetchPet();
     }
-  }, [id, pet]);
+  }, [petID, pet]);
   console.log(pet);
 
   const handleAdoptionApply = () => {

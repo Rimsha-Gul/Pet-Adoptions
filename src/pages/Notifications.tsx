@@ -16,7 +16,7 @@ const Notifications = () => {
     const fetchNotifications = async () => {
       try {
         setAreFetched(true);
-        const response = await api.get("/notification/", {
+        const response = await api.get("/notifications/", {
           params: {
             page: 1,
             limit: 8,
@@ -43,7 +43,7 @@ const Notifications = () => {
         const nextPage = currentPage + 1;
 
         // Fetch the next page of data
-        const response = await api.get("/notification/", {
+        const response = await api.get("/notifications/", {
           params: {
             page: nextPage,
             limit: 8,

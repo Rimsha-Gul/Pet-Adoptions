@@ -122,7 +122,7 @@ export const getRoutes = (
     { path: "/pagenotfound", element: <NotFoundPage /> },
     { path: "/verifyemail", element: renderVerifyEmail() },
     { path: "/homepage", element: renderProtectedRoute(HomePage) },
-    { path: "/pet/:id", element: renderProtectedRoute(PetProfile) },
+    { path: "/pet/:petID", element: renderProtectedRoute(PetProfile) },
     { path: "/dashboard", element: renderProtectedRoute(Dashboard) },
     { path: "/addpet", element: renderProtectedRoute(AddPet) },
     { path: "/settings", element: renderProtectedRoute(Settings) },

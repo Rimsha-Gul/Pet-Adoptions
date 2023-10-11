@@ -18,7 +18,7 @@ const ResetPassword = () => {
   useEffect(() => {
     const verifyInvitation = async () => {
       try {
-        const response = await api.get(`/auth/verifyResetToken`, {
+        const response = await api.get(`/auth/password/reset/token/verify`, {
           params: { resetToken },
         });
 

@@ -26,7 +26,7 @@ describe("Successfully add pet", () => {
   });
 
   it("login as shelter and add pet", () => {
-    cy.intercept("POST", "/pet").as("petApiCall");
+    cy.intercept("POST", "/pets").as("petApiCall");
 
     cy.task("login", { email: "test-shelter@example.com" }).then(
       ({ accessToken, refreshToken }: any) => {

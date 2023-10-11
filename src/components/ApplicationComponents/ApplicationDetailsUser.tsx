@@ -29,7 +29,7 @@ const ApplicationDetailsUser = () => {
   const [reactivationRequest, setReactivationRequest] =
     useState<ReactivationRequest | null>(null);
 
-  const { id } = useParams();
+  const { applicationID } = useParams();
 
   const groupedFields = useMemo(() => {
     return applicationGroups.map((group) => {
@@ -62,8 +62,8 @@ const ApplicationDetailsUser = () => {
       if (nextStatus) {
         try {
           setIsLoading(true);
-          const response = await api.put("/application/status", {
-            id: id,
+          const response = await api.put("/applications/status", {
+            id: applicationID,
             status: nextStatus,
           });
           if (response.status === 200) {
@@ -88,11 +88,7 @@ const ApplicationDetailsUser = () => {
     const fetchApplication = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("/application/", {
-          params: {
-            id: id,
-          },
-        });
+        const response = await api.get(`/applications/${applicationID}`);
         const { application, canReview } = response.data;
         setCanUserReview(canReview);
         setApplication(application);
@@ -102,12 +98,12 @@ const ApplicationDetailsUser = () => {
         setIsLoading(false);
       }
     };
-    console.log(id);
+    console.log(applicationID);
     console.log(application);
-    if (id && !application) {
+    if (applicationID && !application) {
       fetchApplication();
     }
-  }, [id, application]);
+  }, [applicationID, application]);
   console.log(application);
 
   useEffect(() => {
@@ -116,7 +112,7 @@ const ApplicationDetailsUser = () => {
         setIsLoading(true);
         const response = await api.get("/reactivationRequest/", {
           params: {
-            applicationID: id,
+            applicationID: applicationID,
           },
         });
         console.log(response.data);
@@ -145,7 +141,7 @@ const ApplicationDetailsUser = () => {
       setIsLoading(true);
       // Adjust this API call according to your backend's needs
       const response = await api.post("/reactivationRequest", {
-        applicationID: id,
+        applicationID: applicationID,
         reasonNotScheduled: reasonNotScheduled,
         reasonToReactivate: reasonToReactivate,
       });
@@ -170,7 +166,7 @@ const ApplicationDetailsUser = () => {
           <img src={loadingIcon} alt="Loading" className="h-10 w-10" />
         </div>
       )}
-      {application && id && (
+      {application && applicationID && (
         <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
           <div className="flex flex-col items-center gap-6">
             <img
@@ -269,7 +265,7 @@ const ApplicationDetailsUser = () => {
                   status={application.status}
                   action=""
                   isLoading={isLoading}
-                  id={id}
+                  id={applicationID}
                   updateApplicationStatus={updateApplicationStatus}
                   visitType={VisitType.Shelter}
                 />

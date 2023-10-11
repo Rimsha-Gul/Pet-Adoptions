@@ -95,7 +95,7 @@ const NewPassword = ({
       console.log(accessToken);
 
       api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      const response = await api.put("/auth/changePassword", {
+      const response = await api.put("/auth/password", {
         password: changePasswordState.password,
       });
 
@@ -119,7 +119,7 @@ const NewPassword = ({
       setIsLoading(true);
 
       const response = await api.put(
-        "/auth/resetPassword",
+        "/auth/password/reset",
         {
           email: email,
           newPassword: changePasswordState.password,
