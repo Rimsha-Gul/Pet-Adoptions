@@ -72,7 +72,7 @@ export const ScheduleForm = ({
   const [lastDateToschedule, setLastDateToschedule] = useState<Moment | null>(
     null
   );
-  const { id } = useParams();
+  const { applicationID } = useParams();
   // const emailSentTimestamp =
   //   visitType === VisitType.Home
   //     ? application?.homeVisitEmailSentDate
@@ -87,11 +87,11 @@ export const ScheduleForm = ({
         setIsLoadingApplication(true);
         const endpoint =
           visitType === VisitType.Home
-            ? "/applications/"
+            ? `/applications/${applicationID}`
             : "/shelter/application/";
         const response = await api.get(endpoint, {
           params: {
-            id: id,
+            applicationID: applicationID,
           },
         });
         setApplication(response.data.application);
@@ -102,10 +102,10 @@ export const ScheduleForm = ({
       }
     };
 
-    if (id && !application) {
+    if (applicationID && !application) {
       fetchApplication();
     }
-  }, [id, application]);
+  }, [applicationID, application]);
 
   useEffect(() => {
     console.log("2");

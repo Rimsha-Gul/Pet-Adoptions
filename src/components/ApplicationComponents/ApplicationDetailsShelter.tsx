@@ -22,7 +22,7 @@ const ApplicationDetailsShelter = () => {
   const [visitDate, setVisitDate] = useState<string>("");
   const [reactivationRequest, setReactivationRequest] =
     useState<ReactivationRequest | null>(null);
-  const { id } = useParams();
+  const { applicationID } = useParams();
 
   const groupedFields = useMemo(() => {
     return applicationGroups.map((group) => {
@@ -49,7 +49,7 @@ const ApplicationDetailsShelter = () => {
         setIsLoading(true);
         const response = await api.get("/shelter/application/", {
           params: {
-            id: id,
+            id: applicationID,
           },
         });
         console.log(response.data);
@@ -65,20 +65,16 @@ const ApplicationDetailsShelter = () => {
       }
     };
 
-    if (id && !application) {
+    if (applicationID && !application) {
       fetchApplication();
     }
-  }, [id, application]);
+  }, [applicationID, application]);
 
   useEffect(() => {
     const fetchReactivationRequest = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("/reactivationRequest/", {
-          params: {
-            applicationID: id,
-          },
-        });
+        const response = await api.get(`/reactivationRequest/${applicationID}`);
         console.log(response.data);
         setReactivationRequest(response.data);
       } catch (error) {
@@ -102,10 +98,12 @@ const ApplicationDetailsShelter = () => {
     if (nextStatus) {
       try {
         action === "approve" ? setIsApproving(true) : setIsRejecting(true);
-        const response = await api.put("/applications/status", {
-          id: id,
-          status: nextStatus,
-        });
+        const response = await api.put(
+          `/applications/${applicationID}/status`,
+          {
+            status: nextStatus,
+          }
+        );
         if (response.status === 200) {
           showSuccessAlert(response.data.message, undefined, () =>
             setApplication(null)
@@ -129,7 +127,7 @@ const ApplicationDetailsShelter = () => {
           <img src={loadingIcon} alt="Loading" className="h-10 w-10" />
         </div>
       )}
-      {application && id && (
+      {application && applicationID && (
         <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
           <div className="flex flex-col items-center gap-6">
             <img
@@ -244,7 +242,7 @@ const ApplicationDetailsShelter = () => {
                     isLoading={isLoading}
                     isApproving={isApproving}
                     isRejecting={isRejecting}
-                    id={id}
+                    id={applicationID}
                     updateApplicationStatus={updateApplicationStatus}
                     visitType={VisitType.Home}
                   />
@@ -255,7 +253,7 @@ const ApplicationDetailsShelter = () => {
                     isLoading={isLoading}
                     isApproving={isApproving}
                     isRejecting={isRejecting}
-                    id={id}
+                    id={applicationID}
                     updateApplicationStatus={updateApplicationStatus}
                     visitType={VisitType.Home}
                   />
@@ -272,7 +270,7 @@ const ApplicationDetailsShelter = () => {
                       isLoading={isLoading}
                       isApproving={isApproving}
                       isRejecting={isRejecting}
-                      id={id}
+                      id={applicationID}
                       updateApplicationStatus={updateApplicationStatus}
                       visitType={VisitType.Home}
                     />

@@ -33,7 +33,7 @@ const ReviewList = ({
   totalPages,
   isMoreLoading,
 }: ReviewListProps) => {
-  const { id } = useParams();
+  const { shelterID } = useParams();
   const appContext = useContext(AppContext);
   const userEmail = appContext.userEmail;
   const [, setShelter] = useState<Shelter | null>(shelter);
@@ -51,7 +51,6 @@ const ReviewList = ({
   const editReviewRef = useRef<HTMLDivElement>(null);
   const [reviewState, setReviewState] = useState<FieldsState>(fieldsState);
   const reviewData = {
-    shelterID: id,
     rating: Number(reviewState.rating),
     reviewText: reviewState.review,
   };
@@ -122,7 +121,7 @@ const ReviewList = ({
   const updateReview = async () => {
     try {
       setIsLoading(true);
-      const response = await api.put("/review/update", reviewData);
+      const response = await api.put(`/reviews/${shelterID}`, reviewData);
       if (response.status === 200) {
         setShowEditModal(false);
         console.log(response.data);

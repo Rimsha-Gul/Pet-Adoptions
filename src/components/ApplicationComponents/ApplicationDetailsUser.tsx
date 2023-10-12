@@ -62,10 +62,12 @@ const ApplicationDetailsUser = () => {
       if (nextStatus) {
         try {
           setIsLoading(true);
-          const response = await api.put("/applications/status", {
-            id: applicationID,
-            status: nextStatus,
-          });
+          const response = await api.put(
+            `applications/${applicationID}/status`,
+            {
+              status: nextStatus,
+            }
+          );
           if (response.status === 200) {
             showSuccessAlert(response.data.message, undefined, () =>
               setApplication(null)
@@ -110,11 +112,7 @@ const ApplicationDetailsUser = () => {
     const fetchReactivationRequest = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("/reactivationRequest/", {
-          params: {
-            applicationID: applicationID,
-          },
-        });
+        const response = await api.get(`/reactivationRequest/${applicationID}`);
         console.log(response.data);
         setReactivationRequest(response.data);
       } catch (error) {
@@ -140,8 +138,7 @@ const ApplicationDetailsUser = () => {
     try {
       setIsLoading(true);
       // Adjust this API call according to your backend's needs
-      const response = await api.post("/reactivationRequest", {
-        applicationID: applicationID,
+      const response = await api.post(`/reactivationRequest/${applicationID}`, {
         reasonNotScheduled: reasonNotScheduled,
         reasonToReactivate: reasonToReactivate,
       });

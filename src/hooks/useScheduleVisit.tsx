@@ -6,7 +6,7 @@ import { showErrorAlert, showSuccessAlert } from "../utils/alert";
 import { VisitType } from "../types/enums";
 
 export const useScheduleHomeVisit = (visitType: VisitType) => {
-  const { id } = useParams();
+  const { applicationID } = useParams();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<Date>(
@@ -33,14 +33,13 @@ export const useScheduleHomeVisit = (visitType: VisitType) => {
       setIsLoading(true);
       const endpoint =
         visitType === VisitType.Home
-          ? "/applications/homeVisit"
-          : "/applications/shelterVisit";
+          ? `/applications/${applicationID}/homeVisit`
+          : `/applications/${applicationID}/shelterVisit`;
       const response = await api.post(endpoint, {
-        applicationID: id,
         visitDate: dateTimeInUTC,
       });
       showSuccessAlert(response.data.message, undefined, () =>
-        navigate(`/view/application/${id}`)
+        navigate(`/view/application/${applicationID}`)
       );
     } catch (error: any) {
       console.error("Error scheduling visit:", error);

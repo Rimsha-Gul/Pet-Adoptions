@@ -135,20 +135,20 @@ export const getRoutes = (
     },
     { path: "/applications", element: renderProtectedRoute(ViewApplications) },
     {
-      path: "/view/application/:id",
+      path: "/view/application/:applicationID",
       element: renderProtectedRoute(Application),
     },
     { path: "/inviteShelter", element: renderProtectedRoute(InviteShelter) },
     {
-      path: "/:id/scheduleHomeVisit",
+      path: "/:applicationID/scheduleHomeVisit",
       element: renderProtectedRoute(ScheduleHomeVisit),
     },
     {
-      path: "/:id/scheduleShelterVisit",
+      path: "/:applicationID/scheduleShelterVisit",
       element: renderProtectedRoute(ScheduleShelterVisit),
     },
     {
-      path: "/shelterProfile/:id",
+      path: "/shelterProfile/:shelterID",
       element: renderProtectedRoute(ShelterProfile),
     },
     {

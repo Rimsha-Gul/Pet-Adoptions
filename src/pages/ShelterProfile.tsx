@@ -17,7 +17,7 @@ let fieldsState: FieldsState = {};
 fields.forEach((field) => (fieldsState[field.id] = ""));
 
 const ShelterProfile = () => {
-  const { id } = useParams();
+  const { shelterID } = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [rating, setRating] = useState<number>(0);
   const [review, setReview] = useState<string>("");
@@ -29,7 +29,6 @@ const ShelterProfile = () => {
   });
   const [isFormValid, setIsFormValid] = useState(false);
   const reviewData = {
-    shelterID: id,
     rating: reviewState.rating,
     reviewText: reviewState.review,
   };
@@ -47,16 +46,15 @@ const ShelterProfile = () => {
         setIsLoading(true);
         const response = await api.get("/shelter/", {
           params: {
-            id: id,
+            id: shelterID,
           },
         });
 
         console.log(response.data);
         //const shelterData = response.data;
         setShelter(response.data);
-        const reviewsResponse = await api.get("/review/all", {
+        const reviewsResponse = await api.get(`/reviews/${shelterID}`, {
           params: {
-            shelterID: id,
             page: 1,
             limit: 3,
           },
@@ -73,8 +71,8 @@ const ShelterProfile = () => {
       }
     };
 
-    if (id && !shelter) fetchUserData();
-  }, [id, shelter]);
+    if (shelterID && !shelter) fetchUserData();
+  }, [shelterID, shelter]);
 
   const loadMoreData = async () => {
     console.log("Load more reviews");
@@ -86,9 +84,8 @@ const ShelterProfile = () => {
         //console.log("nextPage", nextPage);
 
         // Fetch the next page of data
-        const response = await api.get("/review/all", {
+        const response = await api.get(`/reviews/${shelterID}`, {
           params: {
-            shelterID: id,
             page: nextPage,
             limit: 3,
           },
@@ -150,7 +147,7 @@ const ShelterProfile = () => {
   const submitReview = async () => {
     try {
       setIsLoading(true);
-      const response = await api.post("/review/", reviewData);
+      const response = await api.post(`/reviews/${shelterID}`, reviewData);
       if (response.status === 200) {
         setShowModal(false);
         console.log(response.data);
