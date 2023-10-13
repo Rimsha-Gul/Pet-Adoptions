@@ -22,7 +22,7 @@ function App() {
   }, [appContext.loggedIn])
 
   useEffect(() => {
-    setIsLoading(appContext.isLoading)
+    setIsLoading(isLoading)
   }, [appContext.isLoading])
   const isAuthenticated = appContext.loggedIn
   console.log(isAuthenticated)

@@ -1,47 +1,47 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import PrimaryLogo from "../icons/PrimaryLogo";
-import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
-import { headerLinks } from "../constants/MenuOptions";
-import { BsFillBellFill } from "react-icons/bs";
-import { NotificationsContext } from "../context/NotificationsContext";
-import socket from "../socket/socket";
+import { useContext, useEffect, useRef, useState } from 'react'
+import PrimaryLogo from '../icons/PrimaryLogo'
+import { useNavigate } from 'react-router-dom'
+import { AppContext } from '../context/AppContext'
+import { headerLinks } from '../constants/MenuOptions'
+import { BsFillBellFill } from 'react-icons/bs'
+import { NotificationsContext } from '../context/NotificationsContext'
+import socket from '../socket/socket'
 
 interface HeaderProps {
-  handleLogout: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  handleLogout: (event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
-  const appContext = useContext(AppContext);
-  const userName = appContext.displayName;
-  const userEmail = localStorage.getItem("userEmail");
+  const appContext = useContext(AppContext)
+  const userName = appContext.displayName
+  const userEmail = localStorage.getItem('userEmail')
 
-  const { unseenCount } = useContext(NotificationsContext);
+  const { unseenCount } = useContext(NotificationsContext)
 
-  const navigate = useNavigate();
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [isUserOptionsOpen, setIsUserOptionsOpen] = useState(false);
+  const navigate = useNavigate()
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const [isUserOptionsOpen, setIsUserOptionsOpen] = useState<boolean>(false)
   const [userProfilePhoto, setUserProfilePhoto] = useState(
     appContext.profilePhoto
-  );
+  )
 
   // update local state when context values are updated
   useEffect(() => {
-    setUserProfilePhoto(appContext.profilePhoto);
-  }, [appContext.profilePhoto]);
+    setUserProfilePhoto(appContext.profilePhoto)
+  }, [appContext.profilePhoto])
 
   const handleUserOptionsClick = () => {
-    setIsUserOptionsOpen(!isUserOptionsOpen);
-  };
+    setIsUserOptionsOpen(!isUserOptionsOpen)
+  }
 
   const handleLinkClick = (path: string) => {
-    setIsUserOptionsOpen(false);
-    if (path === "/") {
-      handleLogout({} as React.MouseEvent<HTMLButtonElement>);
+    setIsUserOptionsOpen(false)
+    if (path === '/') {
+      handleLogout({} as React.MouseEvent<HTMLButtonElement>)
     } else {
-      navigate(path);
+      navigate(path)
     }
-  };
+  }
 
   // Handler for clicking outside dropdown menu
   useEffect(() => {
@@ -50,19 +50,19 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setIsUserOptionsOpen(false);
+        setIsUserOptionsOpen(false)
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
+    }
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const handleBellClick = () => {
-    socket.emit("mark_notifications_as_seen", userEmail);
-    navigate("/notifications");
-  };
+    socket.emit('mark_notifications_as_seen', userEmail)
+    navigate('/notifications')
+  }
 
   return (
     <div className="fixed top-0 w-full flex items-center justify-between p-4 shadow-md mb-12 z-20 bg-white">
@@ -112,8 +112,8 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
                   <button
                     data-cy={`${link.label
                       .toLowerCase()
-                      .replace(/&/g, "and")
-                      .replace(/ /g, "-")}-link`}
+                      .replace(/&/g, 'and')
+                      .replace(/ /g, '-')}-link`}
                     key={index}
                     className="mb-2 text-md text-gray-600 hover:text-primary text-left"
                     onClick={() => handleLinkClick(link.to)}
@@ -127,7 +127,7 @@ const PrimaryHeader = ({ handleLogout }: HeaderProps) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PrimaryHeader;
+export default PrimaryHeader
