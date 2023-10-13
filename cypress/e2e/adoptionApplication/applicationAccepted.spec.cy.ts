@@ -1,7 +1,7 @@
 import { petData } from "../../fixtures/addingPet/petData";
 
 describe("Adoption Application Approval", () => {
-  after(() => {
+  const cleanUp = () => {
     cy.task("deleteMany", {
       collection: "users",
       params: {
@@ -37,7 +37,10 @@ describe("Adoption Application Approval", () => {
         userEmail: "test-user@example.com",
       },
     });
-  });
+  };
+
+  before(cleanUp);
+  after(cleanUp);
 
   it("creates shelter", () => {
     cy.task("createUser", {
@@ -72,7 +75,7 @@ describe("Adoption Application Approval", () => {
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);
         cy.setLocalStorage("refreshToken", refreshToken);
-        cy.setSessionStorage("userEmail", "test-user@example.com");
+        cy.setLocalStorage("userEmail", "test-user@example.com");
       }
     );
     cy.visit("/homepage");
@@ -106,7 +109,7 @@ describe("Adoption Application Approval", () => {
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);
         cy.setLocalStorage("refreshToken", refreshToken);
-        cy.setSessionStorage("userEmail", "test-shelter@example.com");
+        cy.setLocalStorage("userEmail", "test-shelter@example.com");
       }
     );
     cy.visit("/homepage");
@@ -126,7 +129,7 @@ describe("Adoption Application Approval", () => {
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);
         cy.setLocalStorage("refreshToken", refreshToken);
-        cy.setSessionStorage("userEmail", "test-user@example.com");
+        cy.setLocalStorage("userEmail", "test-user@example.com");
       }
     );
     cy.visit("/homepage");
@@ -158,7 +161,7 @@ describe("Adoption Application Approval", () => {
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);
         cy.setLocalStorage("refreshToken", refreshToken);
-        cy.setSessionStorage("userEmail", "test-shelter@example.com");
+        cy.setLocalStorage("userEmail", "test-shelter@example.com");
       }
     );
     cy.visit("/homepage");
@@ -192,7 +195,7 @@ describe("Adoption Application Approval", () => {
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);
         cy.setLocalStorage("refreshToken", refreshToken);
-        cy.setSessionStorage("userEmail", "test-shelter@example.com");
+        cy.setLocalStorage("userEmail", "test-shelter@example.com");
       }
     );
     cy.visit("/homepage");

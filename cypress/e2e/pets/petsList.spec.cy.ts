@@ -20,7 +20,7 @@ describe("Pets Display Flow", () => {
         cy.setLocalStorage("refreshToken", refreshToken);
 
         // Save user email in session storage
-        cy.setSessionStorage("userEmail", "test-user@example.com");
+        cy.setLocalStorage("userEmail", "test-user@example.com");
       });
 
       cy.task("db:seedPets");

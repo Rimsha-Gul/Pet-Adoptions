@@ -1,29 +1,29 @@
-import StarRatings from "react-star-ratings";
-import loadingIcon from "../../assets/loading.gif";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Review, Shelter } from "../../types/interfaces";
-import { FormEvent, useContext, useEffect, useRef, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import { FiMoreVertical } from "react-icons/fi";
-import { reviewFields } from "../../constants/formFields";
-import { validateField } from "../../utils/formValidation";
-import { FieldsState } from "../../types/common";
-import api from "../../api";
-import { showErrorAlert, showSuccessAlert } from "../../utils/alert";
-import { useParams } from "react-router-dom";
+import StarRatings from 'react-star-ratings'
+import loadingIcon from '../../assets/loading.gif'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import { Review, Shelter } from '../../types/interfaces'
+import { FormEvent, useContext, useEffect, useRef, useState } from 'react'
+import { AppContext } from '../../context/AppContext'
+import { FiMoreVertical } from 'react-icons/fi'
+import { reviewFields } from '../../constants/formFields'
+import { validateField } from '../../utils/formValidation'
+import { FieldsState } from '../../types/common'
+import api from '../../api'
+import { showErrorAlert, showSuccessAlert } from '../../utils/alert'
+import { useParams } from 'react-router-dom'
 
 interface ReviewListProps {
-  reviews: Review[];
-  shelter: Shelter;
-  loadMoreData: () => void;
-  currentPage: number;
-  totalPages: number;
-  isMoreLoading: boolean;
+  reviews: Review[]
+  shelter: Shelter
+  loadMoreData: () => void
+  currentPage: number
+  totalPages: number
+  isMoreLoading: boolean
 }
 
-const fields = reviewFields;
-let fieldsState: FieldsState = {};
-fields.forEach((field) => (fieldsState[field.id] = ""));
+const fields = reviewFields
+const fieldsState: FieldsState = {}
+fields.forEach((field) => (fieldsState[field.id] = ''))
 
 const ReviewList = ({
   reviews,
@@ -31,29 +31,29 @@ const ReviewList = ({
   loadMoreData,
   currentPage,
   totalPages,
-  isMoreLoading,
+  isMoreLoading
 }: ReviewListProps) => {
-  const { shelterID } = useParams();
-  const appContext = useContext(AppContext);
-  const userEmail = appContext.userEmail;
-  const [, setShelter] = useState<Shelter | null>(shelter);
-  const [showReviewOption, setShowReviewOption] = useState<boolean>(false);
-  const [showEditModal, setShowEditModal] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isFormValid, setIsFormValid] = useState(false);
+  const { shelterID } = useParams()
+  const appContext = useContext(AppContext)
+  const userEmail = appContext.userEmail
+  const [, setShelter] = useState<Shelter | null>(shelter)
+  const [showReviewOption, setShowReviewOption] = useState<boolean>(false)
+  const [showEditModal, setShowEditModal] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isFormValid, setIsFormValid] = useState(false)
   const [errors, setErrors] = useState({
-    rating: "",
-    review: "",
-  });
+    rating: '',
+    review: ''
+  })
 
-  const [rating, setRating] = useState<number>(0);
-  const [review, setReview] = useState<string>("");
-  const editReviewRef = useRef<HTMLDivElement>(null);
-  const [reviewState, setReviewState] = useState<FieldsState>(fieldsState);
+  const [rating, setRating] = useState<number>(0)
+  const [review, setReview] = useState<string>('')
+  const editReviewRef = useRef<HTMLDivElement>(null)
+  const [reviewState, setReviewState] = useState<FieldsState>(fieldsState)
   const reviewData = {
     rating: Number(reviewState.rating),
-    reviewText: reviewState.review,
-  };
+    reviewText: reviewState.review
+  }
 
   // Handler for clicking outside dropdown menu
   useEffect(() => {
@@ -62,79 +62,79 @@ const ReviewList = ({
         editReviewRef.current &&
         !editReviewRef.current.contains(event.target as Node)
       ) {
-        setShowReviewOption(false);
+        setShowReviewOption(false)
       }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
+    }
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const handleShowEditClick = () => {
-    setShowReviewOption(!showReviewOption);
-  };
+    setShowReviewOption(!showReviewOption)
+  }
 
   const handleEditClick = (review: Review) => {
-    setShowReviewOption(false);
+    setShowReviewOption(false)
     setReviewState({
       rating: review.rating.toString(),
-      review: review.reviewText,
-    });
-    setReview(review.reviewText);
-    setRating(review.rating);
-    setShowEditModal(true);
-  };
+      review: review.reviewText
+    })
+    setReview(review.reviewText)
+    setRating(review.rating)
+    setShowEditModal(true)
+  }
 
   const handleChange = (id: any, value: any) => {
-    let newError = "";
-    if (id === "review") {
-      setReview(value);
-      newError = validateField("review", value, reviewState);
-    } else if (id === "rating") {
-      setRating(value);
-      newError = validateField("rating", value, reviewState);
+    let newError = ''
+    if (id === 'review') {
+      setReview(value)
+      newError = validateField('review', value, reviewState)
+    } else if (id === 'rating') {
+      setRating(value)
+      newError = validateField('rating', value, reviewState)
     }
     setReviewState((prevReviewState) => ({
       ...prevReviewState,
-      [id]: value,
-    }));
+      [id]: value
+    }))
 
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [id]: newError,
-    }));
-  };
+      [id]: newError
+    }))
+  }
 
   useEffect(() => {
     const isAllFieldsValid = Object.values(errors).every(
-      (error) => error === ""
-    );
-    setIsFormValid(isAllFieldsValid);
-  }, [errors]);
+      (error) => error === ''
+    )
+    setIsFormValid(isAllFieldsValid)
+  }, [errors])
 
   const handleUpdateReview = (e: FormEvent) => {
-    e.preventDefault();
-    updateReview();
-  };
+    e.preventDefault()
+    updateReview()
+  }
 
   const updateReview = async () => {
     try {
-      setIsLoading(true);
-      const response = await api.put(`/reviews/${shelterID}`, reviewData);
+      setIsLoading(true)
+      const response = await api.put(`/reviews/${shelterID}`, reviewData)
       if (response.status === 200) {
-        setShowEditModal(false);
-        console.log(response.data);
+        setShowEditModal(false)
+        console.log(response.data)
         showSuccessAlert(response.data.message, undefined, () =>
           setShelter(null)
-        );
+        )
       }
     } catch (error: any) {
-      showErrorAlert(error.response.data);
+      showErrorAlert(error.response.data)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="w-full lg:w-3/4 xl:w-2/3 mb-8 px-8 sm:px-16">
@@ -147,8 +147,8 @@ const ReviewList = ({
           starRatedColor="gold"
         />
         <p className="text-lg text-gray-600">
-          {shelter.rating.toFixed(1)} ({shelter.numberOfReviews}{" "}
-          {shelter.numberOfReviews > 1 ? " reviews" : " review"})
+          {shelter.rating.toFixed(1)} ({shelter.numberOfReviews}{' '}
+          {shelter.numberOfReviews > 1 ? ' reviews' : ' review'})
         </p>
       </div>
       <InfiniteScroll
@@ -202,7 +202,7 @@ const ReviewList = ({
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             role="menuitem"
                             onClick={() => {
-                              handleEditClick(review);
+                              handleEditClick(review)
                             }}
                           >
                             Edit
@@ -256,7 +256,7 @@ const ReviewList = ({
                       </p>
                     </div>
                     {reviewFields.map((field) =>
-                      field.name === "rating" ? (
+                      field.name === 'rating' ? (
                         <div className="mt-4">
                           <StarRatings
                             rating={rating}
@@ -296,8 +296,8 @@ const ReviewList = ({
                   className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-md px-4 py-2 bg-primary text-base font-medium text-white hover:ring-2 hover:ring-primary hover:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                     isLoading
                       ? `bg-primary opacity-70 text-white items-center`
-                      : ""
-                  } ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""}`}
+                      : ''
+                  } ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
                   disabled={!isFormValid}
                   onClick={handleUpdateReview}
                 >
@@ -323,7 +323,7 @@ const ReviewList = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ReviewList;
+export default ReviewList

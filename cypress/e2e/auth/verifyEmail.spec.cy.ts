@@ -1,268 +1,272 @@
-describe("Email Verification Flow", () => {
+describe('Email Verification Flow', () => {
   // Successful Email verification Case
-  describe("Successful Verification", () => {
+  describe('Successful Verification', () => {
     beforeEach(() => {
-      // Set user's email in sessionStorage
-      cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
+      // Set user's email in localStorage
+      cy.setLocalStorage('userEmail', 'test-unverified-user@example.com')
 
-      cy.task("seedDB");
+      cy.task('seedDB')
 
-      cy.interceptverificationCodeApi();
-    });
+      cy.interceptverificationCodeApi()
+    })
 
     afterEach(() => {
       // Verify tokens are stored in localStorage
       cy.window()
-        .its("localStorage")
-        .invoke("getItem", "accessToken")
-        .should("exist");
+        .its('localStorage')
+        .invoke('getItem', 'accessToken')
+        .should('exist')
       cy.window()
-        .its("localStorage")
-        .invoke("getItem", "refreshToken")
-        .should("exist");
+        .its('localStorage')
+        .invoke('getItem', 'refreshToken')
+        .should('exist')
 
       // Verify OTP variable to be updated in localStorage
       cy.window()
-        .its("localStorage")
-        .invoke("getItem", "isOTPSent")
-        .should("equal", "true");
+        .its('localStorage')
+        .invoke('getItem', 'isOTPSent')
+        .should('equal', 'true')
 
       // Clear the database
-      cy.task("clearDB");
-    });
+      cy.task('clearDB')
+    })
 
-    it("should go to homepage after successful validation", () => {
+    it('should go to homepage after successful validation', () => {
       // Navigate to verifyEmail page
-      cy.visit("/verifyemail");
+      cy.visit('/verifyemail')
 
       // Type the verification code
-      cy.get("input[type=text]").type("123456");
+      cy.get('input[type=text]').type('123456')
 
       // Click Verify button
-      cy.get("button[data-cy=verify-button]").click();
+      cy.get('button[data-cy=verify-button]').click()
 
       // Assert that a loading indicator is visible
-      cy.get("[data-cy=loadingIcon]").should("be.visible");
+      cy.get('[data-cy=loadingIcon]').should('be.visible')
 
       // Verify that we've been redirected to the home page
-      cy.checkUrlIs("/homepage");
-    });
+      cy.checkUrlIs('/homepage')
+    })
 
-    it("should go to homepage after successful validation after resending code", () => {
-      // Set user's email in sessionStorage
-      cy.setSessionStorage("remainingTime", "0");
+    it('should go to homepage after successful validation after resending code', () => {
+      // Set user's email in localStorage
+      cy.setLocalStorage('remainingTime', '0')
 
       // Navigate to verifyEmail page
-      cy.visit("/verifyemail");
+      cy.visit('/verifyemail')
 
       // Click Resend button
-      cy.get("button[data-cy=resend-button]").click();
+      cy.get('button[data-cy=resend-button]').click()
 
       // Type the verification code
-      cy.get("input[type=text]").type("123456");
+      cy.get('input[type=text]').type('123456')
 
       // Click Verify button
-      cy.get("button[data-cy=verify-button]").click();
+      cy.get('button[data-cy=verify-button]').click()
 
       // Verify that we've been redirected to the home page
-      cy.checkUrlIs("/homepage");
-    });
-  });
+      cy.checkUrlIs('/homepage')
+    })
+  })
 
   // Error Cases
-  describe("Error Handling", () => {
+  describe('Error Handling', () => {
     beforeEach(() => {
-      cy.task("seedDB");
+      cy.task('seedDB')
 
-      cy.interceptverificationCodeApi();
-    });
+      cy.interceptverificationCodeApi()
+    })
 
     afterEach(() => {
       // Clear the database
-      cy.task("clearDB");
-    });
+      cy.task('clearDB')
+    })
 
-    it("should show an error message when user does not exist", () => {
-      // Set user's email in sessionStorage
-      cy.setSessionStorage("userEmail", "nonExistentUser@example.com");
+    it('should show an error message when user does not exist', () => {
+      // Set user's email in localStorage
+      cy.setLocalStorage('userEmail', 'nonExistentUser@example.com')
 
       // Navigate to verifyEmail page
-      cy.visit("/verifyemail");
+      cy.visit('/verifyemail')
 
       // Type the verification code
-      cy.get("input[type=text]").type("123456");
+      cy.get('input[type=text]').type('123456')
 
       // Click Verify button
-      cy.get("button[data-cy=verify-button]").click();
+      cy.get('button[data-cy=verify-button]').click()
 
       // Verify that we've been redirected to the not found page
-      cy.checkUrlIs("/pagenotfound");
-    });
+      cy.checkUrlIs('/pagenotfound')
+    })
 
-    it("should show an error message when user enters expired verification code", () => {
-      // Set user's email in sessionStorage
-      cy.setSessionStorage("userEmail", "test-expired-code-user@example.com");
-
-      // Navigate to verifyEmail page
-      cy.visit("/verifyemail");
-
-      // Type the verification code
-      cy.get("input[type=text]").type("123456");
-
-      // Click Verify button
-      cy.get("button[data-cy=verify-button]").click();
-
-      // Verify that an error message is displayed
-      cy.get("[data-cy=error-message]").should("be.visible");
-      cy.get("[data-cy=error-message]").should(
-        "have.text",
-        "Verification code expired. Please request a new code."
-      );
-    });
-
-    it("should show an error message when user enters incorrect verification code", () => {
-      // Set user's email in sessionStorage
-      cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
+    it('should show an error message when user enters expired verification code', () => {
+      // Set user's email in localStorage
+      cy.setLocalStorage('userEmail', 'test-expired-code-user@example.com')
 
       // Navigate to verifyEmail page
-      cy.visit("/verifyemail");
+      cy.visit('/verifyemail')
 
       // Type the verification code
-      cy.get("input[type=text]").type("111111");
+      cy.get('input[type=text]').type('123456')
 
       // Click Verify button
-      cy.get("button[data-cy=verify-button]").click();
+      cy.get('button[data-cy=verify-button]').click()
 
       // Verify that an error message is displayed
-      cy.get("[data-cy=error-message]").should("be.visible");
-      cy.get("[data-cy=error-message]").should(
-        "have.text",
-        "Incorrect verification code"
-      );
-    });
-  });
+      cy.get('[data-cy=error-message]').should('be.visible')
+      cy.get('[data-cy=error-message]').should(
+        'have.text',
+        'Verification code expired. Please request a new code.'
+      )
+    })
+
+    it('should show an error message when user enters incorrect verification code', () => {
+      // Set user's email in localStorage
+      cy.setLocalStorage('userEmail', 'test-unverified-user@example.com')
+
+      // Navigate to verifyEmail page
+      cy.visit('/verifyemail')
+
+      // Type the verification code
+      cy.get('input[type=text]').type('111111')
+
+      // Click Verify button
+      cy.get('button[data-cy=verify-button]').click()
+
+      // Verify that an error message is displayed
+      cy.get('[data-cy=error-message]').should('be.visible')
+      cy.get('[data-cy=error-message]').should(
+        'have.text',
+        'Incorrect verification code'
+      )
+    })
+  })
 
   // Input Restriction Cases
-  describe("Input Verification", () => {
+  describe('Input Verification', () => {
     beforeEach(() => {
-      // Set user's email in sessionStorage
-      cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
+      // Set user's email in localStorage
+      cy.setLocalStorage('userEmail', 'test-unverified-user@example.com')
 
-      cy.interceptverificationCodeApi();
+      cy.interceptverificationCodeApi()
 
       // Navigate to verifyEmail page
-      cy.visit("/verifyemail");
-    });
+      cy.visit('/verifyemail')
+    })
 
     it("should keep 'Verify' button disabled for less than 6 digits", () => {
-      cy.get("input[type=text]").type("123");
-      cy.get("button[data-cy=verify-button]").should("be.disabled");
-    });
+      cy.get('input[type=text]').type('123')
+      cy.get('button[data-cy=verify-button]').should('be.disabled')
+    })
 
     it("should enable 'Verify' button for exactly 6 digits", () => {
-      cy.get("input[type=text]").type("123456");
-      cy.get("button[data-cy=verify-button]").should("not.be.disabled");
-    });
+      cy.get('input[type=text]').type('123456')
+      cy.get('button[data-cy=verify-button]').should('not.be.disabled')
+    })
 
-    it("should not allow the user to enter more than 6 digits", () => {
-      cy.get("input[type=text]").type("1234567");
-      cy.get("input[type=text]").should("have.value", "123456"); // Checking that the value is still 6 digits
-    });
-  });
+    it('should not allow the user to enter more than 6 digits', () => {
+      cy.get('input[type=text]').type('1234567')
+      cy.get('input[type=text]').should('have.value', '123456') // Checking that the value is still 6 digits
+    })
+  })
 
   // UI Behavior Cases
-  describe("UI Behavior", () => {
+  describe('UI Behavior', () => {
     beforeEach(() => {
-      // Set user's email in sessionStorage
-      cy.setSessionStorage("userEmail", "test-unverified-user@example.com");
+      // Set user's email in localStorage
+      cy.setLocalStorage('userEmail', 'test-unverified-user@example.com')
 
-      cy.interceptverificationCodeApi();
+      cy.interceptverificationCodeApi()
 
       // Navigate to verifyEmail page
-      cy.visit("/verifyemail");
-    });
+      cy.visit('/verifyemail')
+    })
 
     it("should keep 'Verify' button disabled initially", () => {
-      cy.get("button[data-cy=verify-button]").should("be.disabled");
-    });
+      cy.get('button[data-cy=verify-button]').should('be.disabled')
+    })
 
     it("should update 'Verify' button state when deleting digits", () => {
-      cy.get("input[type=text]").type("123456");
-      cy.get("button[data-cy=verify-button]").should("not.be.disabled");
-      cy.get("input[type=text]").type("{backspace}"); // Delete one digit
-      cy.get("button[data-cy=verify-button]").should("be.disabled");
-    });
+      cy.get('input[type=text]').type('123456')
+      cy.get('button[data-cy=verify-button]').should('not.be.disabled')
+      cy.get('input[type=text]').type('{backspace}') // Delete one digit
+      cy.get('button[data-cy=verify-button]').should('be.disabled')
+    })
 
-    it("should persist timer state across page refresh", () => {
+    it('should persist timer state across page refresh', () => {
       // Wait for the timer to appear on the page
-      cy.get("[data-cy=timer]").should("be.visible");
+      cy.get('[data-cy=timer]').should('be.visible')
 
       // The timer starts at 60 seconds
-      cy.get("[data-cy=timer]").should("contain", "60");
+      cy.get('[data-cy=timer]').should('contain', '60')
 
       // Wait for 5 seconds (Cypress will wait 5000ms)
-      cy.wait(5000);
+      cy.wait(5000)
 
       // Check that the timer has reduced (less than or equal to 55)
-      cy.get("[data-cy=timer]")
-        .invoke("text")
+      cy.get('[data-cy=timer]')
+        .invoke('text')
         .then((textBefore) => {
-          if (textBefore.match(/\d+/) !== null) {
-            const timeBefore = parseInt(textBefore.match(/\d+/)![0], 10);
+          const matchBefore = textBefore.match(/\d+/)
+          if (matchBefore) {
+            const timeBefore = parseInt(matchBefore[0], 10)
 
             // Refresh the page
-            cy.reload();
+            cy.reload()
 
             // Wait for the timer to appear again
-            cy.get("[data-cy=timer]").should("be.visible");
+            cy.get('[data-cy=timer]').should('be.visible')
 
             // Check that the timer is less than or equal to the time captured before the refresh
-            cy.get("[data-cy=timer]")
-              .invoke("text")
+            cy.get('[data-cy=timer]')
+              .invoke('text')
               .then((textAfter) => {
-                const timeAfter = parseInt(textAfter.match(/\d+/)![0], 10);
-                expect(timeAfter).to.be.at.most(timeBefore);
-              });
+                const matchAfter = textAfter.match(/\d+/)
+                if (matchAfter) {
+                  const timeAfter = parseInt(matchAfter[0], 10)
+                  expect(timeAfter).to.be.at.most(timeBefore)
+                }
+              })
           }
-        });
-    });
-  });
+        })
+    })
+  })
 
   // Navigation Cases
-  describe("Navigation", () => {
-    it("should redirect the user to the login page if they are already verified, but not logged in", () => {
-      // Set user's email in sessionStorage
-      cy.setSessionStorage("userEmail", "test-user@example.com");
+  describe('Navigation', () => {
+    it('should redirect the user to the login page if they are already verified, but not logged in', () => {
+      // Set user's email in localStorage
+      cy.setLocalStorage('userEmail', 'test-user@example.com')
 
       cy.intercept(
         {
-          method: "POST",
-          url: "/auth/verificationCode",
+          method: 'POST',
+          url: '/auth/verificationCode'
         },
         {
           statusCode: 422,
           body: {
-            message: "User already verified",
-          },
+            message: 'User already verified'
+          }
         }
-      ).as("verificationCode");
+      ).as('verificationCode')
 
       // Navigate to verifyEmail page
-      cy.visit("/verifyemail");
+      cy.visit('/verifyemail')
 
       // Wait for the API call to be made and intercepted
-      cy.wait("@verificationCode");
+      cy.wait('@verificationCode')
 
       // Expect to be redirected to the login page
-      cy.checkUrlIs("/");
-    });
+      cy.checkUrlIs('/')
+    })
 
-    it("should redirect the user to not found page if they are not allowed to access it", () => {
+    it('should redirect the user to not found page if they are not allowed to access it', () => {
       // Navigate to verifyEmail page
-      cy.visit("/verifyemail");
+      cy.visit('/verifyemail')
 
       // Expect to be redirected to not found page
-      cy.checkUrlIs("/pagenotfound");
-    });
-  });
-});
+      cy.checkUrlIs('/pagenotfound')
+    })
+  })
+})

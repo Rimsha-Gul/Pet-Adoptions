@@ -27,7 +27,6 @@ const VerifyEmail = () => {
   const [emailForVerification] = useState<string | null>(userEmail);
 
   const accessToken = localStorage.getItem("accessToken");
-  // console.log(accessToken);
   api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
   const sendCodeData = {
@@ -96,11 +95,6 @@ const VerifyEmail = () => {
       setTimer(60);
     }
   }, [emailForVerification]);
-
-  // Storing the timer's remaining time in session storage
-  // useEffect(() => {
-  //   sessionStorage.setItem("remainingTime", timer.toString());
-  // }, [timer]);
 
   // Retrieving the remaining time when the component mounts
   useEffect(() => {

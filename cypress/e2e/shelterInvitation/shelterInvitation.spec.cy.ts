@@ -1,5 +1,5 @@
 describe("Invitation Acceptance", () => {
-  after(() => {
+  const cleanUp = () => {
     cy.task("deleteMany", {
       collection: "users",
       params: {
@@ -14,14 +14,17 @@ describe("Invitation Acceptance", () => {
         shelterEmail: "test-shelter@example.com",
       },
     });
-  });
+  };
+
+  before(cleanUp);
+  after(cleanUp);
 
   it("login admin and send invitation to shelter", () => {
     cy.task("login", { email: "admin-user@example.com" }).then(
       ({ accessToken, refreshToken }: any) => {
         cy.setLocalStorage("accessToken", accessToken);
         cy.setLocalStorage("refreshToken", refreshToken);
-        cy.setSessionStorage("userEmail", "admin-user@example.com");
+        cy.setLocalStorage("userEmail", "admin-user@example.com");
       }
     );
     cy.visit("/homepage");
@@ -39,7 +42,7 @@ describe("Invitation Acceptance", () => {
     cy.task("getInvitationToken", { email: "test-shelter@example.com" }).then(
       ({ invitationToken }: any) => {
         cy.log("inv tokennnnnnnnnnnnnnnn:", invitationToken);
-        cy.visit(`/shelter/invitation/${invitationToken}/`);
+        cy.visit(`/shelters/invitation/${invitationToken}/`);
       }
     );
 

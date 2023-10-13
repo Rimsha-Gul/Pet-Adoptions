@@ -21,7 +21,7 @@ const InviteShelter = () => {
   const inviteShelter = async () => {
     try {
       setIsLoading(true);
-      const response = await api.post("/shelter/invite", {
+      const response = await api.post("/shelters/invitations", {
         email: shelterEmail,
       });
       if (response.status === 200) {

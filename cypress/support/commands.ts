@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import "cypress-file-upload";
+import 'cypress-file-upload'
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -38,69 +38,59 @@ import "cypress-file-upload";
 // }
 
 // Custom command to check the URL
-Cypress.Commands.add("checkUrlIs", (expectedPath: string) => {
-  cy.url().should("eq", `${Cypress.config("baseUrl")}${expectedPath}`);
-});
-
-// Custom command to set session storage
-Cypress.Commands.add("setSessionStorage", (key: string, value: string) => {
-  cy.window().then((win) => {
-    win.localStorage.setItem(key, value);
-  });
-});
+Cypress.Commands.add('checkUrlIs', (expectedPath: string) => {
+  cy.url().should('eq', `${Cypress.config('baseUrl')}${expectedPath}`)
+})
 
 // Custom command to set local storage
-Cypress.Commands.add("setLocalStorage", (key: string, value: string) => {
+Cypress.Commands.add('setLocalStorage', (key: string, value: string) => {
   cy.window().then((win) => {
-    win.localStorage.setItem(key, value);
-  });
-});
+    win.localStorage.setItem(key, value)
+  })
+})
 
 // Custom command to intercept the verificationCode api
 Cypress.Commands.add(
-  "interceptverificationCodeApi",
-  (
-    statusCode: number = 200,
-    message: string = "Signup email sent successfully"
-  ) => {
+  'interceptverificationCodeApi',
+  (statusCode = 200, message = 'Signup email sent successfully') => {
     cy.intercept(
       {
-        method: "POST",
-        url: "/auth/verificationCode",
+        method: 'POST',
+        url: '/auth/verificationCode'
       },
       {
         statusCode,
         body: {
-          message,
-        },
+          message
+        }
       }
-    ).as("verificationCode");
+    ).as('verificationCode')
   }
-);
+)
 
 // Custom command to intercept the verifyResetToken api
 Cypress.Commands.add(
-  "interceptVerifyResetTokenApi",
-  (statusCode: number = 200, email: string = "test-user@example.com") => {
+  'interceptVerifyResetTokenApi',
+  (statusCode = 200, email = 'test-user@example.com') => {
     cy.intercept(
       {
-        method: "GET",
-        url: "/auth/password/reset/token/verify*",
+        method: 'GET',
+        url: '/auth/password/reset/token/verify*'
       },
       {
         statusCode,
         body: {
-          email,
-        },
+          email
+        }
       }
-    ).as("verifyResetToken");
+    ).as('verifyResetToken')
   }
-);
+)
 
-Cypress.Commands.add("getApplicationIdFromUrl", () => {
+Cypress.Commands.add('getApplicationIdFromUrl', () => {
   cy.url().then((url) => {
-    const parts = url.split("/");
-    const applicationId = parts[parts.length - 1];
-    return cy.wrap(applicationId);
-  });
-});
+    const parts = url.split('/')
+    const applicationId = parts[parts.length - 1]
+    return cy.wrap(applicationId)
+  })
+})

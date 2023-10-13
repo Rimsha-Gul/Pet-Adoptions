@@ -1,170 +1,166 @@
-import { useContext, useEffect, useState } from "react";
-import { Review, Shelter } from "../types/interfaces";
-import api from "../api";
-import { useParams } from "react-router-dom";
-import StarRatings from "react-star-ratings";
-import { validateField } from "../utils/formValidation";
-import { FieldsState } from "../types/common";
-import { reviewFields } from "../constants/formFields";
-import { showErrorAlert, showSuccessAlert } from "../utils/alert";
-import loadingIcon from "../assets/loading.gif";
-import { UserRole } from "../types/enums";
-import { AppContext } from "../context/AppContext";
-import ReviewList from "../components/ShelterComponents/ReviewsList";
+import { useContext, useEffect, useState } from 'react'
+import { Review, Shelter } from '../types/interfaces'
+import api from '../api'
+import { useParams } from 'react-router-dom'
+import StarRatings from 'react-star-ratings'
+import { validateField } from '../utils/formValidation'
+import { FieldsState } from '../types/common'
+import { reviewFields } from '../constants/formFields'
+import { showErrorAlert, showSuccessAlert } from '../utils/alert'
+import loadingIcon from '../assets/loading.gif'
+import { UserRole } from '../types/enums'
+import { AppContext } from '../context/AppContext'
+import ReviewList from '../components/ShelterComponents/ReviewsList'
 
-const fields = reviewFields;
-let fieldsState: FieldsState = {};
-fields.forEach((field) => (fieldsState[field.id] = ""));
+const fields = reviewFields
+const fieldsState: FieldsState = {}
+fields.forEach((field) => (fieldsState[field.id] = ''))
 
 const ShelterProfile = () => {
-  const { shelterID } = useParams();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [rating, setRating] = useState<number>(0);
-  const [review, setReview] = useState<string>("");
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [reviewState, setReviewState] = useState<FieldsState>(fieldsState);
+  const { shelterID } = useParams()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [rating, setRating] = useState<number>(0)
+  const [review, setReview] = useState<string>('')
+  const [showModal, setShowModal] = useState<boolean>(false)
+  const [reviewState, setReviewState] = useState<FieldsState>(fieldsState)
   const [errors, setErrors] = useState({
-    rating: "Rating is required",
-    review: "Review is required",
-  });
-  const [isFormValid, setIsFormValid] = useState(false);
+    rating: 'Rating is required',
+    review: 'Review is required'
+  })
+  const [isFormValid, setIsFormValid] = useState(false)
   const reviewData = {
     rating: reviewState.rating,
-    reviewText: reviewState.review,
-  };
-  const [shelter, setShelter] = useState<Shelter | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false);
-  const appContext = useContext(AppContext);
-  const userRole = appContext.userRole;
+    reviewText: reviewState.review
+  }
+  const [shelter, setShelter] = useState<Shelter | null>(null)
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false)
+  const appContext = useContext(AppContext)
+  const userRole = appContext.userRole
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        setIsLoading(true);
-        const response = await api.get("/shelter/", {
-          params: {
-            id: shelterID,
-          },
-        });
+        setIsLoading(true)
+        const response = await api.get(`/shelters/${shelterID}`)
 
-        console.log(response.data);
+        console.log(response.data)
         //const shelterData = response.data;
-        setShelter(response.data);
+        setShelter(response.data)
         const reviewsResponse = await api.get(`/reviews/${shelterID}`, {
           params: {
             page: 1,
-            limit: 3,
-          },
-        });
-        console.log(reviewsResponse);
-        const { reviews, totalPages } = reviewsResponse.data;
-        setReviews(reviews);
-        setTotalPages(totalPages);
-        setCurrentPage(1);
+            limit: 3
+          }
+        })
+        console.log(reviewsResponse)
+        const { reviews, totalPages } = reviewsResponse.data
+        setReviews(reviews)
+        setTotalPages(totalPages)
+        setCurrentPage(1)
       } catch (error: any) {
-        console.log(error);
+        console.log(error)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    if (shelterID && !shelter) fetchUserData();
-  }, [shelterID, shelter]);
+    if (shelterID && !shelter) fetchUserData()
+  }, [shelterID, shelter])
 
   const loadMoreData = async () => {
-    console.log("Load more reviews");
+    console.log('Load more reviews')
     //console.log("currentPage", currentPage);
     if (currentPage < totalPages) {
       try {
-        setIsMoreLoading(true);
-        const nextPage = currentPage + 1;
+        setIsMoreLoading(true)
+        const nextPage = currentPage + 1
         //console.log("nextPage", nextPage);
 
         // Fetch the next page of data
         const response = await api.get(`/reviews/${shelterID}`, {
           params: {
             page: nextPage,
-            limit: 3,
-          },
-        });
+            limit: 3
+          }
+        })
         //console.log(response.data);
-        const { reviews: newReviews, totalPages } = response.data;
+        const { reviews: newReviews, totalPages } = response.data
 
         // Append the new reviews to the existing reviews
-        setReviews((prevReviews) => [...prevReviews, ...newReviews]);
-        setCurrentPage(nextPage);
-        setTotalPages(totalPages);
-        console.log("Updated reviews:", reviews);
+        setReviews((prevReviews) => [...prevReviews, ...newReviews])
+        setCurrentPage(nextPage)
+        setTotalPages(totalPages)
+        console.log('Updated reviews:', reviews)
       } catch (error: any) {
-        console.error(error.response.status);
+        console.error(error.response.status)
       } finally {
-        setIsMoreLoading(false);
+        setIsMoreLoading(false)
       }
     }
-  };
+  }
 
   const handleReview = () => {
-    console.log("Review");
-    setShowModal(true);
-  };
+    console.log('Review')
+    setShowModal(true)
+  }
 
   const handleChange = (id: any, value: any) => {
-    let newError = "";
-    if (id === "review") {
-      setReview(value);
-      newError = validateField("review", value, reviewState);
-    } else if (id === "rating") {
-      setRating(value);
-      newError = validateField("rating", value, reviewState);
+    let newError = ''
+    if (id === 'review') {
+      setReview(value)
+      newError = validateField('review', value, reviewState)
+    } else if (id === 'rating') {
+      setRating(value)
+      newError = validateField('rating', value, reviewState)
     }
     setReviewState((prevReviewState) => ({
       ...prevReviewState,
-      [id]: value,
-    }));
+      [id]: value
+    }))
 
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [id]: newError,
-    }));
-  };
+      [id]: newError
+    }))
+  }
 
   useEffect(() => {
     const isAllFieldsValid = Object.values(errors).every(
-      (error) => error === ""
-    );
-    setIsFormValid(isAllFieldsValid);
-  }, [errors]);
+      (error) => error === ''
+    )
+    setIsFormValid(isAllFieldsValid)
+  }, [errors])
 
   const handleReviewSubmit = (event: any) => {
-    console.log(reviewData);
-    event.preventDefault();
-    submitReview();
-  };
+    console.log(reviewData)
+    event.preventDefault()
+    submitReview()
+  }
 
   const submitReview = async () => {
     try {
-      setIsLoading(true);
-      const response = await api.post(`/reviews/${shelterID}`, reviewData);
+      setIsLoading(true)
+      const response = await api.post(`/reviews/${shelterID}`, reviewData)
       if (response.status === 200) {
-        setShowModal(false);
-        console.log(response.data);
+        setShowModal(false)
+        console.log(response.data)
         showSuccessAlert(response.data.message, undefined, () =>
           setShelter(null)
-        );
+        )
       }
     } catch (error: any) {
-      showErrorAlert(error.response.data);
+      showErrorAlert(error.response.data)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
-  let imageSrc;
+  let imageSrc
   if (shelter?.profilePhoto) {
-    imageSrc = shelter.profilePhoto as string;
+    imageSrc = shelter.profilePhoto as string
   }
 
   return (
@@ -208,8 +204,8 @@ const ShelterProfile = () => {
                     starRatedColor="gold"
                   />
                   <p className="text-lg text-gray-600">
-                    {shelter.rating.toFixed(1)} ({shelter.numberOfReviews}{" "}
-                    {shelter.numberOfReviews > 1 ? "reviews" : "review"})
+                    {shelter.rating.toFixed(1)} ({shelter.numberOfReviews}{' '}
+                    {shelter.numberOfReviews > 1 ? 'reviews' : 'review'})
                   </p>
                 </div>
               ) : (
@@ -225,7 +221,7 @@ const ShelterProfile = () => {
                   className={`mt-8 group relative w-1/3 lg:w-1/5 2xl:w-1/6 flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white bg-primary hover:bg-white hover:text-primary hover:ring-2 hover:ring-primary hover:ring-offset-2" ${
                     isLoading
                       ? `bg-primary text-white cursor-not-allowed items-center`
-                      : ""
+                      : ''
                   }`}
                   onClick={handleReview}
                 >
@@ -266,7 +262,7 @@ const ShelterProfile = () => {
                           </p>
                         </div>
                         {reviewFields.map((field) =>
-                          field.name === "rating" ? (
+                          field.name === 'rating' ? (
                             <div className="mt-4">
                               <StarRatings
                                 rating={rating}
@@ -306,8 +302,8 @@ const ShelterProfile = () => {
                       className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-md px-4 py-2 bg-primary text-base font-medium text-white hover:ring-2 hover:ring-primary hover:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                         isLoading
                           ? `bg-primary opacity-70 text-white items-center`
-                          : ""
-                      } ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""}`}
+                          : ''
+                      } ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
                       disabled={!isFormValid}
                       onClick={handleReviewSubmit}
                     >
@@ -345,7 +341,7 @@ const ShelterProfile = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ShelterProfile;
+export default ShelterProfile

@@ -1,74 +1,69 @@
-import { useState, useEffect } from "react";
-import StarRatings from "react-star-ratings";
-import { validateField } from "../../utils/formValidation";
-import { FieldsState } from "../../types/common";
-import { reviewFields } from "../../constants/formFields";
-import loadingIcon from "../../assets/loading.gif";
+import { useState, useEffect } from 'react'
+import StarRatings from 'react-star-ratings'
+import { validateField } from '../../utils/formValidation'
+import { FieldsState } from '../../types/common'
+import { reviewFields } from '../../constants/formFields'
+import loadingIcon from '../../assets/loading.gif'
 
-const fields = reviewFields;
-let fieldsState: FieldsState = {};
-fields.forEach((field) => (fieldsState[field.id] = ""));
+const fields = reviewFields
+const fieldsState: FieldsState = {}
+fields.forEach((field) => (fieldsState[field.id] = ''))
 
 interface Props {
-  show: boolean;
-  onClose: () => void;
-  onSubmit: (data: any) => void;
-  isLoading: boolean;
+  show: boolean
+  onClose: () => void
+  onSubmit: (data: any) => void
+  isLoading: boolean
 }
 
-const ReviewModal = ({
-  show,
-  onClose,
-  onSubmit,
-  isLoading,
-}:Props) => {
-  const [rating, setRating] = useState<number>(0);
-  const [review, setReview] = useState<string>("");
+const ReviewModal = ({ show, onClose, onSubmit, isLoading }: Props) => {
+  const [rating, setRating] = useState<number>(0)
+  const [review, setReview] = useState<string>('')
   const [errors, setErrors] = useState({
-    rating: "Rating is required",
-    review: "Review is required",
-  });
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [reviewState, setReviewState] = useState<FieldsState>(fieldsState);
+    rating: 'Rating is required',
+    review: 'Review is required'
+  })
+  const [isFormValid, setIsFormValid] = useState(false)
+  const [reviewState, setReviewState] = useState<FieldsState>(fieldsState)
 
   const reviewData = {
     rating,
-    review,
-  };
+    review
+  }
 
   const handleChange = (id: any, value: any) => {
-    let newError = "";
-    if (id === "review") {
-      setReview(value);
-      newError = validateField("review", value, reviewState);
-    } else if (id === "rating") {
-      setRating(value);
-      newError = validateField("rating", value, reviewState);
+    let newError = ''
+    if (id === 'review') {
+      setReview(value)
+      newError = validateField('review', value, reviewState)
+    } else if (id === 'rating') {
+      setRating(value)
+      newError = validateField('rating', value, reviewState)
     }
     setReviewState((prevReviewState) => ({
       ...prevReviewState,
-      [id]: value,
-    }));
+      [id]: value
+    }))
 
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [id]: newError,
-    }));
-  };
+      [id]: newError
+    }))
+  }
 
   useEffect(() => {
     const isAllFieldsValid = Object.values(errors).every(
-      (error) => error === ""
-    );
-    setIsFormValid(isAllFieldsValid);
-  }, [errors]);
+      (error) => error === ''
+    )
+    setIsFormValid(isAllFieldsValid)
+  }, [errors])
 
   const handleReviewSubmit = (event: any) => {
-    event.preventDefault();
+    event.preventDefault()
     if (isFormValid) {
-      onSubmit(reviewData);
+      onSubmit(reviewData)
     }
-  };
+  }
 
   return (
     <>
@@ -104,7 +99,7 @@ const ReviewModal = ({
                       </p>
                     </div>
                     {reviewFields.map((field) =>
-                      field.name === "rating" ? (
+                      field.name === 'rating' ? (
                         <div className="mt-4">
                           <StarRatings
                             rating={rating}
@@ -142,8 +137,8 @@ const ReviewModal = ({
                   className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-md px-4 py-2 bg-primary text-base font-medium text-white hover:ring-2 hover:ring-primary hover:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                     isLoading
                       ? `bg-primary opacity-70 text-white items-center`
-                      : ""
-                  } ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""}`}
+                      : ''
+                  } ${!isFormValid ? 'opacity-50 cursor-not-allowed' : ''}`}
                   disabled={!isFormValid}
                   onClick={handleReviewSubmit}
                 >
@@ -169,7 +164,7 @@ const ReviewModal = ({
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default ReviewModal;
+export default ReviewModal

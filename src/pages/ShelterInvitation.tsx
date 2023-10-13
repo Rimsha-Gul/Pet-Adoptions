@@ -30,9 +30,12 @@ const ShelterInvitation = ({ handleLogout }: { handleLogout: () => void }) => {
     }
     const verifyInvitation = async () => {
       try {
-        const response = await api.get(`/shelter/verifyInvitationToken`, {
-          params: { invitationToken },
-        });
+        const response = await api.get(
+          `/shelters/invitations/token/verification`,
+          {
+            params: { invitationToken },
+          }
+        );
 
         // On successful verification, navigate to the signup page with email and role
         console.log(response.data);

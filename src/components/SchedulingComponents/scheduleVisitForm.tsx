@@ -88,12 +88,8 @@ export const ScheduleForm = ({
         const endpoint =
           visitType === VisitType.Home
             ? `/applications/${applicationID}`
-            : "/shelter/application/";
-        const response = await api.get(endpoint, {
-          params: {
-            applicationID: applicationID,
-          },
-        });
+            : `/shelters/application/${applicationID}`;
+        const response = await api.get(endpoint);
         setApplication(response.data.application);
       } catch (error) {
         console.error(error);

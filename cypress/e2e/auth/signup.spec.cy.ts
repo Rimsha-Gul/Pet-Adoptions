@@ -18,7 +18,7 @@ describe("Signup Flow", () => {
       // Click signup button
       cy.get("button[type=submit]").click();
 
-      // Verify email is stored in sessionStorage
+      // Verify email is stored in localStorage
       cy.window()
         .its("localStorage")
         .invoke("getItem", "userEmail")

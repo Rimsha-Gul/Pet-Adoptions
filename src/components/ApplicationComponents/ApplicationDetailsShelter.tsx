@@ -47,11 +47,9 @@ const ApplicationDetailsShelter = () => {
     const fetchApplication = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get("/shelter/application/", {
-          params: {
-            id: applicationID,
-          },
-        });
+        const response = await api.get(
+          `/shelters/applications/${applicationID}`
+        );
         console.log(response.data);
         setApplication(response.data.application);
         if (response.data.application.status === Status.HomeVisitScheduled)

@@ -13,7 +13,7 @@ describe("Change Email", () => {
     cy.task("login").then(({ accessToken, refreshToken }: any) => {
       cy.setLocalStorage("accessToken", accessToken);
       cy.setLocalStorage("refreshToken", refreshToken);
-      cy.setSessionStorage("userEmail", "test-user@example.com");
+      cy.setLocalStorage("userEmail", "test-user@example.com");
     });
 
     cy.visit("/homepage");
