@@ -1,28 +1,28 @@
-import { useEffect, useMemo, useState } from "react";
-import api from "../../api";
-import { useParams } from "react-router-dom";
-import loadingIcon from "../../assets/loading.gif";
-import { Status, VisitType } from "../../types/enums";
-import { getNextShelterStatus } from "../../utils/getNextStatus";
-import { showErrorAlert, showSuccessAlert } from "../../utils/alert";
-import { statusButtonText } from "../../utils/getStatusButtonText";
-import StatusButton from "./StatusButton";
-import { getStatusIcon } from "../../utils/getStatusIcon";
-import { applicationGroups } from "../../constants/groups";
-import { Application, ReactivationRequest } from "../../types/interfaces";
-import ApplicationGroupedFields from "./ApplicationDetails";
-import { BiLinkExternal } from "react-icons/bi";
-import ReactivationRequestDetails from "./ReactivationRequestDetails";
+import { useEffect, useMemo, useState } from 'react'
+import api from '../../api'
+import { useParams } from 'react-router-dom'
+import loadingIcon from '../../assets/loading.gif'
+import { Status, VisitType } from '../../types/enums'
+import { getNextShelterStatus } from '../../utils/getNextStatus'
+import { showErrorAlert, showSuccessAlert } from '../../utils/alert'
+import { statusButtonText } from '../../utils/getStatusButtonText'
+import StatusButton from './StatusButton'
+import { getStatusIcon } from '../../utils/getStatusIcon'
+import { applicationGroups } from '../../constants/groups'
+import { Application, ReactivationRequest } from '../../types/interfaces'
+import ApplicationGroupedFields from './ApplicationDetails'
+import { BiLinkExternal } from 'react-icons/bi'
+import ReactivationRequestDetails from './ReactivationRequestDetails'
 
 const ApplicationDetailsShelter = () => {
-  const [application, setApplication] = useState<Application | null>(null);
-  const [isApproving, setIsApproving] = useState<boolean>(false);
-  const [isRejecting, setIsRejecting] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [visitDate, setVisitDate] = useState<string>("");
+  const [application, setApplication] = useState<Application | null>(null)
+  const [isApproving, setIsApproving] = useState<boolean>(false)
+  const [isRejecting, setIsRejecting] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [visitDate, setVisitDate] = useState<string>('')
   const [reactivationRequest, setReactivationRequest] =
-    useState<ReactivationRequest | null>(null);
-  const { applicationID } = useParams();
+    useState<ReactivationRequest | null>(null)
+  const { applicationID } = useParams()
 
   const groupedFields = useMemo(() => {
     return applicationGroups.map((group) => {
@@ -30,93 +30,90 @@ const ApplicationDetailsShelter = () => {
         ...group,
         fields: group.fields.filter((field) => {
           if (
-            (field === "hasRentPetPermission" &&
-              application?.residenceType !== "rentHouse") ||
-            (field === "childrenAges" && !application?.hasChildren) ||
-            (field === "otherPetsInfo" && !application?.hasOtherPets)
+            (field === 'hasRentPetPermission' &&
+              application?.residenceType !== 'rentHouse') ||
+            (field === 'childrenAges' && !application?.hasChildren) ||
+            (field === 'otherPetsInfo' && !application?.hasOtherPets)
           ) {
-            return false;
+            return false
           }
-          return true;
-        }),
-      };
-    });
-  }, [application]);
+          return true
+        })
+      }
+    })
+  }, [application])
 
   useEffect(() => {
     const fetchApplication = async () => {
       try {
-        setIsLoading(true);
+        setIsLoading(true)
         const response = await api.get(
           `/shelters/applications/${applicationID}`
-        );
-        console.log(response.data);
-        setApplication(response.data.application);
+        )
+        setApplication(response.data.application)
         if (response.data.application.status === Status.HomeVisitScheduled)
-          setVisitDate(response.data.application.homeVisitDate);
+          setVisitDate(response.data.application.homeVisitDate)
         else if (response.data.application.status === Status.UserVisitScheduled)
-          setVisitDate(response.data.application.shelterVisitDate);
-      } catch (error) {
-        console.error(error);
+          setVisitDate(response.data.application.shelterVisitDate)
+      } catch (error: any) {
+        showErrorAlert(error.response.data)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
     if (applicationID && !application) {
-      fetchApplication();
+      fetchApplication()
     }
-  }, [applicationID, application]);
+  }, [applicationID, application])
 
   useEffect(() => {
     const fetchReactivationRequest = async () => {
       try {
-        setIsLoading(true);
-        const response = await api.get(`/reactivationRequest/${applicationID}`);
-        console.log(response.data);
-        setReactivationRequest(response.data);
-      } catch (error) {
-        console.error(error);
+        setIsLoading(true)
+        const response = await api.get(`/reactivationRequest/${applicationID}`)
+        setReactivationRequest(response.data)
+      } catch (error: any) {
+        showErrorAlert(error.response.data)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
     if (application && application.status === Status.ReactivationRequested) {
-      fetchReactivationRequest();
+      fetchReactivationRequest()
     }
-  }, [application]);
+  }, [application])
 
   const updateApplicationStatus = async (action: string) => {
     const nextStatus = getNextShelterStatus(
       application?.status || Status.UnderReview,
       action
-    );
+    )
 
     if (nextStatus) {
       try {
-        action === "approve" ? setIsApproving(true) : setIsRejecting(true);
+        action === 'approve' ? setIsApproving(true) : setIsRejecting(true)
         const response = await api.put(
           `/applications/${applicationID}/status`,
           {
-            status: nextStatus,
+            status: nextStatus
           }
-        );
+        )
         if (response.status === 200) {
           showSuccessAlert(response.data.message, undefined, () =>
             setApplication(null)
-          );
+          )
         }
       } catch (error: any) {
         if (error.response.status === 404) {
-          showErrorAlert(error.response);
+          showErrorAlert(error.response)
         }
       } finally {
-        action === "approve" ? setIsApproving(false) : setIsRejecting(false);
-        console.log(application);
+        action === 'approve' ? setIsApproving(false) : setIsRejecting(false)
       }
     }
-  };
+  }
 
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
@@ -134,7 +131,7 @@ const ApplicationDetailsShelter = () => {
               className="h-60 w-60 sm:h-80 sm:w-80 object-cover rounded-lg"
             />
             <a
-              data-cy="shelter-link"
+              data-cy="pet-link"
               className="text-2xl sm:text-3xl text-primary font-bold whitespace-pre-line hover:underline"
               href={`/pet/${application.microchipID}`}
               target="_blank"
@@ -152,7 +149,10 @@ const ApplicationDetailsShelter = () => {
                 Application ID:
               </label>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+                <p
+                  data-cy="applicationID"
+                  className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+                >
                   {application.id}
                 </p>
               </div>
@@ -177,7 +177,10 @@ const ApplicationDetailsShelter = () => {
               <label className="text-gray-700 text-md sm:text-xl font-medium">
                 Submission Date:
               </label>
-              <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+              <p
+                data-cy="submission-date"
+                className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+              >
                 {new Date(application.submissionDate).toLocaleDateString()}
               </p>
             </div>
@@ -186,7 +189,10 @@ const ApplicationDetailsShelter = () => {
                 <label className="text-gray-700 text-md sm:text-xl font-medium">
                   Home Visit Date:
                 </label>
-                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+                <p
+                  data-cy="home-visit-date"
+                  className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+                >
                   {new Date(application.homeVisitDate).toLocaleString()}
                 </p>
               </div>
@@ -196,7 +202,10 @@ const ApplicationDetailsShelter = () => {
                 <label className="text-gray-700 text-md sm:text-xl font-medium">
                   Shelter Visit Date:
                 </label>
-                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+                <p
+                  data-cy="shelter-visit-date"
+                  className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+                >
                   {new Date(application.shelterVisitDate).toLocaleString()}
                 </p>
               </div>
@@ -258,13 +267,13 @@ const ApplicationDetailsShelter = () => {
                 </>
               ) : (
                 statusButtonText(
-                  getNextShelterStatus(application.status, "approve")
+                  getNextShelterStatus(application.status, 'approve')
                 ) && (
                   <>
                     <StatusButton
                       status={application.status}
                       action=""
-                      visitDate={application.homeVisitDate || ""}
+                      visitDate={application.homeVisitDate || ''}
                       isLoading={isLoading}
                       isApproving={isApproving}
                       isRejecting={isRejecting}
@@ -280,7 +289,7 @@ const ApplicationDetailsShelter = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ApplicationDetailsShelter;
+export default ApplicationDetailsShelter

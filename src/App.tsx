@@ -25,12 +25,11 @@ function App() {
     setIsLoading(isLoading)
   }, [appContext.isLoading])
   const isAuthenticated = appContext.loggedIn
-  console.log(isAuthenticated)
 
   const navigate = useNavigate()
   const handleLogout = async () => {
     try {
-      const response = await api.delete('/logout')
+      await api.delete('/logout')
       localStorage.removeItem('accessToken')
       localStorage.removeItem('userEmail')
       localStorage.removeItem('userName')
@@ -39,11 +38,7 @@ function App() {
       appContext.setDisplayName?.('')
       appContext.setUserRole?.('')
       navigate('/')
-
-      console.log(response.status)
-      console.log(appContext.loggedIn)
     } catch (error: any) {
-      console.error(error)
       if (error.response.status === 404) {
         navigate('/pagenotfound', { state: errorMessages.pageNotFound }) // And here
       }

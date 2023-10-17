@@ -1,38 +1,39 @@
-import { useNavigate } from "react-router-dom";
-import { Notification } from "../../types/interfaces";
-import { formatNotificationTime } from "../../utils/formatNotificationTime";
-import api from "../../api";
+import { useNavigate } from 'react-router-dom'
+import { Notification } from '../../types/interfaces'
+import { formatNotificationTime } from '../../utils/formatNotificationTime'
+import api from '../../api'
+import { showErrorAlert } from '../../utils/alert'
 
 interface NotificationCardProps {
-  notification: Notification;
+  notification: Notification
 }
 
 const NotificationCard = ({ notification }: NotificationCardProps) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handdleNotificationClick = async () => {
     try {
-      await MarkAsRead();
-      navigate(`${notification.actionUrl}`);
-    } catch (error) {
-      console.error("Failed in handleNotificationClick:", error);
+      await MarkAsRead()
+      navigate(`${notification.actionUrl}`)
+    } catch (error: any) {
+      showErrorAlert(error.response.data)
     }
-  };
+  }
 
   const MarkAsRead = async () => {
     try {
-      await api.put(`/notifications/${notification.id}/read`);
-    } catch (error) {
-      console.error("Failed to mark as read:", error);
+      await api.put(`/notifications/${notification.id}/read`)
+    } catch (error: any) {
+      showErrorAlert(error.response.data)
     }
-  };
+  }
 
   return (
     <div
       className={`p-4 cursor-pointer text-gray-600 ${
         notification.isRead
-          ? "bg-whiteCustom-10 hover:bg-gray-100"
-          : "bg-secondary-10 hover:bg-secondary-50"
+          ? 'bg-whiteCustom-10 hover:bg-gray-100'
+          : 'bg-secondary-10 hover:bg-secondary-50'
       }`}
       onClick={handdleNotificationClick}
     >
@@ -46,8 +47,8 @@ const NotificationCard = ({ notification }: NotificationCardProps) => {
         </div>
         <div className="flex-auto">
           <p className="text-lg font-semibold text-gray-600">
-            Status for Application ID:{" "}
-            <span className="font-bold">{notification.applicationID}</span>{" "}
+            Status for Application ID:{' '}
+            <span className="font-bold">{notification.applicationID}</span>{' '}
             updated to <span className="font-bold">{notification.status}</span>
           </p>
           <p className="text-sm text-gray-600 mt-1">
@@ -56,7 +57,7 @@ const NotificationCard = ({ notification }: NotificationCardProps) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NotificationCard;
+export default NotificationCard

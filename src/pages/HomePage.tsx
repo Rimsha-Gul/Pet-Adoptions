@@ -1,221 +1,183 @@
-import { useContext, useEffect, useState } from "react";
-import api from "../api";
-import { AppContext } from "../context/AppContext";
-import loadingIcon from "../assets/loading.gif";
-import Select from "react-select";
-import { FaSearch } from "react-icons/fa";
-import PetCard from "../components/PetComponents/PetCard";
-import InfiniteScroll from "react-infinite-scroll-component";
-import socket from "../socket/socket";
+import { useContext, useEffect, useState } from 'react'
+import api from '../api'
+import { AppContext } from '../context/AppContext'
+import loadingIcon from '../assets/loading.gif'
+import Select from 'react-select'
+import { FaSearch } from 'react-icons/fa'
+import PetCard from '../components/PetComponents/PetCard'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import socket from '../socket/socket'
 
 export interface Pet {
-  shelterID: string;
-  shelterName: string;
-  shelterRating: number;
-  microchipID: string;
-  name: string;
-  birthDate: string;
-  color: string;
-  bio: string;
-  images: string[];
-  applicationID?: string;
-  gender: string;
-  breed: string;
-  activityNeeds: string;
-  levelOfGrooming: string;
-  isHouseTrained: string;
+  shelterID: string
+  shelterName: string
+  shelterRating: number
+  microchipID: string
+  name: string
+  birthDate: string
+  color: string
+  bio: string
+  images: string[]
+  applicationID?: string
+  gender: string
+  breed: string
+  activityNeeds: string
+  levelOfGrooming: string
+  isHouseTrained: string
   healthInfo: {
-    healthCheck: boolean;
-    allergiesTreated: boolean;
-    wormed: boolean;
-    heartwormTreated: boolean;
-    vaccinated: boolean;
-    deSexed: boolean;
-  };
-  traits: string[];
-  adoptionFee: string;
-  hasAdoptionRequest: boolean;
-  isAdopted: boolean;
-  category: string;
+    healthCheck: boolean
+    allergiesTreated: boolean
+    wormed: boolean
+    heartwormTreated: boolean
+    vaccinated: boolean
+    deSexed: boolean
+  }
+  traits: string[]
+  adoptionFee: string
+  hasAdoptionRequest: boolean
+  isAdopted: boolean
+  category: string
 }
 
 const ageRange = (ages: number[]): string[] => {
-  const minAge = Math.min(...ages);
-  const maxAge = Math.max(...ages);
-  const rangeSize = Math.ceil((maxAge - minAge) / 5); // define the increment for age ranges
+  const minAge = Math.min(...ages)
+  const maxAge = Math.max(...ages)
+  const rangeSize = Math.ceil((maxAge - minAge) / 5) // define the increment for age ranges
 
-  const ageRanges = [];
+  const ageRanges = []
   for (let i = minAge; i < maxAge; i += rangeSize) {
-    const next = i + rangeSize;
+    const next = i + rangeSize
     ageRanges.push(
       next < maxAge ? `${i}-${next} years` : `${i} years and above`
-    );
+    )
   }
 
-  return ageRanges;
-};
+  return ageRanges
+}
 
 const HomePage = () => {
   const options = [
-    { value: "", label: "All" },
-    { value: "Cat", label: "Cat" },
-    { value: "Dog", label: "Dog" },
-    { value: "Horse", label: "Horse" },
-    { value: "Rabbit", label: "Rabbit" },
-    { value: "Bird", label: "Bird" },
-    { value: "Small and Furry", label: "Small & Furry" },
-    { value: "Scales, Fins and Others", label: "Scales, fins & others" },
-    { value: "Barnyard", label: "Barnyard" },
-  ];
+    { value: '', label: 'All' },
+    { value: 'Cat', label: 'Cat' },
+    { value: 'Dog', label: 'Dog' },
+    { value: 'Horse', label: 'Horse' },
+    { value: 'Rabbit', label: 'Rabbit' },
+    { value: 'Bird', label: 'Bird' },
+    { value: 'Small and Furry', label: 'Small & Furry' },
+    { value: 'Scales, Fins and Others', label: 'Scales, fins & others' },
+    { value: 'Barnyard', label: 'Barnyard' }
+  ]
   const customStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
-      border: state.isFocused ? "1px solid #ff5363" : "1px solid #9ca3af",
-      borderRadius: "0.375rem",
-      backgroundColor: "#fff",
-      padding: "0.5rem",
-      cursor: "pointer",
-      "&:hover": {
-        border: "1px solid #ff5363",
-      },
+      border: state.isFocused ? '1px solid #ff5363' : '1px solid #9ca3af',
+      borderRadius: '0.375rem',
+      backgroundColor: '#fff',
+      padding: '0.5rem',
+      cursor: 'pointer',
+      '&:hover': {
+        border: '1px solid #ff5363'
+      }
     }),
     option: (provided: any, state: { isSelected: any; isFocused: any }) => ({
       ...provided,
-      backgroundColor: state.isSelected ? "#ff5363" : "#fff",
-      color: state.isSelected ? "#fff" : "#000",
-      padding: "0.5rem",
-      "&:hover": {
-        backgroundColor: "#fb7a75",
-        color: "#fff",
-        cursor: "pointer",
-      },
-    }),
-  };
-  const appContext = useContext(AppContext);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false);
-  const [pets, setPets] = useState<Pet[]>([]);
-  const [petsLoadingError, setPetsLoadingError] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined);
-  const [filterOption, setFilterOption] = useState<string>("");
-  const [prevFilterOption, setPrevFilterOption] = useState<string>("");
-  const [prevSearchQuery, setPrevSearchQuery] = useState<string>("");
-  const [showExtraFilters, setShowExtraFilters] = useState<boolean>(false);
-  const [colors, setColors] = useState<string[]>([]);
-  const [colorFilter, setColorFilter] = useState<string>("");
-  const [ages, setAges] = useState<string[]>([]);
-  const [breeds, setBreeds] = useState<string[]>([]);
-  const [genders, setGenders] = useState<string[]>([]);
-  const [ageFilter, setAgeFilter] = useState<string>("");
-  const [breedFilter, setBreedFilter] = useState<string>("");
-  const [genderFilter, setGenderFilter] = useState<string>("");
-  const [noPetsFound, setNoPetsFound] = useState<boolean>(false);
-  const userEmail = localStorage.getItem("userEmail");
-
-  if (!appContext.loggedIn) {
-    //console.log(localStorage.getItem("userEmail"));
-    //return <Navigate to={"/"} />;
+      backgroundColor: state.isSelected ? '#ff5363' : '#fff',
+      color: state.isSelected ? '#fff' : '#000',
+      padding: '0.5rem',
+      '&:hover': {
+        backgroundColor: '#fb7a75',
+        color: '#fff',
+        cursor: 'pointer'
+      }
+    })
   }
+  const appContext = useContext(AppContext)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false)
+  const [pets, setPets] = useState<Pet[]>([])
+  const [petsLoadingError, setPetsLoadingError] = useState<string>('')
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
+  const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined)
+  const [filterOption, setFilterOption] = useState<string>('')
+  const [prevFilterOption, setPrevFilterOption] = useState<string>('')
+  const [prevSearchQuery, setPrevSearchQuery] = useState<string>('')
+  const [showExtraFilters, setShowExtraFilters] = useState<boolean>(false)
+  const [colors, setColors] = useState<string[]>([])
+  const [colorFilter, setColorFilter] = useState<string>('')
+  const [ages, setAges] = useState<string[]>([])
+  const [breeds, setBreeds] = useState<string[]>([])
+  const [genders, setGenders] = useState<string[]>([])
+  const [ageFilter, setAgeFilter] = useState<string>('')
+  const [breedFilter, setBreedFilter] = useState<string>('')
+  const [genderFilter, setGenderFilter] = useState<string>('')
+  const [noPetsFound, setNoPetsFound] = useState<boolean>(false)
+  const userEmail = localStorage.getItem('userEmail')
 
-  const accessToken = localStorage.getItem("accessToken");
-  console.log(accessToken);
-  api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-  //const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   const fetchSession = async () => {
-  //     try {
-  //       const response = await api.get("/session");
-
-  //       if (response.status === 200) {
-  //         appContext.setDisplayName?.(response.data.name);
-  //         appContext.setUserEmail?.(response.data.email);
-  //         appContext.setUserRole?.(response.data.role);
-  //         appContext.setProfilePhoto?.(response.data.profilePhoto);
-  //         //localStorage.setItem("userEmail", response.data.email);
-  //         //localStorage.setItem("userName", response.data.name);
-  //         //localStorage.setItem("userRole", response.data.role);
-  //         console.log(response.data);
-  //       }
-  //     } catch (error: any) {
-  //       // if (error.response.status === 401) {
-  //       //   console.error(error.response.status);
-  //       //   navigate("/");
-  //       // }
-  //     }
-  //   };
-
-  //   fetchSession();
-  // }, []);
+  const accessToken = localStorage.getItem('accessToken')
+  api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
   useEffect(() => {
-    console.log("userEmail", userEmail);
-    socket.emit("join_room", userEmail);
-  });
+    socket.emit('join_room', userEmail)
+  })
 
   useEffect(() => {
     // When category changes, reset all the filters
     if (prevFilterOption !== filterOption) {
-      setColorFilter("");
-      setAgeFilter("");
-      setBreedFilter("");
-      setGenderFilter("");
+      setColorFilter('')
+      setAgeFilter('')
+      setBreedFilter('')
+      setGenderFilter('')
     }
-  }, [filterOption]);
+  }, [filterOption])
 
   /// This effect is responsible for managing the debounce
   useEffect(() => {
     if (timeoutId !== null) {
-      window.clearTimeout(timeoutId);
+      window.clearTimeout(timeoutId)
     }
 
     const id = window.setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 500);
+      setDebouncedSearchQuery(searchQuery)
+    }, 500)
 
-    setTimeoutId(id);
+    setTimeoutId(id)
 
     return () => {
       if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
+        window.clearTimeout(timeoutId)
       }
-    };
-  }, [searchQuery]);
+    }
+  }, [searchQuery])
 
   useEffect(() => {
-    console.log("useEffect called");
-    fetchPets(currentPage);
+    fetchPets(currentPage)
   }, [
     filterOption,
     debouncedSearchQuery,
     colorFilter,
     ageFilter,
     breedFilter,
-    genderFilter,
-  ]);
+    genderFilter
+  ])
 
   const fetchPets = async (apiPage: number) => {
     try {
-      let page = apiPage;
-      console.log("In fetch pets");
-      setPetsLoadingError("");
-      setIsLoading(true);
+      let page = apiPage
+      setPetsLoadingError('')
+      setIsLoading(true)
       if (
         prevFilterOption !== filterOption ||
         prevSearchQuery !== searchQuery
       ) {
-        page = 1;
-        console.log("Current page: ", currentPage);
-        setCurrentPage(1);
-        console.log("api page: ", page);
-        setPrevFilterOption(filterOption);
-        setPrevSearchQuery(searchQuery);
+        page = 1
+        setCurrentPage(1)
+        setPrevFilterOption(filterOption)
+        setPrevSearchQuery(searchQuery)
       }
-      const response = await api.get("/pets", {
+      const response = await api.get('/pets', {
         params: {
           page,
           limit: 6,
@@ -224,57 +186,48 @@ const HomePage = () => {
           colorFilter,
           ageFilter,
           breedFilter,
-          genderFilter,
-        },
-      });
-      const { pets, totalPages, colors, ages, breeds, genders } = response.data;
-      console.log(totalPages);
-      console.log(colors);
-      appContext.setLoggedIn?.(true);
-      const ageRanges = ageRange(ages);
-      setNoPetsFound(false);
-      if (totalPages === 0) setNoPetsFound(true);
-      setPets(pets);
-      setTotalPages(totalPages);
-      setColors(colors);
-      setAges(ageRanges);
-      setBreeds(breeds);
-      setGenders(genders);
-      console.log("Total P: ", totalPages);
+          genderFilter
+        }
+      })
+      const { pets, totalPages, colors, ages, breeds, genders } = response.data
+      appContext.setLoggedIn?.(true)
+      const ageRanges = ageRange(ages)
+      setNoPetsFound(false)
+      if (totalPages === 0) setNoPetsFound(true)
+      setPets(pets)
+      setTotalPages(totalPages)
+      setColors(colors)
+      setAges(ageRanges)
+      setBreeds(breeds)
+      setGenders(genders)
     } catch (error: any) {
-      console.error(error);
-      //appContext.setLoggedIn?.(false);
-      // if (error.response.status === 401) {
-      //   console.error(error.response.status);
-      //   navigate("/");
-      // }
       if (error.response.status === 500) {
-        setPetsLoadingError("Failed to fetch pets");
+        setPetsLoadingError('Failed to fetch pets')
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleOptionChange = (selectedOption: any) => {
     if (selectedOption) {
-      setFilterOption(selectedOption.value);
-      setShowExtraFilters(selectedOption.value !== "");
+      setFilterOption(selectedOption.value)
+      setShowExtraFilters(selectedOption.value !== '')
     } else {
-      setFilterOption("");
-      setShowExtraFilters(false);
+      setFilterOption('')
+      setShowExtraFilters(false)
     }
-  };
+  }
 
   const loadMoreData = async () => {
     if (currentPage < totalPages) {
       try {
-        setIsMoreLoading(true);
-        setPetsLoadingError("");
-        const nextPage = currentPage + 1;
+        setIsMoreLoading(true)
+        setPetsLoadingError('')
+        const nextPage = currentPage + 1
 
         // Fetch the next page of data
-        const response = await api.get("/pets", {
+        const response = await api.get('/pets', {
           params: {
             page: nextPage,
             limit: 6,
@@ -283,9 +236,9 @@ const HomePage = () => {
             colorFilter,
             ageFilter,
             breedFilter,
-            genderFilter,
-          },
-        });
+            genderFilter
+          }
+        })
 
         const {
           pets: newPets,
@@ -293,47 +246,41 @@ const HomePage = () => {
           colors,
           ages,
           breeds,
-          genders,
-        } = response.data;
+          genders
+        } = response.data
 
         // Append the new pets to the existing pets
-        setPets((prevPets) => [...prevPets, ...newPets]);
-        setCurrentPage(nextPage);
-        setTotalPages(totalPages);
-        setColors(colors);
-        setAges(ages);
-        setBreeds(breeds);
-        setGenders(genders);
-        console.log("Updated pets:", pets);
+        setPets((prevPets) => [...prevPets, ...newPets])
+        setCurrentPage(nextPage)
+        setTotalPages(totalPages)
+        setColors(colors)
+        setAges(ages)
+        setBreeds(breeds)
+        setGenders(genders)
       } catch (error: any) {
-        //console.error(error);
-        // if (error.response.status === 401) {
-        //   console.error(error.response.status);
-        //   navigate("/");
-        // }
         if (error.response.status === 500) {
-          setPetsLoadingError("Failed to fetch pets");
+          setPetsLoadingError('Failed to fetch pets')
         }
       } finally {
-        setIsMoreLoading(false);
+        setIsMoreLoading(false)
       }
     }
-  };
+  }
 
   // Convert colors array to Select options
-  const colorOptions = colors.map((color) => ({ value: color, label: color }));
-  const ageOptions = ages.map((age) => ({ value: age, label: age }));
-  const breedOptions = breeds.map((breed) => ({ value: breed, label: breed }));
+  const colorOptions = colors.map((color) => ({ value: color, label: color }))
+  const ageOptions = ages.map((age) => ({ value: age, label: age }))
+  const breedOptions = breeds.map((breed) => ({ value: breed, label: breed }))
   const genderOptions = genders.map((gender) => ({
     value: gender,
-    label: gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase(),
-  }));
+    label: gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase()
+  }))
 
   // Add 'All' option
-  colorOptions.unshift({ value: "", label: "All" });
-  ageOptions.unshift({ value: "", label: "All" });
-  breedOptions.unshift({ value: "", label: "All" });
-  genderOptions.unshift({ value: "", label: "All" });
+  colorOptions.unshift({ value: '', label: 'All' })
+  ageOptions.unshift({ value: '', label: 'All' })
+  breedOptions.unshift({ value: '', label: 'All' })
+  genderOptions.unshift({ value: '', label: 'All' })
 
   return (
     <>
@@ -371,7 +318,7 @@ const HomePage = () => {
                 options={colorOptions}
                 styles={customStyles}
                 onChange={(selectedOption) =>
-                  setColorFilter(selectedOption?.value || "")
+                  setColorFilter(selectedOption?.value || '')
                 }
                 value={colorOptions.find(
                   (option) => option.value === colorFilter
@@ -385,7 +332,7 @@ const HomePage = () => {
                 options={ageOptions}
                 styles={customStyles}
                 onChange={(selectedOption) =>
-                  setAgeFilter(selectedOption?.value || "")
+                  setAgeFilter(selectedOption?.value || '')
                 }
                 value={ageOptions.find((option) => option.value === ageFilter)}
               />
@@ -397,7 +344,7 @@ const HomePage = () => {
                 options={breedOptions}
                 styles={customStyles}
                 onChange={(selectedOption) =>
-                  setBreedFilter(selectedOption?.value || "")
+                  setBreedFilter(selectedOption?.value || '')
                 }
                 value={breedOptions.find(
                   (option) => option.value === breedFilter
@@ -411,7 +358,7 @@ const HomePage = () => {
                 options={genderOptions}
                 styles={customStyles}
                 onChange={(selectedOption) =>
-                  setGenderFilter(selectedOption?.value || "")
+                  setGenderFilter(selectedOption?.value || '')
                 }
                 value={genderOptions.find(
                   (option) => option.value === genderFilter
@@ -463,6 +410,6 @@ const HomePage = () => {
         )}
       </div>
     </>
-  );
-};
-export default HomePage;
+  )
+}
+export default HomePage

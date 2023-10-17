@@ -141,7 +141,6 @@ const AddPet = () => {
         try {
           const response = await api.get('/shelters')
           if (response.status === 200) {
-            console.log(response.data)
             setShelters(
               response.data.map((shelter: { id: string; name: string }) => ({
                 label: shelter.name,
@@ -151,7 +150,6 @@ const AddPet = () => {
           }
         } catch (error: any) {
           if (error.response.status === 500) {
-            console.error('Server error:', error.response.data.message)
             setServerError(
               'An error occurred on the server. Please try again later.'
             )
@@ -214,7 +212,6 @@ const AddPet = () => {
   }
 
   const addAPet = async () => {
-    console.log(addPetData)
     try {
       setIsLoading(true)
       const formData = new FormData()
@@ -232,7 +229,6 @@ const AddPet = () => {
           formData.append('images', selectedFiles[i])
         }
       }
-      console.log('formdata: ', formData)
       const response = await api.post('/pets', formData, {
         headers: {
           'Content-Type': 'multipart/form-data' // Set the correct content type for FormData
@@ -240,9 +236,7 @@ const AddPet = () => {
       })
       if (response.status === 200) {
         setServerError('')
-        console.log('Response data: ', response.data)
         const pet: Pet = response.data
-        console.log('Pet: ', pet)
         showSuccessAlert(
           'The pet has been added successfully.',
           () =>
@@ -258,7 +252,6 @@ const AddPet = () => {
       }
     } catch (error: any) {
       if (error.response.status === 400) {
-        console.log(error.response)
         showErrorAlert(error.response.data)
 
         if (error.response.data === 'Invalid shelter ID.') {
@@ -267,7 +260,6 @@ const AddPet = () => {
             shelter: error.response.data
           }))
         } else if (error.response.data === 'Pet already exists.') {
-          console.log(error.response.data)
           setErrors((prevErrors) => ({
             ...prevErrors,
             microchipID: error.response.data
@@ -279,7 +271,6 @@ const AddPet = () => {
           }))
         }
       } else if (error.response.status === 500) {
-        console.error('Server error:', error.response.data)
         setServerError(
           'An error occurred on the server. Please try again later.'
         )

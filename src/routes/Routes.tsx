@@ -34,7 +34,6 @@ export const getRoutes = (
   userRole: string,
   existingUser: boolean
 ): RouteObject[] => {
-  console.log('authenticated: ', isAuthenticated)
   const adminRoutes = [InviteShelter]
   const userRoutes = [ScheduleHomeVisit]
   const adminAndShelterRoutes = [AddPet]
@@ -51,13 +50,10 @@ export const getRoutes = (
   const renderProtectedRoute = (Component: any) => {
     if (isAuthenticated) {
       if (sidebarRoutes.includes(Component)) {
-        // console.log("sidebar");
         if (adminAndShelterRoutes.includes(Component) && userRole === 'USER') {
-          // console.log("here");
           return <NotFoundPage />
         }
         if (adminRoutes.includes(Component) && userRole !== 'ADMIN') {
-          // console.log("now here");
           return <NotFoundPage />
         }
         return (
@@ -73,12 +69,9 @@ export const getRoutes = (
           </div>
         )
       } else {
-        console.log(userRole)
         if (userRoutes.includes(Component) && userRole !== 'USER') {
-          console.log('not user')
           return <NotFoundPage />
         } else {
-          console.log('yes user')
           return (
             <div className="flex flex-col">
               <PrimaryHeader handleLogout={handleLogout} />

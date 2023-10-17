@@ -45,9 +45,6 @@ const ShelterProfile = () => {
       try {
         setIsLoading(true)
         const response = await api.get(`/shelters/${shelterID}`)
-
-        console.log(response.data)
-        //const shelterData = response.data;
         setShelter(response.data)
         const reviewsResponse = await api.get(`/reviews/${shelterID}`, {
           params: {
@@ -55,13 +52,12 @@ const ShelterProfile = () => {
             limit: 3
           }
         })
-        console.log(reviewsResponse)
         const { reviews, totalPages } = reviewsResponse.data
         setReviews(reviews)
         setTotalPages(totalPages)
         setCurrentPage(1)
       } catch (error: any) {
-        console.log(error)
+        showErrorAlert(error.response.data)
       } finally {
         setIsLoading(false)
       }
@@ -71,13 +67,10 @@ const ShelterProfile = () => {
   }, [shelterID, shelter])
 
   const loadMoreData = async () => {
-    console.log('Load more reviews')
-    //console.log("currentPage", currentPage);
     if (currentPage < totalPages) {
       try {
         setIsMoreLoading(true)
         const nextPage = currentPage + 1
-        //console.log("nextPage", nextPage);
 
         // Fetch the next page of data
         const response = await api.get(`/reviews/${shelterID}`, {
@@ -86,16 +79,14 @@ const ShelterProfile = () => {
             limit: 3
           }
         })
-        //console.log(response.data);
         const { reviews: newReviews, totalPages } = response.data
 
         // Append the new reviews to the existing reviews
         setReviews((prevReviews) => [...prevReviews, ...newReviews])
         setCurrentPage(nextPage)
         setTotalPages(totalPages)
-        console.log('Updated reviews:', reviews)
       } catch (error: any) {
-        console.error(error.response.status)
+        showErrorAlert(error.response.data)
       } finally {
         setIsMoreLoading(false)
       }
@@ -103,7 +94,6 @@ const ShelterProfile = () => {
   }
 
   const handleReview = () => {
-    console.log('Review')
     setShowModal(true)
   }
 
@@ -135,7 +125,6 @@ const ShelterProfile = () => {
   }, [errors])
 
   const handleReviewSubmit = (event: any) => {
-    console.log(reviewData)
     event.preventDefault()
     submitReview()
   }
@@ -146,7 +135,6 @@ const ShelterProfile = () => {
       const response = await api.post(`/reviews/${shelterID}`, reviewData)
       if (response.status === 200) {
         setShowModal(false)
-        console.log(response.data)
         showSuccessAlert(response.data.message, undefined, () =>
           setShelter(null)
         )
@@ -203,7 +191,7 @@ const ShelterProfile = () => {
                     starSpacing="5px"
                     starRatedColor="gold"
                   />
-                  <p className="text-lg text-gray-600">
+                  <p data-cy="shelter-rating" className="text-lg text-gray-600">
                     {shelter.rating.toFixed(1)} ({shelter.numberOfReviews}{' '}
                     {shelter.numberOfReviews > 1 ? 'reviews' : 'review'})
                   </p>
@@ -280,6 +268,7 @@ const ShelterProfile = () => {
                           ) : (
                             <div className="mt-4">
                               <textarea
+                                data-cy="reviewText"
                                 name="reviewText"
                                 className="p-2 border resize rounded-md w-full"
                                 placeholder={field.placeholder}

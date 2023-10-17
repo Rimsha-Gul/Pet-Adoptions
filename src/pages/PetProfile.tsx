@@ -1,49 +1,49 @@
-import { useNavigate, useParams } from "react-router-dom";
-import PetImagesCarousel from "../components/PetComponents/PetImagesCarousel";
-import PetBasicInfo from "../components/PetComponents/PetBasicInfo";
-import PetAdditionalInfo from "../components/PetComponents/PetAdditionalInfo";
-import PetTraits from "../components/PetComponents/PetTraits";
-import PetAdoptionApply from "../components/PetComponents/PetAdoptionApply";
-import api from "../api";
-import { useEffect, useState } from "react";
-import loadingIcon from "../assets/loading.gif";
-import { Pet } from "./HomePage";
+import { useNavigate, useParams } from 'react-router-dom'
+import PetImagesCarousel from '../components/PetComponents/PetImagesCarousel'
+import PetBasicInfo from '../components/PetComponents/PetBasicInfo'
+import PetAdditionalInfo from '../components/PetComponents/PetAdditionalInfo'
+import PetTraits from '../components/PetComponents/PetTraits'
+import PetAdoptionApply from '../components/PetComponents/PetAdoptionApply'
+import api from '../api'
+import { useEffect, useState } from 'react'
+import loadingIcon from '../assets/loading.gif'
+import { Pet } from './HomePage'
+import { showErrorAlert } from '../utils/alert'
 
-const accessToken = localStorage.getItem("accessToken");
-api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+const accessToken = localStorage.getItem('accessToken')
+api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
 const PetProfile = () => {
-  const navigate = useNavigate();
-  const [pet, setPet] = useState<Pet | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { petID } = useParams();
+  const navigate = useNavigate()
+  const [pet, setPet] = useState<Pet | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { petID } = useParams()
 
   useEffect(() => {
     const fetchPet = async () => {
       try {
-        setIsLoading(true);
-        const response = await api.get(`/pets/${petID}`);
-        setPet(response.data.pet);
-      } catch (error) {
-        console.error(error);
+        setIsLoading(true)
+        const response = await api.get(`/pets/${petID}`)
+        setPet(response.data.pet)
+      } catch (error: any) {
+        showErrorAlert(error.response.data)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
     if (petID && !pet) {
-      fetchPet();
+      fetchPet()
     }
-  }, [petID, pet]);
-  console.log(pet);
+  }, [petID, pet])
 
   const handleAdoptionApply = () => {
-    navigate(`/adoptionApplication/${pet?.microchipID || ""}`);
-  };
+    navigate(`/adoptionApplication/${pet?.microchipID || ''}`)
+  }
 
   const handleViewApplication = () => {
-    navigate(`/view/application/${pet?.applicationID}`);
-  };
+    navigate(`/view/application/${pet?.applicationID}`)
+  }
 
   return (
     <>
@@ -59,7 +59,7 @@ const PetProfile = () => {
           <PetImagesCarousel petImages={pet.images} />
           <div className="flex flex-col md:flex-row justify-center w-full px-8 space-y-8 md:space-y-0 md:space-x-8">
             <div className="w-full md:w-3/4 mx-auto max-w-6xl">
-              <PetBasicInfo petBio={pet.bio.replace(/\\n/g, "\n \n")} />
+              <PetBasicInfo petBio={pet.bio.replace(/\\n/g, '\n \n')} />
             </div>
             <div className="w-full md:w-1/4">
               <PetAdditionalInfo
@@ -92,8 +92,8 @@ const PetProfile = () => {
                 }
                 text={
                   pet.hasAdoptionRequest
-                    ? "View Application Status"
-                    : "Apply for Adoption"
+                    ? 'View Application Status'
+                    : 'Apply for Adoption'
                 }
                 isAdopted={pet.isAdopted}
               />
@@ -102,7 +102,7 @@ const PetProfile = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default PetProfile;
+export default PetProfile

@@ -10,7 +10,7 @@ import api from '../api'
 import { AppContext } from '../context/AppContext'
 import loadingIcon from '../assets/loading.gif'
 import { MdModeEditOutline } from 'react-icons/md'
-import { showSuccessAlert } from '../utils/alert'
+import { showErrorAlert, showSuccessAlert } from '../utils/alert'
 import { useNavigate } from 'react-router-dom'
 import { User } from '../types/interfaces'
 import { UserRole } from '../types/enums'
@@ -54,7 +54,6 @@ const UserProfile = () => {
         setIsFetching(true)
         const response = await api.get('/session')
         if (response.status === 200) {
-          console.log(response.data)
           const userData = response.data
           setUser({
             profilePhoto: userData.profilePhoto || '',
@@ -70,12 +69,10 @@ const UserProfile = () => {
             address: userData.address || '',
             bio: userData.bio || ''
           })
-          console.log(user.profilePhoto)
-          console.log(user.email)
           appContext.setProfilePhoto?.(response.data.profilePhoto)
         }
       } catch (error: any) {
-        console.log(error)
+        showErrorAlert(error.response.data)
       } finally {
         setIsFetching(false)
       }
@@ -109,7 +106,6 @@ const UserProfile = () => {
   }, [])
 
   const handleEditIconClick = () => {
-    console.log('clicked')
     setShowMenu(!showMenu)
   }
 
@@ -162,7 +158,6 @@ const UserProfile = () => {
     if (user.name !== prevUser.name) updates.name = user.name
     if (user.address !== prevUser.address) updates.address = user.address
     if (user.bio !== prevUser.bio) updates.bio = user.bio
-    console.log(updates)
     if (Object.keys(updates).length > 0) {
       try {
         const formData = new FormData()
@@ -180,22 +175,17 @@ const UserProfile = () => {
           )
         }
 
-        console.log('formData')
-        for (const pair of formData.entries()) {
-          console.log(pair[0] + ', ' + pair[1])
-        }
         const response = await api.put('/auth/profile', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         })
 
-        console.log(response.data)
         showSuccessAlert(response.data.message, undefined, () =>
           navigate('/userProfile')
         )
       } catch (error: any) {
-        console.log(error)
+        showErrorAlert(error.response.data)
       }
     }
     setIsLoading(false)

@@ -1,70 +1,71 @@
-import { useContext, useEffect, useState } from "react";
-import api from "../api";
-import { NotificationsContext } from "../context/NotificationsContext";
-import loadingIcon from "../assets/loading.gif";
-import InfiniteScroll from "react-infinite-scroll-component";
-import NotificationCard from "../components/NotificationsComponents/NotificationCard";
+import { useContext, useEffect, useState } from 'react'
+import api from '../api'
+import { NotificationsContext } from '../context/NotificationsContext'
+import loadingIcon from '../assets/loading.gif'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import NotificationCard from '../components/NotificationsComponents/NotificationCard'
+import { showErrorAlert } from '../utils/alert'
 
 const Notifications = () => {
-  const [areFetched, setAreFetched] = useState<boolean>(false);
-  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const notificationsContext = useContext(NotificationsContext);
-  const notifications = notificationsContext.notifications;
+  const [areFetched, setAreFetched] = useState<boolean>(false)
+  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const notificationsContext = useContext(NotificationsContext)
+  const notifications = notificationsContext.notifications
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        setAreFetched(true);
-        const response = await api.get("/notifications/", {
+        setAreFetched(true)
+        const response = await api.get('/notifications/', {
           params: {
             page: 1,
-            limit: 8,
-          },
-        });
-        const { notifications, totalPages } = response.data;
-        notificationsContext.setNotifications?.(notifications);
-        setCurrentPage(1);
-        setTotalPages(totalPages);
-      } catch (error) {
-        console.error("Failed to fetch notifications:", error);
+            limit: 8
+          }
+        })
+        const { notifications, totalPages } = response.data
+        notificationsContext.setNotifications?.(notifications)
+        setCurrentPage(1)
+        setTotalPages(totalPages)
+      } catch (error: any) {
+        showErrorAlert(error.response.data)
       } finally {
-        setAreFetched(false);
+        setAreFetched(false)
       }
-    };
+    }
 
-    fetchNotifications();
-  }, []);
+    fetchNotifications()
+  }, [])
 
   const loadMoreData = async () => {
     if (currentPage < totalPages) {
       try {
-        setIsMoreLoading(true);
-        const nextPage = currentPage + 1;
+        setIsMoreLoading(true)
+        const nextPage = currentPage + 1
 
         // Fetch the next page of data
-        const response = await api.get("/notifications/", {
+        const response = await api.get('/notifications/', {
           params: {
             page: nextPage,
-            limit: 8,
-          },
-        });
-        const { notifications: newApplicatiions, totalPages } = response.data;
+            limit: 8
+          }
+        })
+        const { notifications: newApplicatiions, totalPages } = response.data
 
         // Append the new notifications to the existing notifications
         notificationsContext.setNotifications?.((prevApps) => [
           ...prevApps,
-          ...newApplicatiions,
-        ]);
-        setCurrentPage(nextPage);
-        setTotalPages(totalPages);
+          ...newApplicatiions
+        ])
+        setCurrentPage(nextPage)
+        setTotalPages(totalPages)
       } catch (error: any) {
-        console.error(error.response.status);
+        showErrorAlert(error.response.data)
       } finally {
-        setIsMoreLoading(false);
+        setIsMoreLoading(false)
       }
     }
-  };
+  }
 
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
@@ -105,7 +106,7 @@ const Notifications = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Notifications;
+export default Notifications

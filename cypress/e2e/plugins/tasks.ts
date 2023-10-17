@@ -161,7 +161,6 @@ export const plugins = async (on: any) => {
       if (!user) {
         throw new Error('User not found')
       }
-      console.log(user.verificationCode)
       return { verificationCode: user.verificationCode.code }
     },
 
@@ -173,7 +172,6 @@ export const plugins = async (on: any) => {
       if (!invitation) {
         throw new Error('Invitation not found')
       }
-      console.log('inv t: ', invitation.invitationToken)
       return { invitationToken: invitation.invitationToken }
     },
 
@@ -194,31 +192,21 @@ export const plugins = async (on: any) => {
     },
 
     async login({ email }: { email: string }): Promise<LoginResponse> {
-      try {
-        console.log(process.env.API_BASE_URL)
-        console.log(email)
-        const response = await axios.post(
-          `${process.env.API_BASE_URL}/auth/login`,
-          {
-            email: email,
-            password: '123456'
-          }
-        )
-
-        if (response.status !== 200) {
-          throw new Error('Failed to log in')
+      const response = await axios.post(
+        `${process.env.API_BASE_URL}/auth/login`,
+        {
+          email: email,
+          password: '123456'
         }
+      )
 
-        const { accessToken, refreshToken } = response.data.tokens
-
-        return { accessToken, refreshToken }
-      } catch (error: any) {
-        console.error(
-          'Error logging in:',
-          error.response ? error.response.data : error.message
-        )
-        throw error
+      if (response.status !== 200) {
+        throw new Error('Failed to log in')
       }
+
+      const { accessToken, refreshToken } = response.data.tokens
+
+      return { accessToken, refreshToken }
     },
 
     async deleteMany({ collection, params }: DeleteManyProps) {

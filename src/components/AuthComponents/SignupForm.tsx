@@ -94,7 +94,6 @@ const SignupForm = ({
       appContext.setUserEmail?.(signupData.email)
       setIsLoading(true)
       const response = await api.post('/auth/signup', signupData)
-      console.log(response.data)
       if (response.status === 200) {
         navigate('/verifyemail')
       }
@@ -107,7 +106,6 @@ const SignupForm = ({
       } else if (error.response.status === 400) {
         setCredentialsError(error.response.data)
       }
-      console.error(error)
     } finally {
       setIsLoading(false)
     }

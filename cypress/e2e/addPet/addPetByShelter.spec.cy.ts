@@ -32,7 +32,6 @@ describe('Successfully add pet', () => {
 
     cy.task('login', { email: 'test-shelter@example.com' }).then((response) => {
       const { accessToken, refreshToken } = response as LoginResponse
-      console.log('userEmail: ', 'test-shelter@example.com')
       cy.log('userEmail: ', 'test-shelter@example.com')
 
       cy.setLocalStorage('accessToken', accessToken)
@@ -49,9 +48,9 @@ describe('Successfully add pet', () => {
     cy.get('#category').click()
     cy.get('[id="react-select-5-listbox"]').contains('Small & Furry').click()
 
-    cy.get('input[name=microchipID]').type('A123456789')
+    cy.get('input[data-cy=microchipID]').type('A123456789')
 
-    cy.get('input[name=petName]').type('Snowball')
+    cy.get('input[data-cy=petName]').type('Snowball')
 
     cy.get('#gender').click()
     cy.get('[id="react-select-7-listbox"]').contains('Male').click()
@@ -59,9 +58,9 @@ describe('Successfully add pet', () => {
     cy.get('[placeholder=YYYY-MM-DD]').click().type('2020-02-20')
     cy.get('body').click(0, 0)
 
-    cy.get('input[name=breed]').type('Mini Rex')
+    cy.get('input[data-cy=breed]').type('Mini Rex')
 
-    cy.get('input[name=color]').type('White')
+    cy.get('input[data-cy=color]').type('White')
 
     cy.get('#activityNeeds').click()
     cy.get('[id="react-select-9-listbox"]').contains('Very Low').click()
@@ -74,12 +73,12 @@ describe('Successfully add pet', () => {
     cy.get('[data-cy=wormed-div]').find('.react-switch-handle').click()
     cy.get('[data-cy=vaccinated-div]').find('.react-switch-handle').click()
 
-    cy.get('input[name=traits]').type('Playful, Social')
-    cy.get('input[name=adoptionFee]').type('100')
+    cy.get('input[data-cy=traits]').type('Playful, Social')
+    cy.get('input[data-cy=adoptionFee]').type('100')
     cy.get('#currency').click()
     cy.get('[id="react-select-13-listbox"]').contains('USD').click()
 
-    cy.get('textarea[name=bio]').type(
+    cy.get('textarea[data-cy=bio]').type(
       'Snowball, an alluring male Mini Lop rabbit, boasts a pristine white coat that perfectly mirrors his name. Born in 2020, his vibrant curiosity and playful energy are well-balanced by a gentle, sociable nature, which is a hallmark of his breed. His dark, expressive eyes add to his endearing charm.'
     )
 

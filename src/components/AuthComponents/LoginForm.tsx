@@ -63,7 +63,6 @@ const LoginForm = () => {
   //Handle Login API Integration
   const authenticateUser = async () => {
     localStorage.setItem('userEmail', loginData.email)
-    console.log(loginData)
     try {
       setCredentialsError('')
       setIsLoading(true)
@@ -74,7 +73,6 @@ const LoginForm = () => {
         const { tokens } = response.data
         localStorage.setItem('accessToken', tokens.accessToken)
         localStorage.setItem('refreshToken', tokens.refreshToken)
-        console.log('go home')
         navigate('/homepage')
       }
     } catch (error: any) {
@@ -87,7 +85,6 @@ const LoginForm = () => {
         setCredentialsError('Invalid credentials!')
       } else if (error.response.status === 403) {
         // Handle user not verified error
-        console.log(appContext.userEmail)
         navigate('/verifyemail')
       }
     } finally {

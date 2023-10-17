@@ -1,71 +1,64 @@
-import { useContext, useState } from "react";
-import loadingIcon from "../assets/loading.gif";
-import api from "../api";
-import {
-  showErrorAlert,
-  showInfoAlert,
-  showSuccessAlert,
-} from "../utils/alert";
-import { AppContext } from "../context/AppContext";
+import { useState } from 'react'
+import loadingIcon from '../assets/loading.gif'
+import api from '../api'
+import { showErrorAlert, showInfoAlert, showSuccessAlert } from '../utils/alert'
 
 const InviteShelter = () => {
-  const [shelterEmail, setShelterEmail] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const appContext = useContext(AppContext);
+  const [shelterEmail, setShelterEmail] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleShelterInvite = async (e: any) => {
-    e.preventDefault();
-    inviteShelter();
-  };
+    e.preventDefault()
+    inviteShelter()
+  }
 
   const inviteShelter = async () => {
     try {
-      setIsLoading(true);
-      const response = await api.post("/shelters/invitations", {
-        email: shelterEmail,
-      });
+      setIsLoading(true)
+      const response = await api.post('/shelters/invitations', {
+        email: shelterEmail
+      })
       if (response.status === 200) {
-        setShelterEmail("");
-        showSuccessAlert(response.data.message, undefined);
+        setShelterEmail('')
+        showSuccessAlert(response.data.message, undefined)
       }
     } catch (error: any) {
       if (
         error.response.status === 409 &&
-        error.response.data === "User already  exists, which is not a shelter"
+        error.response.data === 'User already  exists, which is not a shelter'
       ) {
         showInfoAlert(
           `The email you entered is already associated with a 'User' account. To proceed with the 'Shelter' invitation, kindly notify the owner of this email to provide a different email address for their 'Shelter' registration. Would you like to notify them now?
 `,
-          "Yes",
-          "No",
+          'Yes',
+          'No',
           () => changeUserRole()
-        );
+        )
       } else {
-        showErrorAlert(error.response.data);
+        showErrorAlert(error.response.data)
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const changeUserRole = async () => {
     try {
-      setIsLoading(true);
+      setIsLoading(true)
 
-      console.log(appContext.userRole);
-      const response = await api.post("/auth/email/alternate", {
-        email: shelterEmail,
-      });
+      const response = await api.post('/auth/email/alternate', {
+        email: shelterEmail
+      })
       if (response.status === 200) {
-        setShelterEmail("");
-        showSuccessAlert(response.data.message, undefined);
+        setShelterEmail('')
+        showSuccessAlert(response.data.message, undefined)
       }
     } catch (error: any) {
-      showErrorAlert(error.response.data);
+      showErrorAlert(error.response.data)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
@@ -86,7 +79,7 @@ const InviteShelter = () => {
             </div>
             <button
               className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer ${
-                isLoading ? "bg-primary text-white cursor-not-allowed" : ""
+                isLoading ? 'bg-primary text-white cursor-not-allowed' : ''
               } `}
               type="submit"
             >
@@ -99,7 +92,7 @@ const InviteShelter = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default InviteShelter;
+export default InviteShelter

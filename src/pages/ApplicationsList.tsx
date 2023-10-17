@@ -57,10 +57,6 @@ const ViewApplications = () => {
   const [applicationStatusFilter, setApplicationStatusFilter] =
     useState<string>('')
 
-  useEffect(() => {
-    //console.log("Updated applications:", applications);
-  }, [applications])
-
   // This effect is responsible for managing the debounce
   useEffect(() => {
     if (timeoutId !== null) {
@@ -86,7 +82,6 @@ const ViewApplications = () => {
 
   const fetchApplications = async (apiPage: number) => {
     try {
-      console.log('fetch applications')
       const page = apiPage
       console.log(page)
 
@@ -102,8 +97,6 @@ const ViewApplications = () => {
         }
       })
 
-      //console.log(response.data);
-      //console.log(response.data.applications.length === 0);
       const { applications, totalPages, applicationStatuses } = response.data
       setNoApplications(false)
       if (totalPages === 0) setNoApplications(true)
@@ -111,9 +104,7 @@ const ViewApplications = () => {
       setTotalPages(totalPages)
       setApplicationStatuses(applicationStatuses)
       setCurrentPage(1)
-      //console.log(totalPages);
     } catch (error: any) {
-      console.error(error)
       setApplicationsLoadingError(error.response.data)
     } finally {
       setIsLoading(false)
@@ -121,13 +112,10 @@ const ViewApplications = () => {
   }
 
   const loadMoreData = async () => {
-    //console.log("Load more applications");
-    //console.log("currentPage", currentPage);
     if (currentPage < totalPages) {
       try {
         setIsMoreLoading(true)
         const nextPage = currentPage + 1
-        //console.log("nextPage", nextPage);
 
         // Fetch the next page of data
         const response = await api.get('/applications', {
@@ -138,7 +126,6 @@ const ViewApplications = () => {
             applicationStatusFilter
           }
         })
-        //console.log(response.data);
         const {
           applications: newApplicatiions,
           totalPages,
@@ -150,9 +137,7 @@ const ViewApplications = () => {
         setCurrentPage(nextPage)
         setTotalPages(totalPages)
         setApplicationStatuses(applicationStatuses)
-        //console.log("Updated applications:", applications);
       } catch (error: any) {
-        console.error(error.response.status)
         setApplicationsLoadingError(error.response.data)
       } finally {
         setIsMoreLoading(false)
@@ -166,7 +151,6 @@ const ViewApplications = () => {
   }))
 
   applicationStatusOptions.unshift({ value: '', label: 'All' })
-  console.log('noApplications', noApplications)
   return (
     <>
       <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">

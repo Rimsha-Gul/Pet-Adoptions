@@ -1,18 +1,17 @@
-import { useContext } from "react";
-import { AppContext } from "../context/AppContext";
-import ApplicationDetailsUser from "../components/ApplicationComponents/ApplicationDetailsUser";
-import ApplicationDetailsShelter from "../components/ApplicationComponents/ApplicationDetailsShelter";
+import { useContext } from 'react'
+import { AppContext } from '../context/AppContext'
+import ApplicationDetailsUser from '../components/ApplicationComponents/ApplicationDetailsUser'
+import ApplicationDetailsShelter from '../components/ApplicationComponents/ApplicationDetailsShelter'
 
 const Application = () => {
-  const appContext = useContext(AppContext);
-  const userRole = appContext.userRole;
-  console.log(userRole);
+  const appContext = useContext(AppContext)
+  const userRole = appContext.userRole
 
-  return userRole === "USER" ? (
+  return userRole === 'USER' ? (
     <ApplicationDetailsUser />
   ) : (
     <ApplicationDetailsShelter />
-  );
-};
+  )
+}
 
-export default Application;
+export default Application

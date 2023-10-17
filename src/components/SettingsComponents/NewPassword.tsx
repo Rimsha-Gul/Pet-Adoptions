@@ -81,7 +81,6 @@ const NewPassword = ({
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-    console.log(changePasswordState)
     requestType === RequestType.changePassword
       ? changePassword()
       : resetPassword()
@@ -92,7 +91,6 @@ const NewPassword = ({
       setIsLoading(true)
 
       const accessToken = localStorage.getItem('accessToken')
-      console.log(accessToken)
 
       api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
       const response = await api.put('/auth/password', {

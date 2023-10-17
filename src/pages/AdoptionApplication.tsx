@@ -75,27 +75,23 @@ const AdoptionApplication = () => {
   })
 
   const { petID } = useParams()
-  console.log(petID)
   useEffect(() => {
     const fetchPet = async () => {
-      console.log('fetch pet')
       try {
         setIsLoading(true)
         const response = await api.get(`/pets/${petID}`)
         setPet(response.data.pet)
-      } catch (error) {
-        console.error(error)
+      } catch (error: any) {
+        showErrorAlert(error.response.data)
       } finally {
         setIsLoading(false)
       }
     }
 
     if (petID && !pet) {
-      console.log('should fetch')
       fetchPet()
     }
   }, [petID, pet])
-  console.log(pet)
 
   const handleChange = (e: { target: { id: any; value: any } }) => {
     const { id, value } = e.target
@@ -158,11 +154,9 @@ const AdoptionApplication = () => {
   }, [errors])
 
   const handleSubmit = (e: FormEvent) => {
-    console.log(errors)
     e.preventDefault()
     applyForPet()
   }
-  console.log(pet)
 
   const adoptPetData = {
     shelterID: pet?.shelterID,
@@ -191,13 +185,10 @@ const AdoptionApplication = () => {
   }
 
   const applyForPet = async () => {
-    console.log(adoptPetData)
     try {
       setIsLoading(true)
       const response = await api.post('/applications/', adoptPetData)
-      console.log(response)
       const id = response.data.application.id
-      console.log(id)
       showSuccessAlert(
         'Application submitted successfully.',
         () => navigate(`/view/application/${id}`),
@@ -216,7 +207,6 @@ const AdoptionApplication = () => {
       )
     } catch (error: any) {
       if (error.response.status === 400) {
-        console.log(error.response)
         showErrorAlert(error.response.data)
       } else if (error.response.status === 500) {
         showErrorAlert(

@@ -1,14 +1,13 @@
 interface ReactivationRequestProps {
   reactivationRequest: {
-    reasonNotScheduled: string;
-    reasonToReactivate: string;
-  };
+    reasonNotScheduled: string
+    reasonToReactivate: string
+  }
 }
 
 const ReactivationRequestDetails = ({
-  reactivationRequest,
+  reactivationRequest
 }: ReactivationRequestProps) => {
-  console.log(reactivationRequest);
   return (
     <div>
       <h2 className="text-xl sm:text-2xl text-primary font-bold mb-4 mt-2">
@@ -57,7 +56,7 @@ const ReactivationRequestDetails = ({
         </p>
       </div> */}
     </div>
-  );
-};
+  )
+}
 
-export default ReactivationRequestDetails;
+export default ReactivationRequestDetails

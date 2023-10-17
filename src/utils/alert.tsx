@@ -59,9 +59,6 @@ export const showInfoAlert = (
     confirmButtonColor: '#ff5363',
     denyButtonColor: '#aaa'
   }).then((result) => {
-    console.log(onConfirm)
-    console.log(onCancel)
-    console.log(result)
     if (result.isConfirmed && onConfirm) {
       onConfirm()
     } else if (result.isDenied && onCancel) {

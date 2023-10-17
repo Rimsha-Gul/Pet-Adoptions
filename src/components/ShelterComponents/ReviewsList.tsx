@@ -124,7 +124,6 @@ const ReviewList = ({
       const response = await api.put(`/reviews/${shelterID}`, reviewData)
       if (response.status === 200) {
         setShowEditModal(false)
-        console.log(response.data)
         showSuccessAlert(response.data.message, undefined, () =>
           setShelter(null)
         )
@@ -175,7 +174,7 @@ const ReviewList = ({
               className="border rounded-lg p-4 mb-4 bg-secondary-10 shadow-lg rounded-md"
             >
               <div className="flex justify-between items-center">
-                <h3 className="text-xl font-semibold">
+                <h3 data-cy="applicant-name" className="text-xl font-semibold">
                   {review.applicantName}
                 </h3>
                 {review.applicantEmail === userEmail && (
@@ -219,7 +218,9 @@ const ReviewList = ({
                 starSpacing="5px"
                 starRatedColor="gold"
               />
-              <p className="mt-2 text-justify">{review.reviewText}</p>
+              <p data-cy="review-text" className="mt-2 text-justify">
+                {review.reviewText}
+              </p>
             </div>
           ))}
         </div>
@@ -239,7 +240,10 @@ const ReviewList = ({
             >
               &#8203;
             </span>
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
+            <div
+              data-cy="review-modal"
+              className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full"
+            >
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                 <div className="sm:flex sm:items-start">
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -274,6 +278,7 @@ const ReviewList = ({
                       ) : (
                         <div className="mt-4">
                           <textarea
+                            data-cy="reviewText"
                             name="reviewText"
                             className="p-2 border resize rounded-md w-full"
                             placeholder={field.placeholder}

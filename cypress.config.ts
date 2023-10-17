@@ -7,7 +7,7 @@ import { plugins } from './cypress/e2e/plugins/tasks'
 export default defineConfig({
   numTestsKeptInMemory: 100,
   e2e: {
-    baseUrl: 'http:/localhost:5173',
+    baseUrl: 'http://localhost:5173',
     setupNodeEvents: plugins
   }
 })

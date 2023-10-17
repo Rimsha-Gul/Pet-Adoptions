@@ -198,6 +198,7 @@ const Input = ({
           {labelText}
         </label>
         <textarea
+          data-cy={`${id}`}
           onChange={handleChange}
           onBlur={handleBlur}
           value={value}
@@ -256,6 +257,7 @@ const Input = ({
       </label>
       <div className="relative">
         <input
+          data-cy={`${id}`}
           onChange={handleChange}
           onBlur={handleBlur}
           value={value}
