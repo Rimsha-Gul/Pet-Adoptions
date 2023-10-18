@@ -335,6 +335,7 @@ const AddPet = () => {
                       if (field.id === 'images') {
                         return (
                           <FileInput
+                            key={field.id}
                             selectedFiles={selectedFiles}
                             setSelectedFiles={setSelectedFiles}
                             previews={previews}

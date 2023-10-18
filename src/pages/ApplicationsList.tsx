@@ -77,14 +77,11 @@ const ViewApplications = () => {
   }, [searchQuery])
 
   useEffect(() => {
-    fetchApplications(currentPage)
+    fetchApplications()
   }, [debouncedSearchQuery, applicationStatusFilter])
 
-  const fetchApplications = async (apiPage: number) => {
+  const fetchApplications = async () => {
     try {
-      const page = apiPage
-      console.log(page)
-
       setApplicationsLoadingError('')
 
       setIsLoading(true)

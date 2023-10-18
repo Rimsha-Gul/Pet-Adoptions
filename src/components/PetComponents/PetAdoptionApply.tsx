@@ -1,16 +1,16 @@
-import { FormEvent, useContext } from "react";
-import { AppContext } from "../../context/AppContext";
-import StarRatings from "react-star-ratings";
-import { BiLinkExternal } from "react-icons/bi";
+import { FormEvent, useContext } from 'react'
+import { AppContext } from '../../context/AppContext'
+import StarRatings from 'react-star-ratings'
+import { BiLinkExternal } from 'react-icons/bi'
 
 interface PetAdoptionApplyProps {
-  petShelterID: string;
-  petShelterName: string;
-  petShelterRating: number;
-  petAdoptionFee: string;
-  handleSubmit: (e: FormEvent) => void;
-  text: string;
-  isAdopted: boolean;
+  petShelterID: string
+  petShelterName: string
+  petShelterRating: number
+  petAdoptionFee: string
+  handleSubmit: (e: FormEvent) => void
+  text: string
+  isAdopted: boolean
 }
 
 const PetAdoptionApply = ({
@@ -20,14 +20,14 @@ const PetAdoptionApply = ({
   petAdoptionFee,
   handleSubmit,
   text,
-  isAdopted,
+  isAdopted
 }: PetAdoptionApplyProps) => {
-  const appContext = useContext(AppContext);
-  const userRole = appContext.userRole;
+  const appContext = useContext(AppContext)
+  const userRole = appContext.userRole
 
   return (
     <div className="flex flex-col gap-6 max-w-9xl p-8 sm:p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
-      <p className="text-lg flex flex-wrap items-end gap-2">
+      <div className="text-lg flex flex-wrap items-end gap-2">
         <span className="text-primary font-bold">Shelter Name:</span>
         <a
           data-cy="shelter-link"
@@ -44,7 +44,7 @@ const PetAdoptionApply = ({
             <BiLinkExternal className="w-5 h-5" />
           </span>
         </a>
-        {petShelterRating !== 0 && (
+        {petShelterRating && petShelterRating !== 0 && (
           <>
             <StarRatings
               rating={petShelterRating}
@@ -57,13 +57,13 @@ const PetAdoptionApply = ({
             </span>
           </>
         )}
-      </p>
+      </div>
       <p className="text-lg text-gray-500">
-        <span className="text-primary font-bold">Adoption Fee:</span>{" "}
+        <span className="text-primary font-bold">Adoption Fee:</span>{' '}
         <span data-cy="adoption-fee">{petAdoptionFee}</span>
       </p>
       <div className="flex items-center justify-center">
-        {userRole === "USER" &&
+        {userRole === 'USER' &&
           (isAdopted ? (
             <p className="text-gray-700 text-xl font-medium">
               This pet has been adopted
@@ -79,7 +79,7 @@ const PetAdoptionApply = ({
           ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PetAdoptionApply;
+export default PetAdoptionApply

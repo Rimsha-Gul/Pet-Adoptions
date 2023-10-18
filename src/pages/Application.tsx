@@ -7,10 +7,13 @@ const Application = () => {
   const appContext = useContext(AppContext)
   const userRole = appContext.userRole
 
-  return userRole === 'USER' ? (
-    <ApplicationDetailsUser />
-  ) : (
-    <ApplicationDetailsShelter />
+  return (
+    userRole &&
+    (userRole === 'USER' ? (
+      <ApplicationDetailsUser />
+    ) : (
+      <ApplicationDetailsShelter />
+    ))
   )
 }
 

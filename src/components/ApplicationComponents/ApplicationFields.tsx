@@ -47,7 +47,7 @@ const fieldLabels: typeof applicationFieldLabels = applicationFieldLabels
 
 export const TextualField = ({ field, application, className }: FieldProps) => {
   return (
-    <div key={field} className={`flex items-start gap-2 ${className}`}>
+    <div className={`flex items-start gap-2 ${className}`}>
       <label className="text-gray-700 text-md sm:text-xl font-medium">
         {fieldLabels[field]}:
       </label>
@@ -63,10 +63,7 @@ export const TextualField = ({ field, application, className }: FieldProps) => {
 
 export const BooleanField = ({ field, application, className }: FieldProps) => {
   return (
-    <div
-      key={field}
-      className={`flex flex-row items-center gap-2 ${className}`}
-    >
+    <div className={`flex flex-row items-center gap-2 ${className}`}>
       <label className="text-gray-700 text-md sm:text-xl font-medium">
         {fieldLabels[field]}:
       </label>

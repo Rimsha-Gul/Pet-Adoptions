@@ -58,6 +58,7 @@ describe('Invitation Acceptance', () => {
 
     cy.checkUrlIs('/verifyemail')
     cy.wait('@codeApiCall')
+    cy.wait('@codeApiCall')
     cy.task('getVerificationCode', { email: 'test-shelter@example.com' }).then(
       ({ verificationCode }: any) => {
         cy.get('input[type=text]').type(`${verificationCode}`)

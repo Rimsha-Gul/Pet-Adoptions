@@ -57,7 +57,7 @@ export const getRoutes = (
           return <NotFoundPage />
         }
         return (
-          <div className="flex">
+          <div className="flex h-screen">
             <Sidebar handleLogout={handleLogout} />
             <div
               className={`flex-grow items-center mt-20 md:mt-4 ${
@@ -89,7 +89,7 @@ export const getRoutes = (
   const renderVerifyEmail = () => {
     if (existingUser) {
       return (
-        <div className="flex">
+        <div className="flex h-[100vh]">
           <Sidebar handleLogout={handleLogout} />
           <div className={`flex-grow ${isSidebarOpen ? 'ml-64' : ''}`}>
             <VerifyEmail />
