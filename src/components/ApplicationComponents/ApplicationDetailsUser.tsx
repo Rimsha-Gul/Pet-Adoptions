@@ -1,37 +1,35 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { getStatusIcon } from "../../utils/getStatusIcon";
-import api from "../../api";
-import { useEffect, useMemo, useState } from "react";
-import loadingIcon from "../../assets/loading.gif";
-import { Status, VisitType } from "../../types/enums";
-import { statusButtonText } from "../../utils/getStatusButtonText";
-import { getNextUserStatus } from "../../utils/getNextStatus";
-import { showErrorAlert, showSuccessAlert } from "../../utils/alert";
-import StatusButton from "./StatusButton";
-import { Application, ReactivationRequest } from "../../types/interfaces";
-import ApplicationGroupedFields from "./ApplicationDetails";
-import { applicationGroups } from "../../constants/groups";
-import { BiLinkExternal } from "react-icons/bi";
-import ReactivationRequestDetails from "./ReactivationRequestDetails";
+import { useNavigate, useParams } from 'react-router-dom'
+import { getStatusIcon } from '../../utils/getStatusIcon'
+import api from '../../api'
+import { useEffect, useMemo, useState } from 'react'
+import loadingIcon from '../../assets/loading.gif'
+import { Status, VisitType } from '../../types/enums'
+import { statusButtonText } from '../../utils/getStatusButtonText'
+import { getNextUserStatus } from '../../utils/getNextStatus'
+import { showErrorAlert, showSuccessAlert } from '../../utils/alert'
+import StatusButton from './StatusButton'
+import { Application, ReactivationRequest } from '../../types/interfaces'
+import ApplicationGroupedFields from './ApplicationDetails'
+import { applicationGroups } from '../../constants/groups'
+import { BiLinkExternal } from 'react-icons/bi'
+import ReactivationRequestDetails from './ReactivationRequestDetails'
 
-const accessToken = localStorage.getItem("accessToken");
-api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+const accessToken = localStorage.getItem('accessToken')
+api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
 const ApplicationDetailsUser = () => {
-  const navigate = useNavigate();
-  const [application, setApplication] = useState<Application | null>(null);
-  const [canUserReview, setCanUserReview] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate()
+  const [application, setApplication] = useState<Application | null>(null)
+  const [canUserReview, setCanUserReview] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showReactivationModal, setShowReactivationModal] =
-    useState<boolean>(false);
-  const [reasonNotScheduled, setReasonNotScheduled] = useState<string>("");
-  const [reasonToReactivate, setReasonToReactivate] = useState<string>("");
+    useState<boolean>(false)
+  const [reasonNotScheduled, setReasonNotScheduled] = useState<string>('')
+  const [reasonToReactivate, setReasonToReactivate] = useState<string>('')
   const [reactivationRequest, setReactivationRequest] =
-    useState<ReactivationRequest | null>(null);
+    useState<ReactivationRequest | null>(null)
 
-  console.log(application);
-
-  const { id } = useParams();
+  const { applicationID } = useParams()
 
   const groupedFields = useMemo(() => {
     return applicationGroups.map((group) => {
@@ -39,131 +37,114 @@ const ApplicationDetailsUser = () => {
         ...group,
         fields: group.fields.filter((field) => {
           if (
-            (field === "hasRentPetPermission" &&
-              application?.residenceType !== "rentHouse") ||
-            (field === "childrenAges" && !application?.hasChildren) ||
-            (field === "otherPetsInfo" && !application?.hasOtherPets)
+            (field === 'hasRentPetPermission' &&
+              application?.residenceType !== 'rentHouse') ||
+            (field === 'childrenAges' && !application?.hasChildren) ||
+            (field === 'otherPetsInfo' && !application?.hasOtherPets)
           ) {
-            return false;
+            return false
           }
-          return true;
-        }),
-      };
-    });
-  }, [application]);
+          return true
+        })
+      }
+    })
+  }, [application])
 
   const updateApplicationStatus = async () => {
     if (application) {
-      const nextStatus = getNextUserStatus(application?.status);
+      const nextStatus = getNextUserStatus(application?.status)
 
       if (nextStatus === Status.ReactivationRequested) {
-        setShowReactivationModal(true); // Show the modal when the next status is ReactivationRequested
-        return;
+        setShowReactivationModal(true) // Show the modal when the next status is ReactivationRequested
+        return
       }
 
       if (nextStatus) {
         try {
-          setIsLoading(true);
-          const response = await api.put("/application/updateStatus", {
-            id: id,
-            status: nextStatus,
-          });
+          setIsLoading(true)
+          const response = await api.put(
+            `applications/${applicationID}/status`,
+            {
+              status: nextStatus
+            }
+          )
           if (response.status === 200) {
             showSuccessAlert(response.data.message, undefined, () =>
               setApplication(null)
-            );
+            )
           }
         } catch (error: any) {
           if (error.response.status === 404) {
-            showErrorAlert(error.response);
+            showErrorAlert(error.response)
           }
-          console.error;
         } finally {
-          setIsLoading(false);
-          console.log(application);
+          setIsLoading(false)
         }
       }
     }
-  };
+  }
 
   useEffect(() => {
     const fetchApplication = async () => {
       try {
-        setIsLoading(true);
-        const response = await api.get("/application/", {
-          params: {
-            id: id,
-          },
-        });
-        const { application, canReview } = response.data;
-        setCanUserReview(canReview);
-        setApplication(application);
-      } catch (error) {
-        console.error(error);
+        setIsLoading(true)
+        const response = await api.get(`/applications/${applicationID}`)
+        const { application, canReview } = response.data
+        setCanUserReview(canReview)
+        setApplication(application)
+      } catch (error: any) {
+        showErrorAlert(error.response.data)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
-    console.log(id);
-    console.log(application);
-    if (id && !application) {
-      fetchApplication();
     }
-  }, [id, application]);
-  console.log(application);
+    if (applicationID && !application) {
+      fetchApplication()
+    }
+  }, [applicationID, application])
 
   useEffect(() => {
     const fetchReactivationRequest = async () => {
       try {
-        setIsLoading(true);
-        const response = await api.get("/reactivationRequest/", {
-          params: {
-            id: id,
-          },
-        });
-        console.log(response.data);
-        setReactivationRequest(response.data);
-      } catch (error) {
-        console.error(error);
+        setIsLoading(true)
+        const response = await api.get(`/reactivationRequest/${applicationID}`)
+        setReactivationRequest(response.data)
+      } catch (error: any) {
+        showErrorAlert(error.response.data)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
     if (application && application.status === Status.ReactivationRequested) {
-      fetchReactivationRequest();
+      fetchReactivationRequest()
     }
-  }, [application]);
+  }, [application])
 
   const handleReview = () => {
-    navigate(`/shelterProfile/${application?.shelterID}`);
-  };
+    navigate(`/shelterProfile/${application?.shelterID}`)
+  }
 
   const handleReactivationRequest = async () => {
-    console.log(reasonNotScheduled);
-    console.log(reasonToReactivate);
-
     try {
-      setIsLoading(true);
+      setIsLoading(true)
       // Adjust this API call according to your backend's needs
-      const response = await api.post("/reactivationRequest", {
-        applicationID: id,
+      const response = await api.post(`/reactivationRequest/${applicationID}`, {
         reasonNotScheduled: reasonNotScheduled,
-        reasonToReactivate: reasonToReactivate,
-      });
+        reasonToReactivate: reasonToReactivate
+      })
       if (response.status === 200) {
         showSuccessAlert(response.data.message, undefined, () =>
           setApplication(null)
-        );
+        )
       }
     } catch (error: any) {
-      showErrorAlert(error.response);
-      console.error;
+      showErrorAlert(error.response)
     } finally {
-      setIsLoading(false);
-      setShowReactivationModal(false); // Hide the modal
+      setIsLoading(false)
+      setShowReactivationModal(false) // Hide the modal
     }
-  };
+  }
 
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
@@ -172,7 +153,7 @@ const ApplicationDetailsUser = () => {
           <img src={loadingIcon} alt="Loading" className="h-10 w-10" />
         </div>
       )}
-      {application && id && (
+      {application && applicationID && (
         <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
           <div className="flex flex-col items-center gap-6">
             <img
@@ -180,15 +161,18 @@ const ApplicationDetailsUser = () => {
               alt="Pet Image"
               className="h-60 w-60 sm:h-80 sm:w-80 object-cover rounded-lg"
             />
-            <Link
-              to={`/pet/${application.microchipID}`}
+            <a
+              data-cy="pet-link"
               className="text-2xl sm:text-3xl text-primary font-bold whitespace-pre-line hover:underline"
+              href={`/pet/${application.microchipID}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <div className="flex flex-row items-end gap-2">
                 {application.petName}
                 <BiLinkExternal className="pb-0.5" />
               </div>
-            </Link>
+            </a>
           </div>
           <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 items-center mt-10 gap-6 sm:gap-8">
             <div className="flex flex-col sm:flex-row gap-2">
@@ -196,7 +180,10 @@ const ApplicationDetailsUser = () => {
                 Application ID:
               </label>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+                <p
+                  data-cy="applicationID"
+                  className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+                >
                   {application.id}
                 </p>
               </div>
@@ -207,7 +194,10 @@ const ApplicationDetailsUser = () => {
               </label>
               <div className="flex flex-row items-center gap-2">
                 {getStatusIcon(application.status)}
-                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+                <p
+                  data-cy="application-status"
+                  className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+                >
                   {application.status}
                 </p>
               </div>
@@ -216,7 +206,10 @@ const ApplicationDetailsUser = () => {
               <label className="text-gray-700 text-md sm:text-xl font-medium">
                 Shelter Name:
               </label>
-              <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+              <p
+                data-cy="shelter-name"
+                className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+              >
                 {application.shelterName}
               </p>
             </div>
@@ -224,7 +217,10 @@ const ApplicationDetailsUser = () => {
               <label className="text-gray-700 text-md sm:text-xl font-medium">
                 Submission Date:
               </label>
-              <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+              <p
+                data-cy="submission-date"
+                className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+              >
                 {new Date(application.submissionDate).toLocaleDateString()}
               </p>
             </div>
@@ -233,7 +229,10 @@ const ApplicationDetailsUser = () => {
                 <label className="text-gray-700 text-md sm:text-xl font-medium">
                   Home Visit Date:
                 </label>
-                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+                <p
+                  data-cy="home-visit-date"
+                  className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+                >
                   {new Date(application.homeVisitDate).toLocaleString()}
                 </p>
               </div>
@@ -243,7 +242,10 @@ const ApplicationDetailsUser = () => {
                 <label className="text-gray-700 text-md sm:text-xl font-medium">
                   Shelter Visit Date:
                 </label>
-                <p className="text-md sm:text-xl text-gray-600 whitespace-pre-line">
+                <p
+                  data-cy="shelter-visit-date"
+                  className="text-md sm:text-xl text-gray-600 whitespace-pre-line"
+                >
                   {new Date(application.shelterVisitDate).toLocaleString()}
                 </p>
               </div>
@@ -268,7 +270,7 @@ const ApplicationDetailsUser = () => {
                   status={application.status}
                   action=""
                   isLoading={isLoading}
-                  id={id}
+                  id={applicationID}
                   updateApplicationStatus={updateApplicationStatus}
                   visitType={VisitType.Shelter}
                 />
@@ -279,7 +281,7 @@ const ApplicationDetailsUser = () => {
                 className={`group relative w-1/2 sm:w-1/3 lg:w-1/5 2xl:w-1/6 flex justify-center py-2 px-4 border border-transparent text-sm sm:text-md uppercase font-medium rounded-md text-white bg-primary hover:bg-white hover:text-primary hover:ring-2 hover:ring-primary hover:ring-offset-2" ${
                   isLoading
                     ? `bg-primary text-white cursor-not-allowed items-center`
-                    : ""
+                    : ''
                 }`}
                 onClick={handleReview}
               >
@@ -355,7 +357,7 @@ const ApplicationDetailsUser = () => {
                       className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-md px-4 py-2 bg-primary text-base font-medium text-white hover:ring-2 hover:ring-primary hover:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                         isLoading
                           ? `bg-primary opacity-70 text-white items-center`
-                          : ""
+                          : ''
                       }`}
                       onClick={handleReactivationRequest}
                     >
@@ -383,7 +385,7 @@ const ApplicationDetailsUser = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ApplicationDetailsUser;
+export default ApplicationDetailsUser

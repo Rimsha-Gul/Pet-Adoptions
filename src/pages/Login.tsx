@@ -1,13 +1,7 @@
-import { useContext } from "react";
-import LoginForm from "../components/AuthComponents/LoginForm";
-import { AppContext } from "../context/AppContext";
-import LogoSection from "../components/AuthComponents/LogoSection";
+import LoginForm from '../components/AuthComponents/LoginForm'
+import LogoSection from '../components/AuthComponents/LogoSection'
 
 function Login() {
-  const appContext = useContext(AppContext);
-  console.log(appContext.loggedIn);
-  console.log(appContext.userEmail);
-  console.log(appContext.displayName);
   return (
     <div className="sm:bg-radial-gradient min-h-screen flex flex-col justify-center items-center p-8 sm:p-16 lg:px-18 xl:px-32 2xl:px-72">
       <div className="grid md:grid-cols-2 w-full">
@@ -24,7 +18,7 @@ function Login() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login

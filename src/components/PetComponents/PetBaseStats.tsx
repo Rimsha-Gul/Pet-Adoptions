@@ -23,23 +23,23 @@ const PetBaseStats = ({
       {[
         { name: "Age", value: formatAge(petBirthDate) },
         { name: "Color", value: petColor },
-        { name: "Gender", value: petGender, isLowercase: true },
+        { name: "Gender", value: petGender },
         { name: "Breed", value: petBreed },
-        { name: "Activity needs", value: petActivityNeeds, isLowercase: true },
+        { name: "Activity needs", value: petActivityNeeds },
         {
           name: "Level Of Grooming",
           value: petLevelOfGrooming,
-          isLowercase: true,
         },
         { name: "House trained", value: petIsHouseTrained ? "Yes" : "No" },
-      ].map(({ name, value, isLowercase }) => (
+      ].map(({ name, value }) => (
         <p className="text-lg text-gray-500" key={name}>
           <span className="text-secondary font-bold">{name}:</span>{" "}
-          {isLowercase ? (
-            <span className="capitalize">{value.toLowerCase()}</span>
-          ) : (
-            value
-          )}
+          <span
+            data-cy={`${name.toLowerCase().replace(/ /g, "-")}-stat`}
+            className="capitalize"
+          >
+            {value}
+          </span>
         </p>
       ))}
     </div>

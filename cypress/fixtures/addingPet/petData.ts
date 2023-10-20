@@ -1,0 +1,21 @@
+export const petData = {
+  microchipID: 'A123456789',
+  name: 'Snowball',
+  gender: 'Male',
+  birthDate: new Date().toISOString(),
+  color: 'White',
+  breed: 'Mini Rex',
+  category: 'Rabbit',
+  bio: "Snowball, an alluring male Mini Lop rabbit, boasts a pristine white coat that perfectly mirrors his name. Born in 2021, his vibrant curiosity and playful energy are well-balanced by a gentle, sociable nature, which is a hallmark of his breed. His dark, expressive eyes only add to his endearing charm.\n In Snowflake's world, playfulness and tranquility are two sides of the same coin. He revels in his playtime, brightening up any room with his adorable antics. However, he also finds bliss in quiet moments, relishing gentle strokes and peaceful cuddles. This harmony of traits makes him a wonderful companion, suitable for both bustling families and individuals seeking a serene pet.\n Ready to bond with a forever family, Snowflake is neutered, microchipped, and fully vaccinated. He was raised in a caring and nurturing environment, which has fostered his friendly, confident demeanor. A home filled with affection, room for exploration, and thoughtful care would be the perfect setting for this delightful bunny.",
+  activityNeeds: 'Low',
+  levelOfGrooming: 'Medium',
+  isHouseTrained: 'true',
+  healthCheck: 'true',
+  allergiesTreated: 'true',
+  wormed: 'true',
+  heartwormTreated: 'true',
+  vaccinated: 'true',
+  deSexed: 'true',
+  traits: "['playful', 'social']",
+  adoptionFee: '120 USD'
+}

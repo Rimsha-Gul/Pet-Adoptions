@@ -20,7 +20,7 @@ export const applicationGroups = [
       "handlePetIssues",
       "moveWithPet",
       "canAffordPetsNeeds",
-      "canAffordPetsMediacal",
+      "canAffordPetsMedical",
       "petTravelPlans",
       "petOutlivePlans",
     ],

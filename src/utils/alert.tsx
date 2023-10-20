@@ -1,46 +1,46 @@
-import Swal from "sweetalert2";
+import Swal from 'sweetalert2'
 
 export const showErrorAlert = (message: string) => {
   Swal.fire({
-    title: "Error!",
+    title: 'Error!',
     text: message,
-    icon: "error",
+    icon: 'error',
     confirmButtonText: '<p class="px-8"></p> OK',
-    confirmButtonColor: "#ff5363",
-  });
-};
+    confirmButtonColor: '#ff5363'
+  })
+}
 
 export const showSuccessAlert = (
   message: string,
   navigateToPage?: () => void,
   onConfirm?: () => void,
   footerHtml?: string,
-  footerLinkId: string = "footerLink"
+  footerLinkId = 'footerLink'
 ) => {
   Swal.fire({
-    title: "Success!",
+    title: 'Success!',
     text: message,
-    icon: "success",
+    icon: 'success',
     confirmButtonText: '<p class="px-8"></p> OK',
-    confirmButtonColor: "#ff5363",
-    footer: footerHtml || "",
+    confirmButtonColor: '#ff5363',
+    footer: footerHtml || '',
     didOpen: () => {
-      const link = document.getElementById(footerLinkId);
+      const link = document.getElementById(footerLinkId)
       if (link && navigateToPage) {
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          Swal.close();
-          navigateToPage();
-        });
+        link.addEventListener('click', (e) => {
+          e.preventDefault()
+          Swal.close()
+          navigateToPage()
+        })
       }
     },
     didClose: () => {
       if (onConfirm) {
-        onConfirm();
+        onConfirm()
       }
-    },
-  });
-};
+    }
+  })
+}
 
 export const showInfoAlert = (
   message: string,
@@ -50,22 +50,19 @@ export const showInfoAlert = (
   onCancel?: () => void
 ) => {
   Swal.fire({
-    title: "Attention!",
+    title: 'Attention!',
     text: message,
-    icon: "info",
+    icon: 'info',
     showDenyButton: true,
     confirmButtonText: `<p class="px-8"></p> ${yesText}`,
     denyButtonText: `<p class="px-8"></p> ${noText}`,
-    confirmButtonColor: "#ff5363",
-    denyButtonColor: "#aaa",
+    confirmButtonColor: '#ff5363',
+    denyButtonColor: '#aaa'
   }).then((result) => {
-    console.log(onConfirm);
-    console.log(onCancel);
-    console.log(result);
     if (result.isConfirmed && onConfirm) {
-      onConfirm();
+      onConfirm()
     } else if (result.isDenied && onCancel) {
-      onCancel();
+      onCancel()
     }
-  });
-};
+  })
+}

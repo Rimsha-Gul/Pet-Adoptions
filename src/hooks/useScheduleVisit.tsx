@@ -1,54 +1,52 @@
-import { FormEvent, useState } from "react";
-import moment, { Moment } from "moment";
-import api from "../api";
-import { useNavigate, useParams } from "react-router-dom";
-import { showErrorAlert, showSuccessAlert } from "../utils/alert";
-import { VisitType } from "../types/enums";
+import { FormEvent, useState } from 'react'
+import moment, { Moment } from 'moment'
+import api from '../api'
+import { useNavigate, useParams } from 'react-router-dom'
+import { showErrorAlert, showSuccessAlert } from '../utils/alert'
+import { VisitType } from '../types/enums'
 
 export const useScheduleHomeVisit = (visitType: VisitType) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { applicationID } = useParams()
+  const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedDate, setSelectedDate] = useState<Date>(
-    moment().add(1, "days").toDate()
-  );
-  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+    moment().add(1, 'days').toDate()
+  )
+  const [selectedTime, setSelectedTime] = useState<Date | null>(null)
 
   const handleDateChange = (date: string | Moment) => {
-    if (moment.isMoment(date)) setSelectedDate(date.toDate());
-  };
+    if (moment.isMoment(date)) setSelectedDate(date.toDate())
+  }
 
   const handleTimeChange = (time: string | Moment) => {
-    if (moment.isMoment(time)) setSelectedTime(time.toDate());
-  };
+    if (moment.isMoment(time)) setSelectedTime(time.toDate())
+  }
 
   const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    const dateStr = moment(selectedDate).format("YYYY-MM-DD");
-    const timeStr = moment(selectedTime).format("HH:mm");
-    const dateTimeStr = `${dateStr}T${timeStr}`;
-    const dateTimeInUTC = moment(dateTimeStr).utc().format();
+    event.preventDefault()
+    const dateStr = moment(selectedDate).format('YYYY-MM-DD')
+    const timeStr = moment(selectedTime).format('HH:mm')
+    const dateTimeStr = `${dateStr}T${timeStr}`
+    const dateTimeInUTC = moment(dateTimeStr).utc().format()
 
     try {
-      setIsLoading(true);
+      setIsLoading(true)
       const endpoint =
         visitType === VisitType.Home
-          ? "/application/scheduleHomeVisit"
-          : "/application/scheduleShelterVisit";
+          ? `/applications/${applicationID}/homeVisit`
+          : `/applications/${applicationID}/shelterVisit`
       const response = await api.post(endpoint, {
-        visitDate: dateTimeInUTC,
-        id: id,
-      });
+        visitDate: dateTimeInUTC
+      })
       showSuccessAlert(response.data.message, undefined, () =>
-        navigate(`/view/application/${id}`)
-      );
+        navigate(`/view/application/${applicationID}`)
+      )
     } catch (error: any) {
-      console.error("Error scheduling visit:", error);
-      showErrorAlert(error.response.data);
+      showErrorAlert(error.response.data)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return {
     handleDateChange,
@@ -56,6 +54,6 @@ export const useScheduleHomeVisit = (visitType: VisitType) => {
     handleSubmit,
     isLoading,
     selectedDate,
-    selectedTime,
-  };
-};
+    selectedTime
+  }
+}

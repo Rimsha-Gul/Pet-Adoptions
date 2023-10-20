@@ -104,13 +104,14 @@ export const addPetFields = [
     autoComplete: "off",
     isRequired: true,
     options: [
-      { value: "CAT", label: "Cat" },
-      { value: "DOG", label: "Dog" },
-      { value: "HORSE", label: "Horse" },
-      { value: "RABBIT", label: "Rabbit" },
-      { value: "SMALL_AND_FURRY", label: "Small & Furry" },
-      { value: "SCALES_FINS_AND_OTHERS", label: "Scales, fins & others" },
-      { value: "BARNYARD", label: "Barnyard" },
+      { value: "Cat", label: "Cat" },
+      { value: "Dog", label: "Dog" },
+      { value: "Horse", label: "Horse" },
+      { value: "Rabbit", label: "Rabbit" },
+      { value: "Bird", label: "Bird" },
+      { value: "Small and Furry", label: "Small & Furry" },
+      { value: "Scales, Fins and Others", label: "Scales, fins & others" },
+      { value: "Barnyard", label: "Barnyard" },
     ],
   },
   {
@@ -142,8 +143,8 @@ export const addPetFields = [
     autoComplete: "gender",
     isRequired: true,
     options: [
-      { value: "MALE", label: "Male" },
-      { value: "FEMALE", label: "Female" },
+      { value: "Male", label: "Male" },
+      { value: "Female", label: "Female" },
     ],
   },
   {
@@ -185,11 +186,11 @@ export const addPetFields = [
     autoComplete: "activityNeeds",
     isRequired: true,
     options: [
-      { value: "VERY_LOW", label: "Very Low" },
-      { value: "LOW", label: "Low" },
-      { value: "MIDRANGE", label: "Midrange" },
-      { value: "HIGH", label: "High" },
-      { value: "VERY_HIGH", label: "Very High" },
+      { value: "Very Low", label: "Very Low" },
+      { value: "Low", label: "Low" },
+      { value: "Midrange", label: "Midrange" },
+      { value: "High", label: "High" },
+      { value: "Very High", label: "Very High" },
     ],
   },
   {
@@ -201,9 +202,9 @@ export const addPetFields = [
     autoComplete: "levelOfGrooming",
     isRequired: true,
     options: [
-      { value: "LOW", label: "Low" },
-      { value: "MEDIUM", label: "Medium" },
-      { value: "HIGH", label: "High" },
+      { value: "Low", label: "Low" },
+      { value: "Medium", label: "Medium" },
+      { value: "High", label: "High" },
     ],
   },
   {
@@ -456,9 +457,9 @@ export const adoptPetFields = [
   {
     labelText:
       "If the pet falls ill or has a medical emergency, are you financially prepared to provide the necessary care?",
-    labelFor: "canAffordPetsMediacal",
-    id: "canAffordPetsMediacal",
-    name: "canAffordPetsMediacal",
+    labelFor: "canAffordPetsMedical",
+    id: "canAffordPetsMedical",
+    name: "canAffordPetsMedical",
     type: "toggle",
     autoComplete: "off",
     isRequired: true,

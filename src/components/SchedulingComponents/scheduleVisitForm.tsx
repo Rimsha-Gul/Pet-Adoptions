@@ -1,24 +1,25 @@
-import Datetime from "react-datetime";
-import moment, { Moment } from "moment";
-import loadingIcon from "../../assets/loading.gif";
-import { useEffect, useState } from "react";
-import api from "../../api";
-import { useParams } from "react-router-dom";
-import { Status, VisitType } from "../../types/enums";
-import { Application } from "../../types/interfaces";
-import { FaRegCalendarAlt } from "react-icons/fa";
+import Datetime from 'react-datetime'
+import moment, { Moment } from 'moment'
+import loadingIcon from '../../assets/loading.gif'
+import { useEffect, useState } from 'react'
+import api from '../../api'
+import { useParams } from 'react-router-dom'
+import { Status, VisitType } from '../../types/enums'
+import { Application } from '../../types/interfaces'
+import { FaRegCalendarAlt } from 'react-icons/fa'
 //import { BiTime } from "react-icons/bi";
-import Select from "react-select";
+import Select from 'react-select'
+import { showErrorAlert } from '../../utils/alert'
 
 interface ScheduleFormProps {
-  title: string;
-  handleDateChange: (date: string | Moment) => void;
-  handleTimeChange: (time: string | Moment) => void;
-  handleSubmit: (event: React.FormEvent) => void;
-  isLoading: boolean;
-  selectedDate: Date;
-  selectedTime: Date | null;
-  visitType: VisitType;
+  title: string
+  handleDateChange: (date: string | Moment) => void
+  handleTimeChange: (time: string | Moment) => void
+  handleSubmit: (event: React.FormEvent) => void
+  isLoading: boolean
+  selectedDate: Date
+  selectedTime: Date | null
+  visitType: VisitType
 }
 
 export const ScheduleForm = ({
@@ -29,135 +30,117 @@ export const ScheduleForm = ({
   isLoading,
   selectedDate,
   selectedTime,
-  visitType,
+  visitType
 }: ScheduleFormProps) => {
   const customStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
-      border: state.isFocused ? "1px solid #ff5363" : "1px solid #9ca3af",
-      borderRadius: "0.375rem",
-      backgroundColor: "#fff",
-      padding: "0.5rem",
-      cursor: "pointer",
-      "&:hover": {
-        border: "1px solid #ff5363",
-      },
+      border: state.isFocused ? '1px solid #ff5363' : '1px solid #9ca3af',
+      borderRadius: '0.375rem',
+      backgroundColor: '#fff',
+      padding: '0.5rem',
+      cursor: 'pointer',
+      '&:hover': {
+        border: '1px solid #ff5363'
+      }
     }),
     option: (provided: any, state: { isSelected: any; isFocused: any }) => ({
       ...provided,
-      backgroundColor: state.isSelected ? "#ff5363" : "#fff",
-      color: state.isSelected ? "#fff" : "#000",
-      padding: "0.5rem",
-      "&:hover": {
-        backgroundColor: "#fb7a75",
-        color: "#fff",
-        cursor: "pointer",
-      },
-    }),
-  };
+      backgroundColor: state.isSelected ? '#ff5363' : '#fff',
+      color: state.isSelected ? '#fff' : '#000',
+      padding: '0.5rem',
+      '&:hover': {
+        backgroundColor: '#fb7a75',
+        color: '#fff',
+        cursor: 'pointer'
+      }
+    })
+  }
 
-  const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState<boolean>(false);
-  const [timeSlots, setTimeSlots] = useState<string[]>([]);
-  const [isDateValid, setDateValid] = useState<boolean>(false);
-  const [isTimeValid, setTimeValid] = useState<boolean>(false);
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
-  const [canSchedule, setCanSchedule] = useState<boolean>(false);
-  const [application, setApplication] = useState<Application | null>(null);
-  const [dateValidityMessage, setDateValidityMessage] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoadingTimeSlots, setIsLoadingTimeSlots] = useState<boolean>(false)
+  const [timeSlots, setTimeSlots] = useState<string[]>([])
+  const [isDateValid, setDateValid] = useState<boolean>(false)
+  const [isTimeValid, setTimeValid] = useState<boolean>(false)
+  const [isDisabled, setIsDisabled] = useState<boolean>(true)
+  const [application, setApplication] = useState<Application | null>(null)
+  const [dateValidityMessage, setDateValidityMessage] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('')
 
   const [isLoadingApplication, setIsLoadingApplication] =
-    useState<boolean>(true);
-  const [emailSentTime, setEmailSentTime] = useState<Moment | null>(null);
+    useState<boolean>(true)
+  const [emailSentTime, setEmailSentTime] = useState<Moment | null>(null)
   const [lastDateToschedule, setLastDateToschedule] = useState<Moment | null>(
     null
-  );
-  const { id } = useParams();
-  // const emailSentTimestamp =
-  //   visitType === VisitType.Home
-  //     ? application?.homeVisitEmailSentDate
-  //     : application?.shelterVisitEmailSentDate;
-  // setEmailSentTime(moment(emailSentTimestamp));
-  // console.log(emailSentTime);
+  )
+  const { applicationID } = useParams()
 
   useEffect(() => {
-    console.log("1");
     const fetchApplication = async () => {
       try {
-        setIsLoadingApplication(true);
+        setIsLoadingApplication(true)
         const endpoint =
           visitType === VisitType.Home
-            ? "/application/"
-            : "/shelter/application/";
-        const response = await api.get(endpoint, {
-          params: {
-            id: id,
-          },
-        });
-        setApplication(response.data.application);
-      } catch (error) {
-        console.error(error);
+            ? `/applications/${applicationID}`
+            : `/shelters/applications/${applicationID}`
+        const response = await api.get(endpoint)
+        setApplication(response.data.application)
+      } catch (error: any) {
+        showErrorAlert(error.response.data)
       } finally {
-        setIsLoadingApplication(false);
+        setIsLoadingApplication(false)
       }
-    };
-
-    if (id && !application) {
-      fetchApplication();
     }
-  }, [id, application]);
+
+    if (applicationID && !application) {
+      fetchApplication()
+    }
+  }, [applicationID, application])
 
   useEffect(() => {
-    console.log("2");
-    console.log("initial useeffect");
     // Get the current date and time
-    const now = moment();
+    const now = moment()
 
     // Set to the next day
-    const initialSelectedDate = now.add(1, "days");
+    const initialSelectedDate = now.add(1, 'days')
 
     // Set to start of day to avoid time conflicts
-    initialSelectedDate.startOf("day");
+    initialSelectedDate.startOf('day')
 
     // Update the state with the new initialSelectedDate
-    handleDateChange(initialSelectedDate);
-    handleDateChangeValidated(initialSelectedDate);
-  }, [emailSentTime]);
+    handleDateChange(initialSelectedDate)
+    handleDateChangeValidated(initialSelectedDate)
+  }, [emailSentTime])
 
   useEffect(() => {
-    console.log("3");
     if (isDateValid && application) {
       const fetchTimeSlots = async () => {
         try {
-          console.log("fetch slots");
-          setIsLoadingTimeSlots(true);
-          const response = await api.get("/application/timeSlots", {
+          setIsLoadingTimeSlots(true)
+          const response = await api.get('/applications/timeSlots', {
             params: {
-              id: application.shelterID,
+              shelterID: application.shelterID,
               petID: application.microchipID,
-              visitDate: moment(selectedDate).format("YYYY-MM-DD"),
-              visitType: visitType,
-            },
-          });
-          console.log(response.data);
-          setTimeSlots(response.data.availableTimeSlots);
+              visitDate: moment(selectedDate).format('YYYY-MM-DD'),
+              visitType: visitType
+            }
+          })
+          setTimeSlots(response.data.availableTimeSlots)
           if (response.data.availableTimeSlots.length === 0)
             setDateValidityMessage(
-              "No slots are available for the selected date."
-            );
-        } catch (error) {
-          console.error(error);
+              'No slots are available for the selected date.'
+            )
+        } catch (error: any) {
+          showErrorAlert(error.response.data)
         } finally {
-          setIsLoadingTimeSlots(false);
+          setIsLoadingTimeSlots(false)
         }
-      };
+      }
 
-      fetchTimeSlots();
+      fetchTimeSlots()
     }
-  }, [selectedDate, isDateValid, application]);
+  }, [selectedDate, isDateValid, application])
 
   useEffect(() => {
-    console.log("4");
     if (application) {
       const canScheduleYet =
         visitType === VisitType.Home
@@ -165,204 +148,99 @@ export const ScheduleForm = ({
               application?.status === Status.HomeVisitRequested ||
                 application?.status === Status.Expired
             )
-          : Boolean(application?.status === Status.HomeApproved);
-
-      setCanSchedule(canScheduleYet);
-      console.log(canScheduleYet);
+          : Boolean(application?.status === Status.HomeApproved)
 
       const emailSentTimestamp =
         visitType === VisitType.Home
           ? application?.homeVisitEmailSentDate
-          : application?.shelterVisitEmailSentDate;
-      setEmailSentTime(moment(emailSentTimestamp));
+          : application?.shelterVisitEmailSentDate
+      setEmailSentTime(moment(emailSentTimestamp))
 
-      console.log(application?.homeVisitScheduleExpiryDate);
       const lastDateVisitSchedule =
         visitType === VisitType.Home
           ? application?.homeVisitScheduleExpiryDate
-          : application?.shelterVisitScheduleExpiryDate;
-      console.log(lastDateVisitSchedule);
-      console.log(moment(lastDateVisitSchedule));
-      setLastDateToschedule(moment(lastDateVisitSchedule));
+          : application?.shelterVisitScheduleExpiryDate
+      setLastDateToschedule(moment(lastDateVisitSchedule))
 
       const visitScheduled: boolean = application
         ? (visitType === VisitType.Home &&
             Boolean(application.homeVisitDate)) ||
           (visitType === VisitType.Shelter &&
             Boolean(application.shelterVisitDate))
-        : false;
-      if (visitScheduled) {
-        console.log("already scheduled");
+        : false
+      if (visitScheduled)
+        setErrorMessage(
+          'The visit for this application has already been scheduled.'
+        )
 
-        setErrorMessage(
-          "The visit for this application has already been scheduled."
-        );
-      }
-      if (!canScheduleYet && !visitScheduled) {
-        console.log("cannot schedule yet");
-        setErrorMessage(
-          "You cannot schedule a visit for this application yet."
-        );
-      }
+      if (!canScheduleYet && !visitScheduled)
+        setErrorMessage('You cannot schedule a visit for this application yet.')
     }
-  }, [application]);
+  }, [application])
 
   useEffect(() => {
-    console.log("5");
-    setIsDisabled(!isDateValid || !isTimeValid || isLoading);
-  }, [isDateValid, isTimeValid, isLoading]);
+    setIsDisabled(!isDateValid || !isTimeValid || isLoading)
+  }, [isDateValid, isTimeValid, isLoading])
 
   const CustomDateInput = (props: any) => (
     <div className="flex flex-row">
       <input {...props} className="flex-grow" />
       <FaRegCalendarAlt color="#ff5363" size={16} className="mr-2" />
     </div>
-  );
-
-  // const CustomTimeInput = (props: any) => (
-  //   <div className="flex flex-row">
-  //     <input {...props} className="flex-grow" />
-  //     <BiTime color="#ff5363" size={20} className="mr-2" />
-  //   </div>
-  // );
-
-  // const validateDateTime = (date: string | Moment, time: string | Moment) => {
-  //   console.log(time);
-  //   const dateMoment = typeof date === "string" ? moment(date) : date;
-  //   const timeMoment = typeof time === "string" ? moment(time) : time;
-
-  //   const oneWeekFromEmailSent = emailSentTime
-  //     .clone()
-  //     .add(7, "days")
-  //     .endOf("day");
-
-  //   const isDateValid =
-  //     dateMoment.isAfter(emailSentTime) &&
-  //     dateMoment.isBefore(oneWeekFromEmailSent);
-  //   const isTimeValid = timeSlots.includes(timeMoment.toString());
-
-  //   console.log("isDateValid", isDateValid);
-  //   console.log("isTimeValid", isTimeValid);
-  //   return isDateValid && isTimeValid;
-  // };
+  )
 
   const handleDateChangeValidated = (date: string | Moment) => {
-    const isThisDateValid = validateDate(date);
-    setDateValid(isThisDateValid);
+    const isThisDateValid = validateDate(date)
+    setDateValid(isThisDateValid)
 
     if (!isThisDateValid) {
-      setTimeSlots([]); // Clear time slots if date is not valid
-      setTimeValid(false); // Set time as invalid since the date is invalid
+      setTimeSlots([]) // Clear time slots if date is not valid
+      setTimeValid(false) // Set time as invalid since the date is invalid
     }
 
-    handleDateChange(date);
-  };
+    handleDateChange(date)
+  }
 
   const validateDate = (date: string | Moment) => {
-    const dateMoment = typeof date === "string" ? moment(date) : date;
+    const dateMoment = typeof date === 'string' ? moment(date) : date
 
-    console.log(dateMoment);
-    console.log(lastDateToschedule);
-    console.log(dateMoment.isAfter(lastDateToschedule));
     if (
       dateMoment.isSameOrAfter(lastDateToschedule) &&
       application?.status === Status.Expired
     )
       setErrorMessage(
-        "The time to schedule this visit has passed. Your application has been marked as expired. If you are still interested in continuing the adoption process, please request a reactivation of your application on the application page. Thank you for your understanding and cooperation."
-      );
+        'The time to schedule this visit has passed. Your application has been marked as expired. If you are still interested in continuing the adoption process, please request a reactivation of your application on the application page. Thank you for your understanding and cooperation.'
+      )
     else if (
       dateMoment.isAfter(lastDateToschedule) &&
       application?.status === Status.Closed
     )
-      setErrorMessage("Your application has been closed.");
+      setErrorMessage('Your application has been closed.')
 
     return (
       dateMoment.isAfter(emailSentTime) &&
       dateMoment.isBefore(lastDateToschedule)
-    );
-  };
+    )
+  }
 
   const handleTimeChangeValidated = (time: string | Moment) => {
     const formattedTime =
-      typeof time === "string" ? moment(time, "HH:mm") : time;
-    const isThisTimeValid = validateTime(formattedTime);
-    setTimeValid(isThisTimeValid);
-    handleTimeChange(formattedTime);
-  };
+      typeof time === 'string' ? moment(time, 'HH:mm') : time
+    const isThisTimeValid = validateTime(formattedTime)
+    setTimeValid(isThisTimeValid)
+    handleTimeChange(formattedTime)
+  }
 
   const validateTime = (time: string | Moment) => {
-    const timeMoment = typeof time === "string" ? moment(time) : time;
-    // console.log(time);
-    //console.log(timeSlots);
-    return timeSlots.includes(timeMoment.format("H:mm"));
-  };
+    const timeMoment = typeof time === 'string' ? moment(time) : time
+    return timeSlots.includes(timeMoment.format('H:mm'))
+  }
 
-  // console.log(application);
-  const visitScheduled: boolean = application
-    ? (visitType === VisitType.Home && Boolean(application.homeVisitDate)) ||
-      (visitType === VisitType.Shelter && Boolean(application.shelterVisitDate))
-    : false;
-
-  //console.log(visitScheduled);
   const formattedTimeSlots = timeSlots.map((time) => ({
     label: time,
-    value: time,
-  }));
-  // console.log(isDisabled);
-  // console.log(timeSlots);
-  //console.log(timeSlots.length === 0 && isDateValid);
-  console.log(canSchedule);
-  console.log(visitScheduled);
-  console.log(dateValidityMessage);
-  // if (isLoadingApplication) {
-  //   return (
-  //     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-  //       <div className="flex items-center justify-center mb-8">
-  //         <img src={loadingIcon} alt="Loading" className="h-10 w-10" />
-  //       </div>
-  //     </div>
-  //   );
-  // } else if (!canSchedule && !visitScheduled && !dateValidityMessage) {
-  //   return (
-  //     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-  //       <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
-  //         <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
-  //           {title}
-  //         </h2>
-  //         <p className="text-gray-700 text-xl font-medium text-center">
-  //           You cannot schedule a visit for this application yet.
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // } else if (dateValidityMessage) {
-  //   return (
-  //     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-  //       <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
-  //         <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
-  //           {title}
-  //         </h2>
-  //         <p className="text-gray-700 text-xl font-medium text-center">
-  //           {dateValidityMessage}
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // } else if (visitScheduled) {
-  //   return (
-  //     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
-  //       <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-12">
-  //         <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
-  //           {title}
-  //         </h2>
-  //         <p className="text-gray-700 text-xl font-medium text-center">
-  //           The visit for this application has already been scheduled.
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // } else {
+    value: time
+  }))
+
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
       {isLoadingApplication ? (
@@ -371,11 +249,6 @@ export const ScheduleForm = ({
         </div>
       ) : (
         <div className="bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md px-8 md:px-8 2xl:px-12 p-4 sm:p-12">
-          {/* {visitScheduled && (
-          <p className="text-gray-700 text-xl font-medium text-center">
-            The visit for this application has already been scheduled.
-          </p>
-        )} */}
           {errorMessage ? (
             <>
               <h2 className="mt-12 text-center text-4xl font-extrabold text-primary mb-12">
@@ -391,9 +264,9 @@ export const ScheduleForm = ({
                 {title}
               </h2>
               <p className="text-gray-700 text-xl font-medium text-center">
-                Schedule a visit by{" "}
+                Schedule a visit by{' '}
                 <span className="font-bold">
-                  {lastDateToschedule?.format("dddd, MMMM Do YYYY")}
+                  {lastDateToschedule?.format('dddd, MMMM Do YYYY')}
                 </span>
               </p>
               <form
@@ -413,31 +286,27 @@ export const ScheduleForm = ({
                     onChange={handleDateChangeValidated}
                     timeFormat={false} // don't need time selection
                     closeOnSelect
-                    inputProps={{ id: "date" }}
+                    inputProps={{ id: 'date' }}
                     isValidDate={(current) => {
-                      const today = moment().startOf("day");
-                      const tomorrow = moment().add(1, "days").startOf("day");
-                      const emailSentDate =
-                        moment(emailSentTime).startOf("day");
-                      // const oneWeekAfterEmailSent = moment(emailSentDate)
-                      //   .add(7, "days")
-                      //   .endOf("day");
+                      const today = moment().startOf('day')
+                      const tomorrow = moment().add(1, 'days').startOf('day')
+                      const emailSentDate = moment(emailSentTime).startOf('day')
 
                       const isValidToday =
-                        today.isSameOrBefore(lastDateToschedule);
+                        today.isSameOrBefore(lastDateToschedule)
 
                       if (!isValidToday) {
                         // If today's date is more than one week after the emailSentDate,
                         // no dates should be selectable
-                        return false;
+                        return false
                       }
 
                       const isValid =
                         current.isSameOrAfter(tomorrow) &&
                         current.isSameOrAfter(emailSentDate) &&
-                        current.isBefore(lastDateToschedule);
+                        current.isBefore(lastDateToschedule)
 
-                      return isValid;
+                      return isValid
                     }}
                     className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm cursor-pointer bg-white"
                   />
@@ -450,6 +319,8 @@ export const ScheduleForm = ({
                     Time:
                   </label>
                   <Select
+                    name="time"
+                    id="time"
                     className="w-56 sm:w-52"
                     styles={customStyles}
                     options={formattedTimeSlots}
@@ -459,25 +330,16 @@ export const ScheduleForm = ({
                         (selectedTime && selectedTime.toString())
                     )}
                     onChange={(selectedOption: any) => {
-                      handleTimeChangeValidated(selectedOption.value);
+                      handleTimeChangeValidated(selectedOption.value)
                     }}
                   />
-                  {/* <Datetime
-                renderInput={CustomTimeInput}
-                value={selectedTime}
-                onChange={handleTimeChangeValidated}
-                dateFormat={false} // don't need date selection
-                closeOnSelect
-                inputProps={{ id: "time" }}
-                className="rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm cursor-pointer bg-white"
-              /> */}
                 </div>
                 <button
                   className={`group relative w-1/2 flex justify-center py-2 px-4 border border-transparent text-md font-medium rounded-md text-white hover:text-primary bg-primary hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-primary ${
                     isLoading
-                      ? "bg-primary text-white cursor-not-allowed items-center"
-                      : ""
-                  } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                      ? 'bg-primary text-white cursor-not-allowed items-center'
+                      : ''
+                  } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
                   type="submit"
                   disabled={isDisabled}
                 >
@@ -501,5 +363,5 @@ export const ScheduleForm = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}

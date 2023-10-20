@@ -1,24 +1,24 @@
-import { FormEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Input from "../../components/AuthComponents/Input";
-import { validateField } from "../../utils/formValidation";
-import FormAction from "../../components/AuthComponents/FormAction";
-import { showSuccessAlert } from "../../utils/alert";
-import Loading from "../../pages/Loading";
-import { changePasswordFields } from "../../constants/formFields";
-import { FieldsState } from "../../types/common";
-import api from "../../api";
-import { RequestType } from "../../types/enums";
+import { FormEvent, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Input from '../../components/AuthComponents/Input'
+import { validateField } from '../../utils/formValidation'
+import FormAction from '../../components/AuthComponents/FormAction'
+import { showSuccessAlert } from '../../utils/alert'
+import Loading from '../../pages/Loading'
+import { changePasswordFields } from '../../constants/formFields'
+import { FieldsState } from '../../types/common'
+import api from '../../api'
+import { RequestType } from '../../types/enums'
 
-const fields = changePasswordFields;
-let fieldsState: FieldsState = {};
-fields.forEach((field) => (fieldsState[field.id] = ""));
+const fields = changePasswordFields
+const fieldsState: FieldsState = {}
+fields.forEach((field) => (fieldsState[field.id] = ''))
 
 interface PasswordComponentProps {
-  requestType: RequestType;
-  buttonText: string;
-  verificationCodeError?: string;
-  email?: string;
+  requestType: RequestType
+  buttonText: string
+  verificationCodeError?: string
+  email?: string
 }
 
 // component for entering a new password and confirm new password
@@ -26,121 +26,117 @@ const NewPassword = ({
   requestType,
   buttonText,
   verificationCodeError,
-  email,
+  email
 }: PasswordComponentProps) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [changePasswordState, setChangePasswordState] =
-    useState<FieldsState>(fieldsState);
+    useState<FieldsState>(fieldsState)
   const [errors, setErrors] = useState<FieldsState>({
-    password: "Password is required",
-    confirmPassword: "Confirm password is required",
-  });
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [showBlankScreen, setShowBlankScreen] = useState(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+    password: 'Password is required',
+    confirmPassword: 'Confirm password is required'
+  })
+  const [isFormValid, setIsFormValid] = useState<boolean>(false)
+  const [showBlankScreen, setShowBlankScreen] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const handleChange = (e: { target: { id: any; value: any } }) => {
-    const { id, value } = e.target;
+    const { id, value } = e.target
 
     // Perform validation for the specific field being changed
-    const fieldError = validateField(id, value, changePasswordState);
+    const fieldError = validateField(id, value, changePasswordState)
 
     // Update the confirm password field if the password field changes
-    if (id === "password") {
+    if (id === 'password') {
       const confirmPasswordError = validateField(
-        "confirmPassword",
+        'confirmPassword',
         changePasswordState.confirmPassword,
         { ...changePasswordState, password: value } // Pass the updated password value
-      );
+      )
       setErrors((prevErrors) => ({
         ...prevErrors,
-        confirmPassword: confirmPasswordError,
-      }));
+        confirmPassword: confirmPasswordError
+      }))
     }
 
     setChangePasswordState((prevSignupState) => ({
       ...prevSignupState,
-      [id]: value,
-    }));
+      [id]: value
+    }))
 
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [id]: fieldError,
-    }));
-  };
+      [id]: fieldError
+    }))
+  }
 
   useEffect(() => {
     // Check if all fields are valid
     const isAllFieldsValid = Object.values(errors).every(
-      (error) => error === ""
-    );
+      (error) => error === ''
+    )
 
     // Update the form validity state
-    setIsFormValid(isAllFieldsValid);
-  }, [errors]);
+    setIsFormValid(isAllFieldsValid)
+  }, [errors])
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log(changePasswordState);
+    e.preventDefault()
     requestType === RequestType.changePassword
       ? changePassword()
-      : resetPassword();
-  };
+      : resetPassword()
+  }
 
   const changePassword = async () => {
     try {
-      setIsLoading(true);
+      setIsLoading(true)
 
-      const accessToken = localStorage.getItem("accessToken");
-      console.log(accessToken);
+      const accessToken = localStorage.getItem('accessToken')
 
-      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      const response = await api.put("/auth/changePassword", {
-        password: changePasswordState.password,
-      });
+      api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+      const response = await api.put('/auth/password', {
+        password: changePasswordState.password
+      })
 
-      setShowBlankScreen(true);
+      setShowBlankScreen(true)
       // show success alert
       showSuccessAlert(response.data.message, undefined, () =>
-        navigate("/userProfile")
-      );
+        navigate('/userProfile')
+      )
     } catch (error: any) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        password: error.response.data,
-      }));
+        password: error.response.data
+      }))
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const resetPassword = async () => {
     try {
-      setIsLoading(true);
+      setIsLoading(true)
 
       const response = await api.put(
-        "/auth/resetPassword",
+        '/auth/password/reset',
         {
           email: email,
-          newPassword: changePasswordState.password,
+          newPassword: changePasswordState.password
         },
-        { headers: { Authorization: "" } }
-      );
+        { headers: { Authorization: '' } }
+      )
 
-      setShowBlankScreen(true);
+      setShowBlankScreen(true)
       // show success alert
-      showSuccessAlert(response.data.message, undefined, () =>
-        navigate("/userProfile")
-      );
+      showSuccessAlert(response.data.message, undefined, () => navigate('/'))
     } catch (error: any) {
       setErrors((prevErrors) => ({
         ...prevErrors,
-        password: error.response.data,
-      }));
+        password: error.response.data
+      }))
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
   return showBlankScreen ? (
     <Loading />
   ) : (
@@ -185,7 +181,7 @@ const NewPassword = ({
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NewPassword;
+export default NewPassword

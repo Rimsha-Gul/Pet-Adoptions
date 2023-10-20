@@ -1,14 +1,14 @@
-import { Application } from "../../types/interfaces";
-import { BooleanField, TextualField } from "./ApplicationFields";
+import { Application } from '../../types/interfaces'
+import { BooleanField, TextualField } from './ApplicationFields'
 
 interface ApplicationGroupedFieldsProps {
-  groupedFields: { label: string; fields: string[] }[];
-  application: Application;
+  groupedFields: { label: string; fields: string[] }[]
+  application: Application
 }
 
 const ApplicationGroupedFields = ({
   groupedFields,
-  application,
+  application
 }: ApplicationGroupedFieldsProps) => {
   return (
     <>
@@ -22,43 +22,46 @@ const ApplicationGroupedFields = ({
             {group.fields.map((field) => {
               const applicationField = field as keyof Omit<
                 Application,
-                "shelterID"
-              >;
+                'shelterID'
+              >
               if (
-                field === "petActivities" ||
-                field === "handlePetIssues" ||
-                field === "moveWithPet" ||
-                field === "petTravelPlans" ||
-                field === "petOutlivePlans"
+                field === 'petActivities' ||
+                field === 'handlePetIssues' ||
+                field === 'moveWithPet' ||
+                field === 'petTravelPlans' ||
+                field === 'petOutlivePlans'
               )
                 return (
                   <TextualField
+                    key={field}
                     field={applicationField}
                     application={application}
                     className="flex-col"
                   />
-                );
-              if (typeof application[field as keyof Application] === "boolean")
+                )
+              if (typeof application[field as keyof Application] === 'boolean')
                 return (
                   <BooleanField
+                    key={field}
                     field={applicationField}
                     application={application}
                     className="flex-row"
                   />
-                );
+                )
               return (
                 <TextualField
+                  key={field}
                   field={applicationField}
                   application={application}
                   className="flex-row"
                 />
-              );
+              )
             })}
           </div>
         </div>
       ))}
     </>
-  );
-};
+  )
+}
 
-export default ApplicationGroupedFields;
+export default ApplicationGroupedFields

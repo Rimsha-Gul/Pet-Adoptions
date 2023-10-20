@@ -1,4 +1,4 @@
-import { FieldsState } from "../types/common";
+import { FieldsState } from '../types/common'
 
 export const validateField = (
   id: string,
@@ -9,224 +9,225 @@ export const validateField = (
   const validationRules: Record<string, (value: string) => string> = {
     name: (value) => {
       if (!value) {
-        return "Name is required";
+        return 'Name is required'
       }
       if (value.length < 3) {
-        return "Name should be at least 3 characters long";
+        return 'Name should be at least 3 characters long'
       }
-      return "";
+      return ''
     },
     password: (value) => {
       if (!value) {
-        return "Password is required";
+        return 'Password is required'
       }
       if (value.length < 6) {
-        return "Password should be at least 6 characters long";
+        return 'Password should be at least 6 characters long'
       }
-      return "";
+      return ''
     },
     confirmPassword: (value) => {
       if (!value) {
-        return "Confirm password is required";
+        return 'Confirm password is required'
+      }
+      if (value.length < 6) {
+        return 'Password should be at least 6 characters long'
       }
       if (value != fieldsState?.password) {
-        return "Passwords do not match";
+        return 'Passwords do not match'
       }
-      return "";
+      return ''
     },
     email: (value) => {
       if (!value) {
-        return "Email is required";
+        return 'Email is required'
       }
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(value)) {
-        return "Invalid email format";
+        return 'Invalid email format'
       }
-      return "";
+      return ''
     },
     shelter: (value) => {
       if (!value) {
-        return "Shelter is required";
+        return 'Shelter is required'
       }
 
-      return "";
+      return ''
     },
     category: (value) => {
       if (!value) {
-        return "Category is required";
+        return 'Category is required'
       }
-      return "";
+      return ''
     },
     microchipID: (value) => {
       if (!value) {
-        return "Microchip ID is required";
+        return 'Microchip ID is required'
       }
       if (value.length !== 10) {
-        return "Microchip ID should be 10 characters long";
+        return 'Microchip ID should be 10 characters long'
       }
-      return "";
+      return ''
     },
     petName: (value) => {
       if (!value) {
-        return "Name is required";
+        return 'Name is required'
       }
       if (value.length < 3) {
-        return "Name should be at least 3 characters long";
+        return 'Name should be at least 3 characters long'
       }
-      return "";
+      return ''
     },
     gender: (value) => {
       if (!value) {
-        return "Gender is required";
+        return 'Gender is required'
       }
-      return "";
+      return ''
     },
     breed: (value) => {
       if (!value) {
-        return "Breed is required";
+        return 'Breed is required'
       }
-      return "";
+      return ''
     },
     color: (value) => {
       if (!value) {
-        return "Color is required";
+        return 'Color is required'
       }
-      return "";
+      return ''
     },
     activityNeeds: (value) => {
       if (!value) {
-        return "Activity needs is required";
+        return 'Activity needs is required'
       }
-      return "";
+      return ''
     },
     levelOfGrooming: (value) => {
       if (!value) {
-        return "Level of grooming is required";
+        return 'Level of grooming is required'
       }
-      return "";
+      return ''
     },
     bio: (value) => {
       if (!value) {
-        return "Bio is required";
+        return 'Bio is required'
       }
-      return "";
+      return ''
     },
     adoptionFee: (value) => {
       if (!value) {
-        return "Adoption fee is required";
+        return 'Adoption fee is required'
       }
       if (isNaN(Number(value))) {
-        return "Adoption fee should be a valid number";
+        return 'Adoption fee should be a valid number'
       }
-      return "";
+      return ''
     },
     currency: (value) => {
       if (!value) {
-        return "Currency is required";
+        return 'Currency is required'
       }
-      return "";
+      return ''
     },
     images: (value) => {
-      console.log(value);
+      console.log(value)
 
       if (!value || parseInt(value) === 0) {
-        return "Choose at least one image";
+        return 'Choose at least one image'
       }
       if (parseInt(value) > 10) {
-        return "You can add a maximum of 10 files";
+        return 'You can add a maximum of 10 files'
       }
-      return "";
+      return ''
     },
     residenceType: (value) => {
       if (!value) {
-        return "Residence Type is required";
+        return 'Residence Type is required'
       }
 
-      return "";
+      return ''
     },
     childrenAges: (value) => {
-      console.log(fieldsState?.hasChildren);
-      console.log(newValue);
-      const childrenValue = newValue;
-      if (childrenValue === "true") {
+      const childrenValue = newValue
+      if (childrenValue === 'true') {
         if (!value) {
-          return "Children Ages are required";
+          return 'Children Ages are required'
         }
       }
-      return "";
+      return ''
     },
     otherPetsInfo: (value) => {
-      if (fieldsState?.otherPets === "true") {
+      if (fieldsState?.otherPets === 'true') {
         if (!value) {
-          return "Other pets info is required";
+          return 'Other pets info is required'
         }
       }
-      return "";
+      return ''
     },
     petAloneTime: (value) => {
       if (!value) {
-        return "Pet alone time is required";
+        return 'Pet alone time is required'
       }
       if (isNaN(Number(value))) {
-        return "Pet alone time should be a valid number";
+        return 'Pet alone time should be a valid number'
       }
-      return "";
+      return ''
     },
     petActivities: (value) => {
       if (!value) {
-        return "Pet Activities is required";
+        return 'Pet Activities is required'
       }
-      return "";
+      return ''
     },
     handlePetIssues: (value) => {
       if (!value) {
-        return "Handle pet issues is required";
+        return 'Handle pet issues is required'
       }
-      return "";
+      return ''
     },
     moveWithPet: (value) => {
       if (!value) {
-        return "Moving with pet is required";
+        return 'Moving with pet is required'
       }
-      return "";
+      return ''
     },
     petTravelPlans: (value) => {
       if (!value) {
-        return "Pet travel plans is required";
+        return 'Pet travel plans is required'
       }
-      return "";
+      return ''
     },
     petOutlivePlans: (value) => {
       if (!value) {
-        return "Pet outlive plans is required";
+        return 'Pet outlive plans is required'
       }
-      return "";
+      return ''
     },
     rating: (value) => {
       if (!value) {
-        return "Rating is required";
+        return 'Rating is required'
       }
       if (parseInt(value) < 1 || parseInt(value) > 5) {
-        return "Rating should be between 1 and 5";
+        return 'Rating should be between 1 and 5'
       }
-      return "";
+      return ''
     },
     review: (value) => {
       if (!value) {
-        return "Review is required";
+        return 'Review is required'
       }
       if (value.length < 10) {
-        return "Review should be at least 10 characters long";
+        return 'Review should be at least 10 characters long'
       }
-      return "";
-    },
-  };
-
-  const validationRule = validationRules[id];
-
-  if (validationRule) {
-    return validationRule(value);
+      return ''
+    }
   }
 
-  return "";
-};
+  const validationRule = validationRules[id]
+
+  if (validationRule) {
+    return validationRule(value)
+  }
+
+  return ''
+}

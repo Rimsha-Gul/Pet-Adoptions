@@ -40,7 +40,7 @@ export interface Application {
   handlePetIssues: string;
   moveWithPet: string;
   canAffordPetsNeeds: boolean;
-  canAffordPetsMediacal: boolean;
+  canAffordPetsMedical: boolean;
   petTravelPlans: string;
   petOutlivePlans: string;
   applicantEmail: string;
@@ -66,7 +66,7 @@ export interface ReactivationRequest {
 }
 
 export interface Notification {
-  _id: string;
+  id: string;
   applicationID: string;
   status: Status;
   petImage: string;

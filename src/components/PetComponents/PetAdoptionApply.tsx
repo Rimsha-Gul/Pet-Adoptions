@@ -1,17 +1,16 @@
-import { FormEvent, useContext } from "react";
-import { AppContext } from "../../context/AppContext";
-import { Link } from "react-router-dom";
-import StarRatings from "react-star-ratings";
-import { BiLinkExternal } from "react-icons/bi";
+import { FormEvent, useContext } from 'react'
+import { AppContext } from '../../context/AppContext'
+import StarRatings from 'react-star-ratings'
+import { BiLinkExternal } from 'react-icons/bi'
 
 interface PetAdoptionApplyProps {
-  petShelterID: string;
-  petShelterName: string;
-  petShelterRating: number;
-  petAdoptionFee: string;
-  handleSubmit: (e: FormEvent) => void;
-  text: string;
-  isAdopted: boolean;
+  petShelterID: string
+  petShelterName: string
+  petShelterRating: number
+  petAdoptionFee: string
+  handleSubmit: (e: FormEvent) => void
+  text: string
+  isAdopted: boolean
 }
 
 const PetAdoptionApply = ({
@@ -21,25 +20,31 @@ const PetAdoptionApply = ({
   petAdoptionFee,
   handleSubmit,
   text,
-  isAdopted,
+  isAdopted
 }: PetAdoptionApplyProps) => {
-  const appContext = useContext(AppContext);
-  const userRole = appContext.userRole;
+  const appContext = useContext(AppContext)
+  const userRole = appContext.userRole
 
   return (
     <div className="flex flex-col gap-6 max-w-9xl p-8 sm:p-12 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 ">
-      <p className="text-lg flex flex-wrap items-end gap-2">
+      <div className="text-lg flex flex-wrap items-end gap-2">
         <span className="text-primary font-bold">Shelter Name:</span>
-        <Link
+        <a
+          data-cy="shelter-link"
           className="hover:underline text-gray-500"
-          to={`/shelterProfile/${petShelterID}`}
+          href={`/shelterProfile/${petShelterID}`}
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          <span className="flex items-center gap-1 font-medium">
+          <span
+            data-cy="shelter-name"
+            className="flex items-center gap-1 font-medium"
+          >
             {petShelterName}
             <BiLinkExternal className="w-5 h-5" />
           </span>
-        </Link>
-        {petShelterRating && (
+        </a>
+        {petShelterRating && petShelterRating !== 0 && (
           <>
             <StarRatings
               rating={petShelterRating}
@@ -52,19 +57,20 @@ const PetAdoptionApply = ({
             </span>
           </>
         )}
-      </p>
+      </div>
       <p className="text-lg text-gray-500">
-        <span className="text-primary font-bold">Adoption Fee:</span>{" "}
-        {petAdoptionFee}
+        <span className="text-primary font-bold">Adoption Fee:</span>{' '}
+        <span data-cy="adoption-fee">{petAdoptionFee}</span>
       </p>
       <div className="flex items-center justify-center">
-        {userRole === "USER" &&
+        {userRole === 'USER' &&
           (isAdopted ? (
             <p className="text-gray-700 text-xl font-medium">
               This pet has been adopted
             </p>
           ) : (
             <button
+              data-cy="application-button"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-md uppercase font-medium rounded-md text-white hover:text-primary bg-primary hover:bg-white hover:ring-2 hover:ring-offset-2 hover:ring-primary"
               onClick={handleSubmit}
             >
@@ -73,7 +79,7 @@ const PetAdoptionApply = ({
           ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PetAdoptionApply;
+export default PetAdoptionApply

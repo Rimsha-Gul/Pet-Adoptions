@@ -1,236 +1,222 @@
-import { FormEvent, useEffect, useState } from "react";
-import FormAction from "../components/AuthComponents/FormAction";
-import Input from "../components/AuthComponents/Input";
-import { adoptPetFields } from "../constants/formFields";
-import { FieldsState } from "../types/common";
-import { validateField } from "../utils/formValidation";
-import { useNavigate, useParams } from "react-router-dom";
-import api from "../api";
-import { showErrorAlert, showSuccessAlert } from "../utils/alert";
-import { Pet } from "./HomePage";
-import loadingIcon from "../assets/loading.gif";
+import { FormEvent, useEffect, useState } from 'react'
+import FormAction from '../components/AuthComponents/FormAction'
+import Input from '../components/AuthComponents/Input'
+import { adoptPetFields } from '../constants/formFields'
+import { FieldsState } from '../types/common'
+import { validateField } from '../utils/formValidation'
+import { useNavigate, useParams } from 'react-router-dom'
+import api from '../api'
+import { showErrorAlert, showSuccessAlert } from '../utils/alert'
+import { Pet } from './HomePage'
+import loadingIcon from '../assets/loading.gif'
 
 const groups = [
   {
-    label: "Residence Information",
+    label: 'Residence Information',
     fields: [
-      "residenceType",
-      "hasRentPetPermission",
-      "hasChildren",
-      "childrenAges",
-      "hasOtherPets",
-      "otherPetsInfo",
-    ],
+      'residenceType',
+      'hasRentPetPermission',
+      'hasChildren',
+      'childrenAges',
+      'hasOtherPets',
+      'otherPetsInfo'
+    ]
   },
   {
-    label: "Pet Engagement Information",
-    fields: ["petAloneTime", "hasPlayTimeParks", "petActivities"],
+    label: 'Pet Engagement Information',
+    fields: ['petAloneTime', 'hasPlayTimeParks', 'petActivities']
   },
   {
-    label: "Pet Commitment Information",
+    label: 'Pet Commitment Information',
     fields: [
-      "handlePetIssues",
-      "moveWithPet",
-      "canAffordPetsNeeds",
-      "canAffordPetsMediacal",
-      "petTravelPlans",
-      "petOutlivePlans",
-    ],
-  },
-];
+      'handlePetIssues',
+      'moveWithPet',
+      'canAffordPetsNeeds',
+      'canAffordPetsMedical',
+      'petTravelPlans',
+      'petOutlivePlans'
+    ]
+  }
+]
 
-const fields = adoptPetFields;
-let fieldsState: FieldsState = {};
-fields.forEach((field) => (fieldsState[field.id] = ""));
+const fields = adoptPetFields
+const fieldsState: FieldsState = {}
+fields.forEach((field) => (fieldsState[field.id] = ''))
 
-const accessToken = localStorage.getItem("accessToken");
-api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+const accessToken = localStorage.getItem('accessToken')
+api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
 const AdoptionApplication = () => {
-  const navigate = useNavigate();
-  const [pet, setPet] = useState<Pet | null>(null);
+  const navigate = useNavigate()
+  const [pet, setPet] = useState<Pet | null>(null)
 
   const isDependentField = (fieldId: string) => {
-    const field = adoptPetFields.find((field) => field.id === fieldId);
-    return field && field.dependsOn !== undefined;
-  };
+    const field = adoptPetFields.find((field) => field.id === fieldId)
+    return field && field.dependsOn !== undefined
+  }
 
-  const [adoptPetState, setAdoptPetState] = useState<FieldsState>(fieldsState);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
+  const [adoptPetState, setAdoptPetState] = useState<FieldsState>(fieldsState)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isFormValid, setIsFormValid] = useState<boolean>(false)
 
   const [errors, setErrors] = useState<FieldsState>({
-    residenceType: "residence type is required",
-    hasRentPetPermission: "",
-    hasChildren: "",
-    childrenAges: "",
-    hasOtherPets: "",
-    otherPetsInfo: "",
-    petAloneTime: "Pet alone time is required",
-    petActivities: "Pet Activities is required",
-    handlePetIssues: "Handle pet issues is required",
-    moveWithPet: "Moving with pet is required",
-    petTravelPlans: "Pet travel plans is required",
-    petOutlivePlans: "Pet outlive plans is required",
-  });
+    residenceType: 'residence type is required',
+    hasRentPetPermission: '',
+    hasChildren: '',
+    childrenAges: '',
+    hasOtherPets: '',
+    otherPetsInfo: '',
+    petAloneTime: 'Pet alone time is required',
+    petActivities: 'Pet Activities is required',
+    handlePetIssues: 'Handle pet issues is required',
+    moveWithPet: 'Moving with pet is required',
+    petTravelPlans: 'Pet travel plans is required',
+    petOutlivePlans: 'Pet outlive plans is required'
+  })
 
-  const { petID } = useParams();
-  console.log(petID);
+  const { petID } = useParams()
   useEffect(() => {
     const fetchPet = async () => {
-      console.log("fetch pet");
       try {
-        setIsLoading(true);
-        const response = await api.get("/pet", {
-          params: {
-            id: petID,
-          },
-        });
-        setPet(response.data.pet);
-      } catch (error) {
-        console.error(error);
+        setIsLoading(true)
+        const response = await api.get(`/pets/${petID}`)
+        setPet(response.data.pet)
+      } catch (error: any) {
+        showErrorAlert(error.response.data)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
     if (petID && !pet) {
-      console.log("should fetch");
-      fetchPet();
+      fetchPet()
     }
-  }, [petID, pet]);
-  console.log(pet);
+  }, [petID, pet])
 
   const handleChange = (e: { target: { id: any; value: any } }) => {
-    const { id, value } = e.target;
+    const { id, value } = e.target
 
     // Perform validation for the specific field being changed
-    const fieldError = validateField(id, value, adoptPetState);
+    const fieldError = validateField(id, value, adoptPetState)
 
     if (
-      id === "hasRentPetPermission" ||
-      id === "hasChildren" ||
-      id === "hasOtherPets" ||
-      id === "hasPlayTimeParks" ||
-      id === "canAffordPetsNeeds" ||
-      id === "canAffordPetsMediacal"
+      id === 'hasRentPetPermission' ||
+      id === 'hasChildren' ||
+      id === 'hasOtherPets' ||
+      id === 'hasPlayTimeParks' ||
+      id === 'canAffordPetsNeeds' ||
+      id === 'canAffordPetsMedical'
     ) {
       setAdoptPetState((prevAdoptPetState) => ({
         ...prevAdoptPetState,
-        [id]: value.toString(),
-      }));
+        [id]: value.toString()
+      }))
     } else {
       setAdoptPetState((prevAdoptPetState) => ({
         ...prevAdoptPetState,
-        [id]: value,
-      }));
+        [id]: value
+      }))
     }
-    let childrenAgesError = "";
-    let otherPetsInfoError = "";
-    if (id === "hasChildren") {
+    let childrenAgesError = ''
+    let otherPetsInfoError = ''
+    if (id === 'hasChildren') {
       childrenAgesError = validateField(
-        "childrenAges",
+        'childrenAges',
         adoptPetState.childrenAges,
         adoptPetState,
         value
-      );
+      )
     }
-    if (id === "hasOtherPets") {
+    if (id === 'hasOtherPets') {
       otherPetsInfoError = validateField(
-        "otherPetsInfo",
+        'otherPetsInfo',
         adoptPetState.otherPetsInfo,
         adoptPetState,
         value
-      );
+      )
     }
     setErrors((prevErrors) => ({
       ...prevErrors,
       [id]: fieldError,
-      ["childrenAges"]: childrenAgesError,
-      ["otherPetsInfo"]: otherPetsInfoError,
-    }));
-  };
+      ['childrenAges']: childrenAgesError,
+      ['otherPetsInfo']: otherPetsInfoError
+    }))
+  }
 
   useEffect(() => {
     // Check if all fields are valid
     const isAllFieldsValid = Object.values(errors).every(
-      (error) => error === ""
-    );
+      (error) => error === ''
+    )
 
     // Update the form validity state
-    setIsFormValid(isAllFieldsValid);
-  }, [errors]);
+    setIsFormValid(isAllFieldsValid)
+  }, [errors])
 
   const handleSubmit = (e: FormEvent) => {
-    console.log(errors);
-    e.preventDefault();
-    applyForPet();
-  };
-  console.log(pet);
+    e.preventDefault()
+    applyForPet()
+  }
 
   const adoptPetData = {
     shelterID: pet?.shelterID,
     microchipID: pet?.microchipID,
     residenceType: adoptPetState.residenceType,
-    ...(adoptPetState.residenceType === "rentHouse" && {
-      hasRentPetPermission: adoptPetState.hasRentPetPermission === "true",
+    ...(adoptPetState.residenceType === 'rentHouse' && {
+      hasRentPetPermission: adoptPetState.hasRentPetPermission === 'true'
     }),
-    hasChildren: adoptPetState.hasChildren === "true",
-    ...(adoptPetState.hasChildren === "true" && {
-      childrenAges: adoptPetState.childrenAges,
+    hasChildren: adoptPetState.hasChildren === 'true',
+    ...(adoptPetState.hasChildren === 'true' && {
+      childrenAges: adoptPetState.childrenAges
     }),
-    hasOtherPets: adoptPetState.hasOtherPets === "true",
-    ...(adoptPetState.hasOtherPets === "true" && {
-      otherPetsInfo: adoptPetState.otherPetsInfo,
+    hasOtherPets: adoptPetState.hasOtherPets === 'true',
+    ...(adoptPetState.hasOtherPets === 'true' && {
+      otherPetsInfo: adoptPetState.otherPetsInfo
     }),
     petAloneTime: adoptPetState.petAloneTime,
-    hasPlayTimeParks: adoptPetState.hasPlayTimeParks === "true",
+    hasPlayTimeParks: adoptPetState.hasPlayTimeParks === 'true',
     petActivities: adoptPetState.petActivities,
     handlePetIssues: adoptPetState.handlePetIssues,
     moveWithPet: adoptPetState.moveWithPet,
-    canAffordPetsNeeds: adoptPetState.canAffordPetsNeeds === "true",
-    canAffordPetsMediacal: adoptPetState.canAffordPetsMediacal === "true",
+    canAffordPetsNeeds: adoptPetState.canAffordPetsNeeds === 'true',
+    canAffordPetsMedical: adoptPetState.canAffordPetsMedical === 'true',
     petTravelPlans: adoptPetState.petTravelPlans,
-    petOutlivePlans: adoptPetState.petOutlivePlans,
-  };
+    petOutlivePlans: adoptPetState.petOutlivePlans
+  }
 
   const applyForPet = async () => {
-    console.log(adoptPetData);
     try {
-      setIsLoading(true);
-      const response = await api.post("/application/", adoptPetData);
-      console.log(response);
-      const id = response.data.application.id;
-      console.log(id);
+      setIsLoading(true)
+      const response = await api.post('/applications/', adoptPetData)
+      const id = response.data.application.id
       showSuccessAlert(
-        "Application submitted successfully.",
+        'Application submitted successfully.',
         () => navigate(`/view/application/${id}`),
         () => {
           // Get the current URL path
-          const path = window.location.pathname;
+          const path = window.location.pathname
 
           // Check whether the current page is the application page
           if (!path.includes(`/view/application/${id}`)) {
             // If it's not, navigate to the pet page
-            navigate(`/pet/${encodeURIComponent(id)}`);
+            navigate(`/pet/${pet?.microchipID}`)
           }
         },
         '<a href id="navigateApplication">View your application and its status</a><style>#navigateApplication:hover { text-decoration: underline; }</style>',
-        "navigateApplication"
-      );
+        'navigateApplication'
+      )
     } catch (error: any) {
       if (error.response.status === 400) {
-        console.log(error.response);
-        showErrorAlert(error.response.data);
+        showErrorAlert(error.response.data)
       } else if (error.response.status === 500) {
         showErrorAlert(
-          "An error occurred on the server. Please try again later."
-        );
+          'An error occurred on the server. Please try again later.'
+        )
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
@@ -253,11 +239,11 @@ const AdoptionApplication = () => {
                     {group.fields.map((fieldId) => {
                       const field = adoptPetFields.find(
                         (field) => field.id === fieldId
-                      );
-                      if (!field) return null;
-                      if (!field) return null;
+                      )
+                      if (!field) return null
+                      if (!field) return null
 
-                      if (isDependentField(field.id)) return null; // skip rendering if this is a dependent field
+                      if (isDependentField(field.id)) return null // skip rendering if this is a dependent field
 
                       return (
                         <div className="flex flex-col" key={field.id}>
@@ -288,10 +274,10 @@ const AdoptionApplication = () => {
                                 adoptPetState[
                                   dependentField.dependsOn
                                     ? dependentField.dependsOn
-                                    : ""
+                                    : ''
                                 ] !== dependentField.dependsOnValue
                               ) {
-                                return null;
+                                return null
                               }
 
                               return (
@@ -312,16 +298,17 @@ const AdoptionApplication = () => {
                                     validationError={errors[dependentField.id]}
                                   />
                                 </div>
-                              );
+                              )
                             })}
                         </div>
-                      );
+                      )
                     })}
                   </div>
                 </div>
               ))}
 
               <FormAction
+                data-cy="apply-button"
                 handleSubmit={handleSubmit}
                 text="Apply for Adoption"
                 isLoading={isLoading}
@@ -333,7 +320,7 @@ const AdoptionApplication = () => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default AdoptionApplication;
+export default AdoptionApplication

@@ -1,41 +1,45 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import api from "../api";
-import loadingIcon from "../assets/loading.gif";
-import NewPassword from "../components/SettingsComponents/NewPassword";
-import { RequestType } from "../types/enums";
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import api from '../api'
+import loadingIcon from '../assets/loading.gif'
+import NewPassword from '../components/SettingsComponents/NewPassword'
+import { RequestType } from '../types/enums'
 
 const ResetPassword = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [verificationError, setVerificationError] = useState<string>("");
-  const [isTokenVerified, setIsTokenVerified] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [verificationError, setVerificationError] = useState<string>('')
+  const [isTokenVerified, setIsTokenVerified] = useState<boolean>(false)
+  const [email, setEmail] = useState<string>('')
 
   // Extract the token from the location.pathname
-  const resetToken = useParams().resetToken;
-  console.log(resetToken);
+  const resetToken = useParams().resetToken
 
   useEffect(() => {
     const verifyInvitation = async () => {
       try {
-        const response = await api.get(`/auth/verifyResetToken`, {
-          params: { resetToken },
-        });
+        const response = await api.get(`/auth/password/reset/token/verify`, {
+          params: { resetToken }
+        })
 
-        const { email } = response.data;
-        setEmail(email);
-        setIsTokenVerified(true);
+        const { email } = response.data
+        setEmail(email)
+        setIsTokenVerified(true)
       } catch (error: any) {
-        setVerificationError(
-          "Your password reset token is invalid or has expired. Please request a new one."
-        );
+        if (error.response.status === 404)
+          setVerificationError(error.response.data.message)
+        else if (error.response.status === 400)
+          setVerificationError(
+            'Your password reset token is invalid or has expired. Please request a new one.'
+          )
+        else if (error.response.status === 500)
+          setVerificationError(error.response.data.message)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    verifyInvitation();
-  }, [resetToken]);
+    verifyInvitation()
+  }, [resetToken])
 
   return (
     <>
@@ -49,7 +53,7 @@ const ResetPassword = () => {
       {verificationError && (
         <div className="w-full flex flex-col items-center justify-center min-h-screen py-2">
           <div className="flex items-center justify-center h-full">
-            <p>{verificationError}</p>
+            <p data-cy="error-message">{verificationError}</p>
           </div>
         </div>
       )}
@@ -61,7 +65,7 @@ const ResetPassword = () => {
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default ResetPassword;
+export default ResetPassword

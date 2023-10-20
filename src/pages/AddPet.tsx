@@ -1,119 +1,119 @@
-import { FormEvent, useContext, useEffect, useState } from "react";
-import Input from "../components/AuthComponents/Input";
-import { addPetFields } from "../constants/formFields";
-import { FieldsState } from "../types/common";
-import FormAction from "../components/AuthComponents/FormAction";
-import { validateField } from "../utils/formValidation";
-import api from "../api";
-import { useNavigate } from "react-router-dom";
-import { showErrorAlert, showSuccessAlert } from "../utils/alert";
-import { FileInput } from "../components/PetComponents/PetImageUpload";
-import { AppContext } from "../context/AppContext";
+import { FormEvent, useContext, useEffect, useState } from 'react'
+import Input from '../components/AuthComponents/Input'
+import { addPetFields } from '../constants/formFields'
+import { FieldsState } from '../types/common'
+import FormAction from '../components/AuthComponents/FormAction'
+import { validateField } from '../utils/formValidation'
+import api from '../api'
+import { useNavigate } from 'react-router-dom'
+import { showErrorAlert, showSuccessAlert } from '../utils/alert'
+import { FileInput } from '../components/PetComponents/PetImageUpload'
+import { AppContext } from '../context/AppContext'
 
 interface Pet {
-  microchipID: string;
-  name: string;
-  gender: string;
-  birthDate: string;
-  color: string;
-  breed: string;
-  category: string;
-  activityNeeds: string;
-  levelOfGrooming: string;
-  isHouseTrained: boolean;
+  microchipID: string
+  name: string
+  gender: string
+  birthDate: string
+  color: string
+  breed: string
+  category: string
+  activityNeeds: string
+  levelOfGrooming: string
+  isHouseTrained: boolean
   healthInfo: {
-    healthCheck: boolean;
-    allergiesTreated: boolean;
-    wormed: boolean;
-    heartwormTreated: boolean;
-    vaccinated: boolean;
-    deSexed: boolean;
-  };
-  bio: string;
-  traits: string[];
-  adoptionFee: string;
-  images: string[];
+    healthCheck: boolean
+    allergiesTreated: boolean
+    wormed: boolean
+    heartwormTreated: boolean
+    vaccinated: boolean
+    deSexed: boolean
+  }
+  bio: string
+  traits: string[]
+  adoptionFee: string
+  images: string[]
 }
 
 const groups = [
   {
-    label: "Basic Information",
+    label: 'Basic Information',
     fields: [
-      "shelter",
-      "category",
-      "microchipID",
-      "petName",
-      "gender",
-      "birthDate",
-    ],
+      'shelter',
+      'category',
+      'microchipID',
+      'petName',
+      'gender',
+      'birthDate'
+    ]
   },
   {
-    label: "Physical Characteristics",
-    fields: ["breed", "color", "activityNeeds", "levelOfGrooming"],
+    label: 'Physical Characteristics',
+    fields: ['breed', 'color', 'activityNeeds', 'levelOfGrooming']
   },
   {
-    label: "Health Details",
+    label: 'Health Details',
     fields: [
-      "isHouseTrained",
-      "healthCheck",
-      "allergiesTreated",
-      "wormed",
-      "heartwormTreated",
-      "vaccinated",
-      "deSexed",
-    ],
+      'isHouseTrained',
+      'healthCheck',
+      'allergiesTreated',
+      'wormed',
+      'heartwormTreated',
+      'vaccinated',
+      'deSexed'
+    ]
   },
   {
-    label: "Additional Information",
-    fields: ["traits", "adoptionFee", "currency", "bio", "images"],
-  },
-];
+    label: 'Additional Information',
+    fields: ['traits', 'adoptionFee', 'currency', 'bio', 'images']
+  }
+]
 
-const fields = addPetFields;
-let fieldsState: FieldsState = {};
-fields.forEach((field) => (fieldsState[field.id] = ""));
+const fields = addPetFields
+const fieldsState: FieldsState = {}
+fields.forEach((field) => (fieldsState[field.id] = ''))
 
-const accessToken = localStorage.getItem("accessToken");
-api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+const accessToken = localStorage.getItem('accessToken')
+api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
 const AddPet = () => {
-  const appContext = useContext(AppContext);
-  const navigate = useNavigate();
-  const userRole = appContext.userRole;
-  const [addPetState, setAddPetState] = useState<FieldsState>(fieldsState);
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [serverErrorMessage, setServerError] = useState<string>("");
-  const [shelters, setShelters] = useState([]);
+  const appContext = useContext(AppContext)
+  const navigate = useNavigate()
+  const userRole = appContext.userRole
+  const [addPetState, setAddPetState] = useState<FieldsState>(fieldsState)
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
+  const [previews, setPreviews] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isFormValid, setIsFormValid] = useState<boolean>(false)
+  const [serverErrorMessage, setServerError] = useState<string>('')
+  const [shelters, setShelters] = useState([])
   const [errors, setErrors] = useState<FieldsState>({
-    ...(userRole === "ADMIN" && { shelter: "shelter is required" }),
-    category: "category is required",
-    microchipID: "microchipID is required",
-    petName: "name is required",
-    gender: "gender is required",
-    birthDate: "date of birth is required",
-    breed: "breed is required",
-    color: "color is required",
-    activityNeeds: "activityNeeds is required",
-    levelOfGrooming: "levelOfGrooming is required",
-    isHouseTrained: "",
-    healthCheck: "",
-    allergiesTreated: "",
-    wormed: "",
-    heartwormTreated: "",
-    vaccinated: "",
-    deSexed: "",
-    traits: "traits is required",
-    adoptionFee: "adoptionFee is required",
-    currency: "currency is required",
-    bio: "bio is required",
-    images: "",
-  });
+    ...(userRole === 'ADMIN' && { shelter: 'shelter is required' }),
+    category: 'category is required',
+    microchipID: 'microchipID is required',
+    petName: 'name is required',
+    gender: 'gender is required',
+    birthDate: 'date of birth is required',
+    breed: 'breed is required',
+    color: 'color is required',
+    activityNeeds: 'activityNeeds is required',
+    levelOfGrooming: 'levelOfGrooming is required',
+    isHouseTrained: '',
+    healthCheck: '',
+    allergiesTreated: '',
+    wormed: '',
+    heartwormTreated: '',
+    vaccinated: '',
+    deSexed: '',
+    traits: 'traits is required',
+    adoptionFee: 'adoptionFee is required',
+    currency: 'currency is required',
+    bio: 'bio is required',
+    images: ''
+  })
 
   const addPetData = {
-    ...(userRole === "ADMIN" && { shelterID: addPetState.shelter }),
+    ...(userRole === 'ADMIN' && { shelterID: addPetState.shelter }),
     category: addPetState.category,
     microchipID: addPetState.microchipID,
     name: addPetState.petName,
@@ -123,185 +123,165 @@ const AddPet = () => {
     color: addPetState.color,
     activityNeeds: addPetState.activityNeeds,
     levelOfGrooming: addPetState.levelOfGrooming,
-    isHouseTrained: addPetState.isHouseTrained === "true",
-    healthCheck: addPetState.healthCheck === "true",
-    allergiesTreated: addPetState.allergiesTreated === "true",
-    wormed: addPetState.wormed === "true",
-    heartwormTreated: addPetState.heartwormTreated === "true",
-    vaccinated: addPetState.vaccinated === "true",
-    deSexed: addPetState.deSexed === "true",
+    isHouseTrained: addPetState.isHouseTrained === 'true',
+    healthCheck: addPetState.healthCheck === 'true',
+    allergiesTreated: addPetState.allergiesTreated === 'true',
+    wormed: addPetState.wormed === 'true',
+    heartwormTreated: addPetState.heartwormTreated === 'true',
+    vaccinated: addPetState.vaccinated === 'true',
+    deSexed: addPetState.deSexed === 'true',
     traits: addPetState.traits,
     adoptionFee: `${addPetState.adoptionFee} ${addPetState.currency}`,
-    bio: addPetState.bio,
-  };
+    bio: addPetState.bio
+  }
 
   useEffect(() => {
-    if (userRole === "ADMIN") {
+    if (userRole === 'ADMIN') {
       const fetchShelters = async () => {
         try {
-          const response = await api.get("/auth/shelters");
+          const response = await api.get('/shelters')
           if (response.status === 200) {
-            console.log(response.data);
             setShelters(
               response.data.map((shelter: { id: string; name: string }) => ({
                 label: shelter.name,
-                value: shelter.id,
+                value: shelter.id
               }))
-            );
+            )
           }
         } catch (error: any) {
-          // if (error.response.status === 401) {
-          //   console.error(error.response.status);
-          //   navigate("/");
-          // }
           if (error.response.status === 500) {
-            console.error("Server error:", error.response.data.message);
             setServerError(
-              "An error occurred on the server. Please try again later."
-            );
+              'An error occurred on the server. Please try again later.'
+            )
             showErrorAlert(
-              "An error occurred on the server. Please try again later."
-            );
+              'An error occurred on the server. Please try again later.'
+            )
           }
         }
-      };
+      }
 
-      fetchShelters();
+      fetchShelters()
     }
-  }, [userRole]);
+  }, [userRole])
 
   const handleChange = (e: { target: { id: any; value: any } }) => {
-    const { id, value } = e.target;
+    const { id, value } = e.target
 
     // Perform validation for the specific field being changed
-    const fieldError = validateField(id, value, addPetState);
+    const fieldError = validateField(id, value, addPetState)
 
     if (
-      id === "isHouseTrained" ||
-      id === "healthCheck" ||
-      id === "allergiesTreated" ||
-      id === "wormed" ||
-      id === "heartwormTreated" ||
-      id === "vaccinated" ||
-      id === "deSexed"
+      id === 'isHouseTrained' ||
+      id === 'healthCheck' ||
+      id === 'allergiesTreated' ||
+      id === 'wormed' ||
+      id === 'heartwormTreated' ||
+      id === 'vaccinated' ||
+      id === 'deSexed'
     ) {
       setAddPetState((prevAddPetState) => ({
         ...prevAddPetState,
-        [id]: value.toString(),
-      }));
+        [id]: value.toString()
+      }))
     } else {
       setAddPetState((prevAddPetState) => ({
         ...prevAddPetState,
-        [id]: value,
-      }));
+        [id]: value
+      }))
     }
 
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [id]: fieldError,
-    }));
-  };
+      [id]: fieldError
+    }))
+  }
 
   useEffect(() => {
     // Check if all fields are valid
     const isAllFieldsValid = Object.values(errors).every(
-      (error) => error === ""
-    );
+      (error) => error === ''
+    )
 
     // Update the form validity state
-    setIsFormValid(isAllFieldsValid);
-  }, [errors]);
+    setIsFormValid(isAllFieldsValid)
+  }, [errors])
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    addAPet();
-  };
+    e.preventDefault()
+    addAPet()
+  }
 
   const addAPet = async () => {
-    console.log(addPetData);
     try {
-      setIsLoading(true);
-      const formData = new FormData();
+      setIsLoading(true)
+      const formData = new FormData()
 
       Object.entries(addPetData).forEach(([key, value]) => {
-        if (typeof value === "boolean") {
-          formData.append(key, value.toString());
+        if (typeof value === 'boolean') {
+          formData.append(key, value.toString())
         } else {
-          formData.append(key, value as string);
+          formData.append(key, value as string)
         }
-      });
-      console.log(selectedFiles);
+      })
+      console.log(selectedFiles)
       if (selectedFiles) {
         for (let i = 0; i < selectedFiles.length; i++) {
-          formData.append("images", selectedFiles[i]);
+          formData.append('images', selectedFiles[i])
         }
       }
-      console.log("formdata: ", formData);
-      const response = await api.post("/pet", formData, {
+      const response = await api.post('/pets', formData, {
         headers: {
-          "Content-Type": "multipart/form-data", // Set the correct content type for FormData
-        },
-      });
+          'Content-Type': 'multipart/form-data' // Set the correct content type for FormData
+        }
+      })
       if (response.status === 200) {
-        setServerError("");
-        console.log("Response data: ", response.data);
-        const pet: Pet = response.data;
-        console.log("Pet: ", pet);
+        setServerError('')
+        const pet: Pet = response.data
         showSuccessAlert(
-          "The pet has been added successfully.",
+          'The pet has been added successfully.',
           () =>
             navigate(`/pet/${addPetData.microchipID}`, {
-              state: pet,
+              state: pet
             }),
           () => {
-            // Get the current URL path
-            const path = window.location.pathname;
-
-            // Check whether the current page is the application page
-            if (!path.includes(`/pet/${addPetData.microchipID}`)) {
-              // If it's not, navigate to the pet page
-              navigate("/addpet");
-            }
+            window.location.reload()
           },
           '<a href id="navigatePet">View the pet\'s profile page</a><style>#navigatePet:hover { text-decoration: underline; }</style>',
-          "navigatePet"
-        );
+          'navigatePet'
+        )
       }
     } catch (error: any) {
       if (error.response.status === 400) {
-        console.log(error.response);
-        showErrorAlert(error.response.data);
+        showErrorAlert(error.response.data)
 
-        if (error.response.data === "Invalid shelter ID.") {
+        if (error.response.data === 'Invalid shelter ID.') {
           setErrors((prevErrors) => ({
             ...prevErrors,
-            shelter: error.response.data,
-          }));
-        } else if (error.response.data === "Pet already exists.") {
-          console.log(error.response.data);
+            shelter: error.response.data
+          }))
+        } else if (error.response.data === 'Pet already exists.') {
           setErrors((prevErrors) => ({
             ...prevErrors,
-            microchipID: error.response.data,
-          }));
+            microchipID: error.response.data
+          }))
         } else {
           setErrors((prevErrors) => ({
             ...prevErrors,
-            images: error.response.data,
-          }));
+            images: error.response.data
+          }))
         }
       } else if (error.response.status === 500) {
-        console.error("Server error:", error.response.data);
         setServerError(
-          "An error occurred on the server. Please try again later."
-        );
+          'An error occurred on the server. Please try again later.'
+        )
         showErrorAlert(
-          "An error occurred on the server. Please try again later."
-        );
+          'An error occurred on the server. Please try again later.'
+        )
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12">
@@ -321,7 +301,7 @@ const AddPet = () => {
                   {addPetFields
                     .filter((field) => group.fields.includes(field.id))
                     .map((field) => {
-                      if (field.id === "bio") {
+                      if (field.id === 'bio') {
                         return (
                           <div
                             key={field.id}
@@ -342,19 +322,20 @@ const AddPet = () => {
                               labelClassName="text-gray-700 font-medium text-lg"
                               customClass=""
                               options={
-                                field.name === "shelter"
+                                field.name === 'shelter'
                                   ? shelters
                                   : field.options
                               }
                               validationError={errors[field.id]}
-                              showShelterID={appContext.userRole === "ADMIN"}
+                              showShelterID={appContext.userRole === 'ADMIN'}
                             />
                           </div>
-                        );
+                        )
                       }
-                      if (field.id === "images") {
+                      if (field.id === 'images') {
                         return (
                           <FileInput
+                            key={field.id}
                             selectedFiles={selectedFiles}
                             setSelectedFiles={setSelectedFiles}
                             previews={previews}
@@ -364,7 +345,7 @@ const AddPet = () => {
                             addPetState={addPetState}
                             validateField={validateField}
                           />
-                        );
+                        )
                       }
                       return (
                         <Input
@@ -382,12 +363,12 @@ const AddPet = () => {
                           labelClassName="text-gray-700 font-medium text-lg"
                           customClass=""
                           options={
-                            field.name === "shelter" ? shelters : field.options
+                            field.name === 'shelter' ? shelters : field.options
                           }
                           validationError={errors[field.id]}
-                          showShelterID={userRole === "ADMIN"}
+                          showShelterID={userRole === 'ADMIN'}
                         />
-                      );
+                      )
                     })}
                 </div>
               </div>
@@ -404,7 +385,7 @@ const AddPet = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AddPet;
+export default AddPet

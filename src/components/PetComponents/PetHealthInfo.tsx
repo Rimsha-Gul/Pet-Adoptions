@@ -51,13 +51,17 @@ const PetHealthInfo = ({ petHealthInfo }: petHealthInfoProps) => {
         },
       ].map(({ name, icon: Icon, value }) => (
         <div
+          data-cy={`${name.toLowerCase().replace(/ /g, "-")}-container`}
           key={name}
           className="flex flex-col items-center gap-2 w-1/3 lg:w-1/4"
         >
           <div className="bg-secondary-50 rounded-full p-3 relative">
             <Icon className="text-primary text-3xl" />
             {value && (
-              <FaCheckCircle className="text-green-500 text-xl absolute top-0 left-0" />
+              <FaCheckCircle
+                data-cy={`${name.toLowerCase().replace(/ /g, "-")}-check-icon`}
+                className="text-green-500 text-xl absolute top-0 left-0"
+              />
             )}
           </div>
           <p className="text-md text-gray-500 text-center">{name}</p>

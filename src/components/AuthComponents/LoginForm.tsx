@@ -1,99 +1,96 @@
-import { FormEvent, useContext, useEffect, useState } from "react";
-import { loginFields } from "../../constants/formFields";
-import Input from "./Input";
-import { FieldsState } from "../../types/common";
-import FormAction from "./FormAction";
-import api from "../../api";
-import { Link, useNavigate } from "react-router-dom";
-import { AppContext } from "../../context/AppContext";
-import { validateField } from "../../utils/formValidation";
+import { FormEvent, useContext, useEffect, useState } from 'react'
+import { loginFields } from '../../constants/formFields'
+import Input from './Input'
+import { FieldsState } from '../../types/common'
+import FormAction from './FormAction'
+import api from '../../api'
+import { Link, useNavigate } from 'react-router-dom'
+import { AppContext } from '../../context/AppContext'
+import { validateField } from '../../utils/formValidation'
 
-const fields = loginFields;
-let fieldsState: FieldsState = {};
-fields.forEach((field) => (fieldsState[field.id] = ""));
+const fields = loginFields
+const fieldsState: FieldsState = {}
+fields.forEach((field) => (fieldsState[field.id] = ''))
 
 const LoginForm = () => {
-  const navigate = useNavigate();
-  const appContext = useContext(AppContext);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isFormValid, setIsFormValid] = useState<boolean>(false);
-  const [loginState, setLoginState] = useState<FieldsState>(fieldsState);
-  const [credentialsError, setCredentialsError] = useState<string>("");
+  const navigate = useNavigate()
+  const appContext = useContext(AppContext)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isFormValid, setIsFormValid] = useState<boolean>(false)
+  const [loginState, setLoginState] = useState<FieldsState>(fieldsState)
+  const [credentialsError, setCredentialsError] = useState<string>('')
   const [errors, setErrors] = useState<FieldsState>({
-    email: "Email is required",
-    password: "Password is required",
-  });
+    email: 'Email is required',
+    password: 'Password is required'
+  })
   const loginData = {
     email: loginState.email,
-    password: loginState.password,
-  };
+    password: loginState.password
+  }
 
   const handleChange = (e: { target: { id: any; value: any } }) => {
-    const { id, value } = e.target;
+    const { id, value } = e.target
 
     // Perform validation for the specific field being changed
-    const fieldError = validateField(id, value, loginState);
+    const fieldError = validateField(id, value, loginState)
 
     setLoginState((prevLoginState) => ({
       ...prevLoginState,
-      [id]: value,
-    }));
-    setCredentialsError("");
+      [id]: value
+    }))
+    setCredentialsError('')
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [id]: fieldError,
-    }));
-  };
+      [id]: fieldError
+    }))
+  }
 
   useEffect(() => {
     // Check if all fields are valid
     const isAllFieldsValid =
-      credentialsError === "" &&
-      Object.values(errors).every((error) => error === "");
+      credentialsError === '' &&
+      Object.values(errors).every((error) => error === '')
 
     // Update the form validity state
-    setIsFormValid(isAllFieldsValid);
-  }, [errors, credentialsError]);
+    setIsFormValid(isAllFieldsValid)
+  }, [errors, credentialsError])
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    authenticateUser();
-  };
+    e.preventDefault()
+    authenticateUser()
+  }
 
   //Handle Login API Integration
   const authenticateUser = async () => {
-    sessionStorage.setItem("userEmail", loginData.email);
-    console.log(loginData);
+    localStorage.setItem('userEmail', loginData.email)
     try {
-      setCredentialsError("");
-      setIsLoading(true);
-      const response = await api.post("/auth/login", loginData);
+      setCredentialsError('')
+      setIsLoading(true)
+      const response = await api.post('/auth/login', loginData)
       if (response.status === 200) {
-        appContext.setLoggedIn?.(true);
-        appContext.setUserEmail?.(loginData.email);
-        const { tokens } = response.data;
-        localStorage.setItem("accessToken", tokens.accessToken);
-        localStorage.setItem("refreshToken", tokens.refreshToken);
-        console.log("go home");
-        navigate("/homepage");
+        appContext.setLoggedIn?.(true)
+        appContext.setUserEmail?.(loginData.email)
+        const { tokens } = response.data
+        localStorage.setItem('accessToken', tokens.accessToken)
+        localStorage.setItem('refreshToken', tokens.refreshToken)
+        navigate('/homepage')
       }
     } catch (error: any) {
       if (error.response.status === 404) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          email: "User not found.",
-        }));
+          email: 'User not found.'
+        }))
       } else if (error.response.status === 401) {
-        setCredentialsError("Invalid credentials!");
+        setCredentialsError('Invalid credentials!')
       } else if (error.response.status === 403) {
         // Handle user not verified error
-        console.log(appContext.userEmail);
-        navigate("/verifyemail");
+        navigate('/verifyemail')
       }
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <form className="mx-auto md:w-full px-4 sm:px-8 lg:px-16 xl:px-4 xl:w-2/3 mt-8">
@@ -130,9 +127,14 @@ const LoginForm = () => {
         disabled={!isFormValid}
         customClass="w-full"
       />
-      <p className="text-center text-red-500 text-xs">{credentialsError}</p>
+      <p
+        data-cy="credentials-error"
+        className="text-center text-red-500 text-xs"
+      >
+        {credentialsError}
+      </p>
     </form>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm

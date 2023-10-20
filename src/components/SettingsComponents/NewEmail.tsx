@@ -1,48 +1,45 @@
-import { useContext, useState } from "react";
-import loadingIcon from "../../assets/loading.gif";
-import api from "../../api";
-import { AppContext } from "../../context/AppContext";
-import { useNavigate } from "react-router-dom";
+import { useContext, useState } from 'react'
+import loadingIcon from '../../assets/loading.gif'
+import api from '../../api'
+import { AppContext } from '../../context/AppContext'
+import { useNavigate } from 'react-router-dom'
 
 const NewEmailForm = () => {
-  const [userNewEmail, setuserNewEmail] = useState<string>("");
-  const appContext = useContext(AppContext);
-  appContext.setNewEmail?.(userNewEmail);
-  appContext.setVerificationOperation?.("changedEmail");
-  const navigate = useNavigate();
+  const [userNewEmail, setuserNewEmail] = useState<string>('')
+  const appContext = useContext(AppContext)
+  appContext.setNewEmail?.(userNewEmail)
+  appContext.setVerificationOperation?.('changedEmail')
+  const navigate = useNavigate()
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [verificationCodeError, setVerificationCodeError] =
-    useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [verificationCodeError, setVerificationCodeError] = useState<string>('')
 
   const handleEmailChange = async (e: any) => {
-    setVerificationCodeError("");
-    e.preventDefault();
-    checkEmail();
-  };
+    setVerificationCodeError('')
+    e.preventDefault()
+    checkEmail()
+  }
 
   const checkEmail = async () => {
     try {
-      setIsLoading(true);
-      const accessToken = localStorage.getItem("accessToken");
-      console.log(accessToken);
+      setIsLoading(true)
+      const accessToken = localStorage.getItem('accessToken')
 
-      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      const response = await api.get("/auth/checkEmail", {
+      api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+      const response = await api.get('/auth/email/availability', {
         params: {
-          email: appContext.newEmail,
-        },
-      });
-      console.log(response.data);
+          email: appContext.newEmail
+        }
+      })
       if (response.status === 200) {
-        navigate("/verifyemail");
+        navigate('/verifyemail')
       }
     } catch (error: any) {
-      setVerificationCodeError(error.response.data);
+      setVerificationCodeError(error.response.data)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
   return (
     <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
       <div className="sm:w-2/3 md:w-1/2 lg:w-1/3 2xl:w-1/4 bg-gradient-to-r from-red-50 via-stone-50 to-red-50 rounded-lg shadow-md p-12">
@@ -52,6 +49,7 @@ const NewEmailForm = () => {
               <label>
                 New Email:
                 <input
+                  name="email"
                   type="email"
                   value={userNewEmail}
                   onChange={(e) => setuserNewEmail(e.target.value)}
@@ -61,8 +59,9 @@ const NewEmailForm = () => {
               </label>
             </div>
             <button
+              data-cy="verify-new-email-button"
               className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer ${
-                isLoading ? "bg-primary text-white cursor-not-allowed" : ""
+                isLoading ? 'bg-primary text-white cursor-not-allowed' : ''
               } `}
               type="submit"
             >
@@ -80,7 +79,7 @@ const NewEmailForm = () => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NewEmailForm;
+export default NewEmailForm

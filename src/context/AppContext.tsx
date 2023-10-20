@@ -4,157 +4,158 @@ import {
   SetStateAction,
   createContext,
   useEffect,
-  useState,
-} from "react";
-import api from "../api";
+  useState
+} from 'react'
+import api from '../api'
+import { Navigate } from 'react-router-dom'
 
 interface AppContextProps {
-  isLoading: boolean;
-  setIsLoading: Dispatch<SetStateAction<boolean>> | null;
-  userRole: string;
-  setUserRole: Dispatch<SetStateAction<string>> | null;
-  userEmail: string;
-  setUserEmail: Dispatch<SetStateAction<string>> | null;
-  displayName: string;
-  setDisplayName: Dispatch<SetStateAction<string>> | null;
-  profilePhoto: string;
-  setProfilePhoto: Dispatch<SetStateAction<string>> | null;
-  loggedIn: boolean;
-  setLoggedIn: Dispatch<SetStateAction<boolean>> | null;
-  verificationOperation: string;
-  setVerificationOperation: Dispatch<SetStateAction<string>> | null;
-  isEmailVerified: boolean;
-  setIsEmailVerified: Dispatch<SetStateAction<boolean>> | null;
-  newEmail: string;
-  setNewEmail: Dispatch<SetStateAction<string>> | null;
+  isLoading: boolean
+  setIsLoading: Dispatch<SetStateAction<boolean>> | null
+  userRole: string
+  setUserRole: Dispatch<SetStateAction<string>> | null
+  userEmail: string
+  setUserEmail: Dispatch<SetStateAction<string>> | null
+  displayName: string
+  setDisplayName: Dispatch<SetStateAction<string>> | null
+  profilePhoto: string
+  setProfilePhoto: Dispatch<SetStateAction<string>> | null
+  loggedIn: boolean
+  setLoggedIn: Dispatch<SetStateAction<boolean>> | null
+  verificationOperation: string
+  setVerificationOperation: Dispatch<SetStateAction<string>> | null
+  isEmailVerified: boolean
+  setIsEmailVerified: Dispatch<SetStateAction<boolean>> | null
+  newEmail: string
+  setNewEmail: Dispatch<SetStateAction<string>> | null
 }
 
 export const AppContext = createContext<AppContextProps>({
   isLoading: false,
   setIsLoading: null,
-  userRole: "",
+  userRole: '',
   setUserRole: null,
-  userEmail: "",
+  userEmail: '',
   setUserEmail: null,
-  displayName: "",
+  displayName: '',
   setDisplayName: null,
-  profilePhoto: "",
+  profilePhoto: '',
   setProfilePhoto: null,
   loggedIn: false,
   setLoggedIn: null,
-  verificationOperation: "",
+  verificationOperation: '',
   setVerificationOperation: null,
   isEmailVerified: false,
   setIsEmailVerified: null,
-  newEmail: "",
-  setNewEmail: null,
-});
+  newEmail: '',
+  setNewEmail: null
+})
+
+const MAX_RETRIES = 3
 
 const AppContextProvider = (props: { children: ReactNode }) => {
-  const { children } = props;
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [userEmail, setUserEmail] = useState<string>("");
-  const [userRole, setUserRole] = useState<string>("");
-  const [displayName, setDisplayName] = useState<string>("");
-  const [profilePhoto, setProfilePhoto] = useState<string>("");
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
-  const [verificationOperation, setVerificationOperation] =
-    useState<string>("");
-  const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false);
-  const [newEmail, setNewEmail] = useState<string>("");
+  const { children } = props
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [userEmail, setUserEmail] = useState<string>('')
+  const [userRole, setUserRole] = useState<string>('')
+  const [displayName, setDisplayName] = useState<string>('')
+  const [profilePhoto, setProfilePhoto] = useState<string>('')
+  const [loggedIn, setLoggedIn] = useState<boolean>(false)
+  const [verificationOperation, setVerificationOperation] = useState<string>('')
+  const [isEmailVerified, setIsEmailVerified] = useState<boolean>(false)
+  const [newEmail, setNewEmail] = useState<string>('')
 
   useEffect(() => {
-    console.log("this one called");
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem('accessToken')
 
     if (accessToken) {
-      api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      setLoggedIn(true);
-      console.log(loggedIn);
+      api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+      setLoggedIn(true)
 
       api.interceptors.request.use(
         function (config) {
-          return config;
+          return config
         },
         function (error) {
-          return Promise.reject(error);
+          return Promise.reject(error)
         }
-      );
-
+      )
+      let retryCount = 0
       api.interceptors.response.use(
         function (response) {
-          return response;
+          return response
         },
         async function (error) {
-          const originalConfig = error.config;
-          console.log("Try to refresh");
-          if (error.response?.status === 401 && !originalConfig._retry) {
-            originalConfig._retry = true;
-            const refreshToken = localStorage.getItem("refreshToken");
+          const originalConfig = error.config
+          if (error.response?.status === 401 && retryCount < MAX_RETRIES) {
+            originalConfig._retry = true
+            retryCount++
+            const refreshToken = localStorage.getItem('refreshToken')
 
             api.defaults.headers.common[
-              "Authorization"
-            ] = `Bearer ${refreshToken}`;
+              'Authorization'
+            ] = `Bearer ${refreshToken}`
             try {
-              console.log("Refresh the tokens");
-              console.log(refreshToken);
-              console.log(api);
-              const res = await api.post("/auth/refresh");
-              console.log("Refresh response: ", res);
-              // sessionStorage.setItem("userEmail", signupData.email);
-              setLoggedIn(true);
-              localStorage.setItem("accessToken", res.data.tokens.accessToken);
-              localStorage.setItem(
-                "refreshToken",
-                res.data.tokens.refreshToken
-              );
+              const res = await api.post('/auth/token/refresh')
+              setLoggedIn(true)
+              localStorage.setItem('accessToken', res.data.tokens.accessToken)
+              localStorage.setItem('refreshToken', res.data.tokens.refreshToken)
               originalConfig.headers.Authorization =
-                "Bearer " + res.data.tokens.accessToken;
+                'Bearer ' + res.data.tokens.accessToken
 
               api.defaults.headers.common[
-                "Authorization"
-              ] = `Bearer ${res.data.tokens.accessToken}`;
+                'Authorization'
+              ] = `Bearer ${res.data.tokens.accessToken}`
               return api.request({
                 ...originalConfig,
                 ...{
-                  headers: originalConfig.headers.toJSON(),
-                },
-              });
-            } catch (err) {
-              setLoggedIn(false);
+                  headers: originalConfig.headers.toJSON()
+                }
+              })
+            } catch (err: any) {
+              if (err.response?.data?.message === 'Refresh token has expired') {
+                setLoggedIn(false)
+                localStorage.removeItem('accessToken')
+                localStorage.removeItem('refreshToken')
+                ;<Navigate to="/" />
+              }
             }
+          } else if (retryCount >= MAX_RETRIES) {
+            setLoggedIn(false)
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+            ;<Navigate to="/" />
           }
-          return Promise.reject(error);
+
+          return Promise.reject(error)
         }
-      );
+      )
     } else {
-      console.log(accessToken);
-      setLoggedIn(false);
+      setLoggedIn(false)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (loggedIn) {
-      setIsLoading(true);
-      console.log("Session called");
+      setIsLoading(true)
       api
-        .get("/session")
+        .get('/session')
         .then((res) => res.data)
         .then((data: any) => {
-          sessionStorage.setItem("userEmail", data.email);
-          setUserEmail(data.email);
-          setDisplayName(data.name);
-          setUserRole(data.role);
-          setProfilePhoto(data.profilePhoto);
-          setIsLoading(false);
+          localStorage.setItem('userEmail', data.email)
+          setUserEmail(data.email)
+          setDisplayName(data.name)
+          setUserRole(data.role)
+          setProfilePhoto(data.profilePhoto)
+          setIsLoading(false)
         })
         .catch((error) => {
-          setLoggedIn(false);
-          console.error(error.response?.data?.message || error.response?.data);
-          setIsLoading(false);
-        });
+          setLoggedIn(false)
+          console.error(error.response?.data?.message || error.response?.data)
+          setIsLoading(false)
+        })
     }
-  }, [loggedIn]);
+  }, [loggedIn])
 
   return (
     <AppContext.Provider
@@ -176,12 +177,12 @@ const AppContextProvider = (props: { children: ReactNode }) => {
         isEmailVerified,
         setIsEmailVerified,
         newEmail,
-        setNewEmail,
+        setNewEmail
       }}
     >
       {children}
     </AppContext.Provider>
-  );
-};
+  )
+}
 
-export default AppContextProvider;
+export default AppContextProvider

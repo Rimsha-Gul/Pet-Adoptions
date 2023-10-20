@@ -1,172 +1,153 @@
-import { useContext, useEffect, useState } from "react";
-import api from "../api";
-import { useNavigate } from "react-router-dom";
-import { getStatusIcon } from "../utils/getStatusIcon";
-import loadingIcon from "../assets/loading.gif";
-import { AppContext } from "../context/AppContext";
-import { Application } from "../types/interfaces";
-import InfiniteScroll from "react-infinite-scroll-component";
-import Select from "react-select";
-import { FaSearch } from "react-icons/fa";
-import { UserRole } from "../types/enums";
+import { useContext, useEffect, useState } from 'react'
+import api from '../api'
+import { useNavigate } from 'react-router-dom'
+import { getStatusIcon } from '../utils/getStatusIcon'
+import loadingIcon from '../assets/loading.gif'
+import { AppContext } from '../context/AppContext'
+import { Application } from '../types/interfaces'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import Select from 'react-select'
+import { FaSearch } from 'react-icons/fa'
+import { UserRole } from '../types/enums'
 
-const accessToken = localStorage.getItem("accessToken");
-api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+const accessToken = localStorage.getItem('accessToken')
+api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
 const customStyles = {
   control: (provided: any, state: any) => ({
     ...provided,
-    border: state.isFocused ? "1px solid #ff5363" : "1px solid #9ca3af",
-    borderRadius: "0.375rem",
-    backgroundColor: "#fff",
-    padding: "0.5rem",
-    cursor: "pointer",
-    "&:hover": {
-      border: "1px solid #ff5363",
-    },
+    border: state.isFocused ? '1px solid #ff5363' : '1px solid #9ca3af',
+    borderRadius: '0.375rem',
+    backgroundColor: '#fff',
+    padding: '0.5rem',
+    cursor: 'pointer',
+    '&:hover': {
+      border: '1px solid #ff5363'
+    }
   }),
   option: (provided: any, state: { isSelected: any; isFocused: any }) => ({
     ...provided,
-    backgroundColor: state.isSelected ? "#ff5363" : "#fff",
-    color: state.isSelected ? "#fff" : "#000",
-    padding: "0.5rem",
-    "&:hover": {
-      backgroundColor: "#fb7a75",
-      color: "#fff",
-      cursor: "pointer",
-    },
-  }),
-};
+    backgroundColor: state.isSelected ? '#ff5363' : '#fff',
+    color: state.isSelected ? '#fff' : '#000',
+    padding: '0.5rem',
+    '&:hover': {
+      backgroundColor: '#fb7a75',
+      color: '#fff',
+      cursor: 'pointer'
+    }
+  })
+}
 
 const ViewApplications = () => {
-  const appContext = useContext(AppContext);
-  const userRole = appContext.userRole;
-  const navigate = useNavigate();
+  const appContext = useContext(AppContext)
+  const userRole = appContext.userRole
+  const navigate = useNavigate()
   const [applicationsLoadingError, setApplicationsLoadingError] =
-    useState<string>("");
-  const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined);
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false);
-  const [noApplications, setNoApplications] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [applicationStatuses, setApplicationStatuses] = useState<string[]>([]);
+    useState<string>('')
+  const [timeoutId, setTimeoutId] = useState<number | undefined>(undefined)
+  const [applications, setApplications] = useState<Application[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isMoreLoading, setIsMoreLoading] = useState<boolean>(false)
+  const [noApplications, setNoApplications] = useState<boolean>(false)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [totalPages, setTotalPages] = useState<number>(0)
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
+  const [applicationStatuses, setApplicationStatuses] = useState<string[]>([])
   const [applicationStatusFilter, setApplicationStatusFilter] =
-    useState<string>("");
-
-  useEffect(() => {
-    //console.log("Updated applications:", applications);
-  }, [applications]);
+    useState<string>('')
 
   // This effect is responsible for managing the debounce
   useEffect(() => {
     if (timeoutId !== null) {
-      window.clearTimeout(timeoutId);
+      window.clearTimeout(timeoutId)
     }
 
     const id = window.setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 500);
+      setDebouncedSearchQuery(searchQuery)
+    }, 500)
 
-    setTimeoutId(id);
+    setTimeoutId(id)
 
     return () => {
       if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
+        window.clearTimeout(timeoutId)
       }
-    };
-  }, [searchQuery]);
+    }
+  }, [searchQuery])
 
   useEffect(() => {
-    fetchApplications(currentPage);
-  }, [debouncedSearchQuery, applicationStatusFilter]);
+    fetchApplications()
+  }, [debouncedSearchQuery, applicationStatusFilter])
 
-  const fetchApplications = async (apiPage: number) => {
+  const fetchApplications = async () => {
     try {
-      console.log("fetch applications");
-      let page = apiPage;
-      console.log(page);
+      setApplicationsLoadingError('')
 
-      setApplicationsLoadingError("");
-
-      setIsLoading(true);
-      const response = await api.get("/application/applications", {
+      setIsLoading(true)
+      const response = await api.get('/applications', {
         params: {
           page: 1,
           limit: 5,
           searchQuery,
-          applicationStatusFilter,
-        },
-      });
+          applicationStatusFilter
+        }
+      })
 
-      //console.log(response.data);
-      //console.log(response.data.applications.length === 0);
-      const { applications, totalPages, applicationStatuses } = response.data;
-      setNoApplications(false);
-      if (totalPages === 0) setNoApplications(true);
-      setApplications(applications);
-      setTotalPages(totalPages);
-      setApplicationStatuses(applicationStatuses);
-      setCurrentPage(1);
-      //console.log(totalPages);
+      const { applications, totalPages, applicationStatuses } = response.data
+      setNoApplications(false)
+      if (totalPages === 0) setNoApplications(true)
+      setApplications(applications)
+      setTotalPages(totalPages)
+      setApplicationStatuses(applicationStatuses)
+      setCurrentPage(1)
     } catch (error: any) {
-      console.error(error);
-      setApplicationsLoadingError(error.response.data);
+      setApplicationsLoadingError(error.response.data)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const loadMoreData = async () => {
-    //console.log("Load more applications");
-    //console.log("currentPage", currentPage);
     if (currentPage < totalPages) {
       try {
-        setIsMoreLoading(true);
-        const nextPage = currentPage + 1;
-        //console.log("nextPage", nextPage);
+        setIsMoreLoading(true)
+        const nextPage = currentPage + 1
 
         // Fetch the next page of data
-        const response = await api.get("/application/applications", {
+        const response = await api.get('/applications', {
           params: {
             page: nextPage,
             limit: 5,
             searchQuery,
-            applicationStatusFilter,
-          },
-        });
-        //console.log(response.data);
+            applicationStatusFilter
+          }
+        })
         const {
           applications: newApplicatiions,
           totalPages,
-          applicationStatuses,
-        } = response.data;
+          applicationStatuses
+        } = response.data
 
         // Append the new applications to the existing applications
-        setApplications((prevApps) => [...prevApps, ...newApplicatiions]);
-        setCurrentPage(nextPage);
-        setTotalPages(totalPages);
-        setApplicationStatuses(applicationStatuses);
-        //console.log("Updated applications:", applications);
+        setApplications((prevApps) => [...prevApps, ...newApplicatiions])
+        setCurrentPage(nextPage)
+        setTotalPages(totalPages)
+        setApplicationStatuses(applicationStatuses)
       } catch (error: any) {
-        console.error(error.response.status);
-        setApplicationsLoadingError(error.response.data);
+        setApplicationsLoadingError(error.response.data)
       } finally {
-        setIsMoreLoading(false);
+        setIsMoreLoading(false)
       }
     }
-  };
+  }
 
   const applicationStatusOptions = applicationStatuses.map((name) => ({
     value: name,
-    label: name,
-  }));
+    label: name
+  }))
 
-  applicationStatusOptions.unshift({ value: "", label: "All" });
-  console.log("noApplications", noApplications);
+  applicationStatusOptions.unshift({ value: '', label: 'All' })
   return (
     <>
       <div className="bg-white mr-4 ml-4 md:ml-12 2xl:ml-12 2xl:mr-12 pt-24 pb-8">
@@ -178,7 +159,7 @@ const ViewApplications = () => {
             <input
               type="text"
               placeholder={
-                userRole === "USER"
+                userRole === 'USER'
                   ? "Type pet's or shelter's name..."
                   : "Type pet's or applicant's name..."
               }
@@ -197,7 +178,7 @@ const ViewApplications = () => {
                 options={applicationStatusOptions}
                 styles={customStyles}
                 onChange={(selectedOption) =>
-                  setApplicationStatusFilter(selectedOption?.value || "")
+                  setApplicationStatusFilter(selectedOption?.value || '')
                 }
                 value={applicationStatusOptions.find(
                   (option) => option.value === applicationStatusFilter
@@ -235,19 +216,14 @@ const ViewApplications = () => {
                         <h2 className="text-2xl text-gray-700 font-bold">
                           Application for
                         </h2>
-
                         <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
                           Status
                         </h2>
-                        {userRole === "SHELTER" ? (
-                          <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
-                            Applicant
-                          </h2>
-                        ) : (
-                          <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
-                            Shelter Name
-                          </h2>
-                        )}
+                        <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
+                          {userRole === 'SHELTER'
+                            ? 'Applicant'
+                            : 'Shelter Name'}
+                        </h2>
                         <h2 className="text-2xl text-gray-700 font-bold sm:block hidden">
                           Submitted on
                         </h2>
@@ -277,6 +253,7 @@ const ViewApplications = () => {
                       <div>
                         {applications.map((application, index) => (
                           <div
+                            data-cy="application-card"
                             key={index}
                             className="flex flex-row hover:bg-gray-100 shadow-md p-4 flex flex-col justify-center items-center hover:cursor-pointer hover:shadow-primary transform transition-all duration-300 hover:scale-[1.01] rounded-lg"
                             onClick={() =>
@@ -301,15 +278,11 @@ const ViewApplications = () => {
                                   {application.status}
                                 </p>
                               </div>
-                              {userRole === "SHELTER" ? (
-                                <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
-                                  {application.applicantName}
-                                </p>
-                              ) : (
-                                <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
-                                  {application.shelterName}
-                                </p>
-                              )}
+                              <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
+                                {userRole === 'SHELTER'
+                                  ? application.applicantName
+                                  : application.shelterName}
+                              </p>
                               <p className="text-xl text-gray-600 whitespace-pre-line sm:block hidden">
                                 {new Date(
                                   application.submissionDate
@@ -329,7 +302,7 @@ const ViewApplications = () => {
         )}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default ViewApplications;
+export default ViewApplications

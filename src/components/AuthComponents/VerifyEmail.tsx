@@ -50,6 +50,7 @@ const EmailVerificationForm = ({
       </div>
       <div className="flex flex-row gap-4 mt-2 items-center justify-center">
         <button
+          data-cy="verify-button"
           className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer ${
             !isCodeValid ? "opacity-50 cursor-not-allowed" : ""
           } ${
@@ -61,13 +62,19 @@ const EmailVerificationForm = ({
           disabled={!isCodeValid}
         >
           {isLoading && (
-            <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
+            <img
+              data-cy="loadingIcon"
+              src={loadingIcon}
+              alt="Loading"
+              className="mr-2 h-4 w-4"
+            />
           )}
           Verify
         </button>
         <div>
           {timer === 0 ? (
             <button
+              data-cy="resend-button"
               className={`flex items-center justify-center px-4 py-2 border border-primary hover:bg-primary text-primary hover:text-white rounded cursor-pointer 
         ${
           isResending
@@ -78,17 +85,25 @@ const EmailVerificationForm = ({
               disabled={resendDisabled}
             >
               {isResending && (
-                <img src={loadingIcon} alt="Loading" className="mr-2 h-4 w-4" />
+                <img
+                  data-cy="loadingIcon"
+                  src={loadingIcon}
+                  alt="Loading"
+                  className="mr-2 h-4 w-4"
+                />
               )}
               Resend Code
             </button>
           ) : (
-            <div>Code will expire in {timer} seconds</div>
+            <div data-cy="timer">Code will expire in {timer} seconds</div>
           )}
         </div>
       </div>
       {verificationCodeError && (
-        <p className="flex items-center justify-center mt-4 text-sm text-red-500">
+        <p
+          data-cy="error-message"
+          className="flex items-center justify-center mt-4 text-sm text-red-500"
+        >
           {verificationCodeError}
         </p>
       )}
