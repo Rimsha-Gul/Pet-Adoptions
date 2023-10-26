@@ -16,7 +16,7 @@ const NotificationCard = ({ notification }: NotificationCardProps) => {
       await MarkAsRead()
       navigate(`${notification.actionUrl}`)
     } catch (error: any) {
-      showErrorAlert(error.response.data)
+      showErrorAlert(error.data)
     }
   }
 
@@ -24,7 +24,7 @@ const NotificationCard = ({ notification }: NotificationCardProps) => {
     try {
       await api.put(`/notifications/${notification.id}/read`)
     } catch (error: any) {
-      showErrorAlert(error.response.data)
+      if (error.response.status === 404) showErrorAlert(error.response.data)
     }
   }
 

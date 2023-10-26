@@ -82,7 +82,7 @@ const AdoptionApplication = () => {
         const response = await api.get(`/pets/${petID}`)
         setPet(response.data.pet)
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status === 404) showErrorAlert(error.response.data)
       } finally {
         setIsLoading(false)
       }

@@ -93,7 +93,8 @@ const ApplicationDetailsUser = () => {
         setCanUserReview(canReview)
         setApplication(application)
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status === 404 || error.response.status === 500)
+          showErrorAlert(error.response.data)
       } finally {
         setIsLoading(false)
       }
@@ -110,7 +111,7 @@ const ApplicationDetailsUser = () => {
         const response = await api.get(`/reactivationRequest/${applicationID}`)
         setReactivationRequest(response.data)
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status === 404) showErrorAlert(error.response.data)
       } finally {
         setIsLoading(false)
       }
@@ -139,7 +140,8 @@ const ApplicationDetailsUser = () => {
         )
       }
     } catch (error: any) {
-      showErrorAlert(error.response)
+      if (error.response.status === 404 || error.response.status === 409)
+        showErrorAlert(error.response)
     } finally {
       setIsLoading(false)
       setShowReactivationModal(false) // Hide the modal

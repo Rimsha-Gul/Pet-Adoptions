@@ -72,7 +72,7 @@ const UserProfile = () => {
           appContext.setProfilePhoto?.(response.data.profilePhoto)
         }
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status !== 401) showErrorAlert(error.response.data)
       } finally {
         setIsFetching(false)
       }
@@ -185,7 +185,7 @@ const UserProfile = () => {
           navigate('/userProfile')
         )
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status === 500) showErrorAlert(error.response.data)
       }
     }
     setIsLoading(false)

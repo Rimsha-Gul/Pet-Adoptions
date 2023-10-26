@@ -34,7 +34,7 @@ const InviteShelter = () => {
           'No',
           () => changeUserRole()
         )
-      } else {
+      } else if (error.response.status === 409) {
         showErrorAlert(error.response.data)
       }
     } finally {
@@ -54,7 +54,8 @@ const InviteShelter = () => {
         showSuccessAlert(response.data.message, undefined)
       }
     } catch (error: any) {
-      showErrorAlert(error.response.data)
+      if (error.response.status === 404 || error.response.status === 409)
+        showErrorAlert(error.response.data)
     } finally {
       setIsLoading(false)
     }

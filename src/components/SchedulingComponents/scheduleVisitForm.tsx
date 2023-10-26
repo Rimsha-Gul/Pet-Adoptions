@@ -85,7 +85,8 @@ export const ScheduleForm = ({
         const response = await api.get(endpoint)
         setApplication(response.data.application)
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status === 404 || error.response.status === 500)
+          showErrorAlert(error.response.data)
       } finally {
         setIsLoadingApplication(false)
       }
@@ -130,7 +131,7 @@ export const ScheduleForm = ({
               'No slots are available for the selected date.'
             )
         } catch (error: any) {
-          showErrorAlert(error.response.data)
+          if (error.response.status === 500) showErrorAlert(error.response.data)
         } finally {
           setIsLoadingTimeSlots(false)
         }

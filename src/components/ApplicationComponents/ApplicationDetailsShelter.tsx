@@ -56,7 +56,7 @@ const ApplicationDetailsShelter = () => {
         else if (response.data.application.status === Status.UserVisitScheduled)
           setVisitDate(response.data.application.shelterVisitDate)
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status === 404) showErrorAlert(error.response.data)
       } finally {
         setIsLoading(false)
       }
@@ -74,7 +74,7 @@ const ApplicationDetailsShelter = () => {
         const response = await api.get(`/reactivationRequest/${applicationID}`)
         setReactivationRequest(response.data)
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status === 404) showErrorAlert(error.response.data)
       } finally {
         setIsLoading(false)
       }

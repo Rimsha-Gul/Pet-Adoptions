@@ -28,7 +28,7 @@ const Notifications = () => {
         setCurrentPage(1)
         setTotalPages(totalPages)
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status === 500) showErrorAlert(error.response.data)
       } finally {
         setAreFetched(false)
       }
@@ -60,7 +60,7 @@ const Notifications = () => {
         setCurrentPage(nextPage)
         setTotalPages(totalPages)
       } catch (error: any) {
-        showErrorAlert(error.response.data)
+        if (error.response.status === 500) showErrorAlert(error.response.data)
       } finally {
         setIsMoreLoading(false)
       }
