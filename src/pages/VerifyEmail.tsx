@@ -117,11 +117,9 @@ const VerifyEmail = () => {
 
       if (response.status === 200) {
         appContext.setLoggedIn?.(true)
-        const { isVerified, tokens } = response.data
+        const { tokens } = response.data
         localStorage.setItem('accessToken', tokens.accessToken)
         localStorage.setItem('refreshToken', tokens.refreshToken)
-
-        console.log('Isverified: ', isVerified)
 
         if (appContext.verificationOperation === 'changeEmail') {
           appContext.setIsEmailVerified?.(true)
