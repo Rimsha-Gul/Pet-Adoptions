@@ -74,7 +74,12 @@ const Notifications = () => {
           <img src={loadingIcon} alt="Loading" className="h-10 w-10" />
         </div>
       )}
-      {notifications && !areFetched && (
+      {notifications.length === 0 && !areFetched && (
+        <p className="mt-8 text-gray-700 text-xl font-medium text-center">
+          No notifications
+        </p>
+      )}
+      {notifications.length > 0 && !areFetched && (
         <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
           <InfiniteScroll
             dataLength={notifications.length}
