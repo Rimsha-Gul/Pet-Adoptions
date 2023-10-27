@@ -76,7 +76,7 @@ const Notifications = () => {
       )}
       {notifications.length === 0 && !areFetched && (
         <p className="mt-8 text-gray-700 text-xl font-medium text-center">
-          No notifications
+          Stay tuned! Any fur-tastic updates will appear here.
         </p>
       )}
       {notifications.length > 0 && !areFetched && (
