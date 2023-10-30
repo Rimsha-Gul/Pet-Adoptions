@@ -11,7 +11,10 @@ const VerifyCurrentEmail = () => {
   }
 
   useEffect(() => {
+    localStorage.setItem('remainingTime', '60')
+    localStorage.setItem('isOTPSent', 'false')
     appContext.setVerificationOperation?.('changeEmail')
+    localStorage.setItem('verificationOperation', 'changeEmail')
   }, [])
 
   return (

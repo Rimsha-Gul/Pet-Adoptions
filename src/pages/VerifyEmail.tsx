@@ -32,12 +32,19 @@ const VerifyEmail = () => {
     email: emailForVerification
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const verificationOperation: string = localStorage.getItem(
+    'verificationOperation'
+  )!
+  appContext.setVerificationOperation?.(verificationOperation)
+
   useEffect(() => {
     const sendVerificationCode = async () => {
       const isOTPSent = localStorage.getItem('isOTPSent')
+
       // Check if usermail is not null
       if (emailForVerification) {
-        if (!isOTPSent) {
+        if (isOTPSent === 'false') {
           try {
             if (appContext.verificationOperation === 'changedEmail') {
               await api.post('/auth/verificationCode', {
@@ -54,7 +61,7 @@ const VerifyEmail = () => {
             }
             localStorage.setItem('isOTPSent', 'true')
 
-            // Initialize timer if a previous timer exists in session storage
+            // Initialize timer if a previous timer exists in local storage
             const remainingTimeStr = localStorage.getItem('remainingTime')
             if (remainingTimeStr) {
               const remainingTime = parseInt(remainingTimeStr, 10)
@@ -125,6 +132,7 @@ const VerifyEmail = () => {
           appContext.setIsEmailVerified?.(true)
           navigate('/changeEmail')
         } else if (appContext.verificationOperation === 'changedEmail') {
+          appContext.setIsEmailVerified?.(false)
           const accessToken = localStorage.getItem('accessToken')
 
           api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
@@ -133,11 +141,15 @@ const VerifyEmail = () => {
           })
           const { tokens } = response.data
           appContext.setUserEmail?.(appContext.newEmail)
+          appContext.setVerificationOperation?.('null')
+          localStorage.setItem('userEmail', appContext.newEmail)
           localStorage.setItem('accessToken', tokens.accessToken)
           localStorage.setItem('refreshToken', tokens.refreshToken)
+          localStorage.setItem('verificationOperation', 'null')
+
           setShowBlankScreen(true)
           // show success alert
-          showSuccessAlert(response.data.message, undefined, () =>
+          showSuccessAlert('Email changed successfully', undefined, () =>
             navigate('/userProfile')
           )
         } else {
@@ -171,20 +183,23 @@ const VerifyEmail = () => {
     setVerificationCodeError('')
     try {
       setIsResending(true)
-      let response
+
       if (appContext.verificationOperation === 'changedEmail') {
-        response = await api.post('/auth/verificationCode', {
+        await api.post('/auth/verificationCode', {
           email: appContext.newEmail,
-          emailChangeRequest: true
+          emailChangeRequest: 'newEmailStep'
+        })
+      } else if (appContext.verificationOperation === 'changeEmail') {
+        await api.post('/auth/verificationCode', {
+          email: emailForVerification,
+          emailChangeRequest: 'currentEmailStep'
         })
       } else {
-        response = await api.post('/auth/verificationCode', resendCodeData)
+        await api.post('/auth/verificationCode', resendCodeData)
       }
 
-      if (response.status === 200) {
-        setTimer(60) // After a successful response, start the timer for 60 seconds
-        setResendDisabled(true)
-      }
+      setTimer(60) // After a successful response, start the timer for 60 seconds
+      setResendDisabled(true)
     } catch (error: any) {
       if (error.response.status === 422) {
         // user is already verified
