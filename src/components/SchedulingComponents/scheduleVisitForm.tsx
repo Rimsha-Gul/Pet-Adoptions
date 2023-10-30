@@ -7,7 +7,6 @@ import { useParams } from 'react-router-dom'
 import { Status, VisitType } from '../../types/enums'
 import { Application } from '../../types/interfaces'
 import { FaRegCalendarAlt } from 'react-icons/fa'
-//import { BiTime } from "react-icons/bi";
 import Select from 'react-select'
 import { showErrorAlert } from '../../utils/alert'
 
@@ -65,7 +64,6 @@ export const ScheduleForm = ({
   const [application, setApplication] = useState<Application | null>(null)
   const [dateValidityMessage, setDateValidityMessage] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
-
   const [isLoadingApplication, setIsLoadingApplication] =
     useState<boolean>(true)
   const [emailSentTime, setEmailSentTime] = useState<Moment | null>(null)
