@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: `https://purrfect-adoptions-server-rimsha-gul-dev.apps.sandbox-m4.g2pi.p1.openshiftapps.com/`,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json'
   }
