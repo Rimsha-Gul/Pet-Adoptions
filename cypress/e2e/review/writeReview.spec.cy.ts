@@ -120,7 +120,7 @@ describe('Successfully write review of shelter', () => {
 
     cy.get('[data-cy=profile-photo]').click()
     cy.get('[data-cy=view-applications-link]').click()
-    cy.get('[data-cy=application-card]').click()
+    cy.get('[data-cy=application-card]').should('be.visible').click()
     cy.get('[data-cy=request-for-home-visit-button]').click()
     cy.wait('@statusApiCall')
     cy.get('.swal2-confirm').click()
@@ -140,10 +140,10 @@ describe('Successfully write review of shelter', () => {
 
     cy.get('[data-cy=profile-photo]').click()
     cy.get('[data-cy=view-applications-link]').click()
-    cy.get('[data-cy=application-card]').click()
+    cy.get('[data-cy=application-card]').should('be.visible').click()
     cy.get('[data-cy=schedule-shelter-s-visit-to-your-home-button]').click()
 
-    cy.get('#time').click()
+    cy.get('#time').should('exist').should('be.visible').click()
     cy.get('[id="react-select-7-listbox"]').contains('9:00').click()
     cy.get('button[type=submit]').click()
     cy.wait('@visitApiCall')
@@ -172,8 +172,11 @@ describe('Successfully write review of shelter', () => {
 
     cy.get('[data-cy=profile-photo]').click()
     cy.get('[data-cy=view-applications-link]').click()
-    cy.get('[data-cy=application-card]').click()
-    cy.get('[data-cy=approve-applicant-home-button]').click()
+    cy.get('[data-cy=application-card]').should('be.visible').click()
+    cy.get('[data-cy=approve-applicant-home-button]')
+      .should('exist')
+      .should('be.visible')
+      .click()
     cy.wait('@statusApiCall')
     cy.get('.swal2-confirm').click()
     cy.get('[data-cy=schedule-applicant-s-visit-to-shelter-button]').click()
@@ -204,7 +207,10 @@ describe('Successfully write review of shelter', () => {
 
     cy.get('[data-cy=pet-grid]').find('[data-cy=pet-card]').click()
     cy.get('[data-cy=shelter-link]').invoke('removeAttr', 'target').click()
-    cy.get('[data-cy=review-button]').click()
+    cy.get('[data-cy=review-button]')
+      .should('exist')
+      .should('be.visible')
+      .click()
     cy.get('.star-container:nth-child(6)').click()
     cy.get('.star').eq(4).click()
     cy.get('textarea[data-cy=reviewText]').type(

@@ -177,6 +177,7 @@ describe('Adoption Application Approval', () => {
 
   // // Schedule Home Visit/Inspection
   it('login user and schedule home visit', () => {
+    //cy.intercept('GET', '/applications/timeSlots').as('getTimeSlots')
     cy.intercept('POST', '/applications/*/homeVisit').as('visitApiCall')
     cy.task('login', { email: 'test-user@example.com' }).then(
       ({ accessToken, refreshToken }: any) => {
@@ -192,6 +193,7 @@ describe('Adoption Application Approval', () => {
     cy.get('[data-cy=application-card]').click()
     cy.get('[data-cy=schedule-shelter-s-visit-to-your-home-button]').click()
 
+    //  cy.wait('@getTimeSlots')
     cy.get('#time').click()
     cy.get('[id="react-select-7-listbox"]').contains('9:00').click()
     cy.get('button[type=submit]').click()
@@ -214,6 +216,7 @@ describe('Adoption Application Approval', () => {
   // // Approve Home Visit and Schedule Shelter Visit
   it("login shelter, approve home visit, and schedule applicant's visit to shelter", () => {
     cy.intercept('PUT', '/applications/*/status').as('statusApiCall')
+    //cy.intercept('GET', '/applications/*').as('getTimeSlots')
     cy.intercept('POST', '/applications/*/shelterVisit').as('visitApiCall')
     cy.task('login', { email: 'test-shelter@example.com' }).then(
       ({ accessToken, refreshToken }: any) => {
@@ -242,6 +245,7 @@ describe('Adoption Application Approval', () => {
 
     cy.get('[data-cy=schedule-applicant-s-visit-to-shelter-button]').click()
 
+    // cy.wait('@getTimeSlots')
     cy.get('#time').click()
     cy.get('[id="react-select-7-listbox"]').contains('10:00').click()
     cy.get('button[type=submit]').click()

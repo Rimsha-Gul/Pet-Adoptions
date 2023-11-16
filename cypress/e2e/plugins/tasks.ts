@@ -63,7 +63,7 @@ interface SetVisitDateToPastProps {
 const connectDB = async () => {
   if (!client) {
     client = await MongoClient.connect(process.env.MONGO_URI_TEST || '')
-    db = client.db('test')
+    db = client.db()
   }
 }
 
@@ -72,6 +72,8 @@ export const plugins = async (on: any) => {
 
   on('task', {
     async addAdmin() {
+      await db.collection('users').deleteMany({})
+
       const existingAdmin = await db
         .collection('users')
         .findOne({ role: 'ADMIN', email: 'admin-user@example.com' })

@@ -112,6 +112,9 @@ export const validateField = (
       if (!value) {
         return 'Bio is required'
       }
+      if (value.length < 50) {
+        return 'Bio should be at least 50 characters long'
+      }
       return ''
     },
     adoptionFee: (value) => {
