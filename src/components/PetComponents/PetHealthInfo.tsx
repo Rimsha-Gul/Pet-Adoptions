@@ -5,18 +5,18 @@ import {
   FaBug,
   FaHeartbeat,
   FaSyringe,
-  FaNeuter,
-} from "react-icons/fa";
+  FaNeuter
+} from 'react-icons/fa'
 
 interface petHealthInfoProps {
   petHealthInfo: {
-    healthCheck: boolean;
-    allergiesTreated: boolean;
-    wormed: boolean;
-    heartwormTreated: boolean;
-    vaccinated: boolean;
-    deSexed: boolean;
-  };
+    healthCheck: boolean
+    allergiesTreated: boolean
+    wormed: boolean
+    heartwormTreated: boolean
+    vaccinated: boolean
+    deSexed: boolean
+  }
 }
 
 const PetHealthInfo = ({ petHealthInfo }: petHealthInfoProps) => {
@@ -24,34 +24,34 @@ const PetHealthInfo = ({ petHealthInfo }: petHealthInfoProps) => {
     <div className="flex flex-wrap items-start justify-between gap-4 py-4 px-2">
       {[
         {
-          name: "Health Check",
+          name: 'Health Check',
           icon: FaStethoscope,
-          value: petHealthInfo.healthCheck,
+          value: petHealthInfo.healthCheck
         },
         {
-          name: "Allergies Treated",
+          name: 'Allergies Treated',
           icon: FaMicrochip,
-          value: petHealthInfo.allergiesTreated,
+          value: petHealthInfo.allergiesTreated
         },
-        { name: "Wormed", icon: FaBug, value: petHealthInfo.wormed },
+        { name: 'Wormed', icon: FaBug, value: petHealthInfo.wormed },
         {
-          name: "Heartworm Treated",
+          name: 'Heartworm Treated',
           icon: FaHeartbeat,
-          value: petHealthInfo.heartwormTreated,
+          value: petHealthInfo.heartwormTreated
         },
         {
-          name: "Vaccinated",
+          name: 'Vaccinated',
           icon: FaSyringe,
-          value: petHealthInfo.vaccinated,
+          value: petHealthInfo.vaccinated
         },
         {
-          name: "Desexed",
+          name: 'Desexed',
           icon: FaNeuter,
-          value: petHealthInfo.deSexed,
-        },
+          value: petHealthInfo.deSexed
+        }
       ].map(({ name, icon: Icon, value }) => (
         <div
-          data-cy={`${name.toLowerCase().replace(/ /g, "-")}-container`}
+          data-cy={`${name.toLowerCase().replace(/ /g, '-')}-container`}
           key={name}
           className="flex flex-col items-center gap-2 w-1/3 lg:w-1/4"
         >
@@ -59,8 +59,8 @@ const PetHealthInfo = ({ petHealthInfo }: petHealthInfoProps) => {
             <Icon className="text-primary text-3xl" />
             {value && (
               <FaCheckCircle
-                data-cy={`${name.toLowerCase().replace(/ /g, "-")}-check-icon`}
-                className="text-green-500 text-xl absolute top-0 left-0"
+                data-cy={`${name.toLowerCase().replace(/ /g, '-')}-check-icon`}
+                className="text-green-500 bg-white rounded-full text-xl absolute top-0 left-0"
               />
             )}
           </div>
@@ -68,7 +68,7 @@ const PetHealthInfo = ({ petHealthInfo }: petHealthInfoProps) => {
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default PetHealthInfo;
+export default PetHealthInfo

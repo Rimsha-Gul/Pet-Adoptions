@@ -1,25 +1,26 @@
-import { useContext, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { AppContext } from "../context/AppContext";
+import { useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { AppContext } from '../context/AppContext'
 
 const Settings = () => {
-  const appContext = useContext(AppContext);
-  const navigate = useNavigate();
+  const appContext = useContext(AppContext)
+  const navigate = useNavigate()
 
   const handleEmailChange = () => {
-    appContext.setVerificationOperation?.("changeEmail");
-  };
+    appContext.setVerificationOperation?.('changeEmail')
+    localStorage.setItem('verificationOperation', 'changeEmail')
+  }
 
   const handlePasswordChange = () => {
-    navigate("/changePassword");
-  };
+    navigate('/changePassword')
+  }
 
   // This useEffect will be triggered every time 'verificationOperation' changes.
   useEffect(() => {
-    if (appContext.verificationOperation === "changeEmail") {
-      navigate("/verifyEmail");
+    if (appContext.verificationOperation === 'changeEmail') {
+      navigate('/verifyEmail')
     }
-  }, [appContext.verificationOperation, navigate]);
+  }, [appContext.verificationOperation, navigate])
 
   return (
     <div className="bg-white min-h-screen flex flex-col justify-center items-center p-4">
@@ -40,7 +41,7 @@ const Settings = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Settings;
+export default Settings

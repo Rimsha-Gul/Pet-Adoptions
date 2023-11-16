@@ -1,62 +1,63 @@
 export const headerLinks = [
-  { to: "/applications", label: "View Applications" },
-  { to: "/userProfile", label: "Profile & Settings" },
-  { to: "/", label: "Logout" },
-];
+  { to: '/applications', label: 'View Applications' },
+  { to: '/userProfile', label: 'Profile & Settings' },
+  { to: '/', label: 'Logout' }
+]
 
 export const sidebarLinks = [
   {
-    to: "/userProfile",
-    label: "Profile",
+    to: '/userProfile',
+    label: 'Profile'
   },
   {
     divider: true,
     admin: true,
-    shelter: true,
+    shelter: true
   },
   {
-    heading: "Admin Tasks",
+    heading: 'Admin Tasks',
+    admin: true
+  },
+  {
+    heading: 'Shelter Tasks',
+    shelter: true
+  },
+  {
+    to: '/addpet',
+    label: 'Add a pet',
     admin: true,
+    shelter: true
   },
   {
-    heading: "Shelter Tasks",
-    shelter: true,
+    to: '/inviteShelter',
+    label: 'Invite a shelter',
+    admin: true
   },
   {
-    to: "/addpet",
-    label: "Add a pet",
-    admin: true,
-    shelter: true,
+    divider: true
   },
   {
-    to: "/inviteShelter",
-    label: "Invite a shelter",
-    admin: true,
+    heading: 'Settings & Privacy'
   },
   {
-    divider: true,
-  },
-  {
-    heading: "Settings & Privacy",
-  },
-  {
-    label: "Settings",
+    label: 'Settings',
     options: [
       {
-        to: "/changeEmail",
-        label: "Change Email",
+        to: '/changeEmail',
+        has: '/verifyemail',
+        label: 'Change Email'
       },
       {
-        to: "/changePassword",
-        label: "Change Password",
-      },
-    ],
+        to: '/changePassword',
+        label: 'Change Password'
+      }
+    ]
   },
   {
-    divider: true,
+    divider: true
   },
   {
-    to: "/",
-    label: "Logout",
-  },
-];
+    to: '/',
+    label: 'Logout'
+  }
+]

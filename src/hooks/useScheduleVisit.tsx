@@ -42,7 +42,8 @@ export const useScheduleHomeVisit = (visitType: VisitType) => {
         navigate(`/view/application/${applicationID}`)
       )
     } catch (error: any) {
-      showErrorAlert(error.response.data)
+      if (error.response.status === 400 || error.response.status === 404)
+        showErrorAlert(error.response.data)
     } finally {
       setIsLoading(false)
     }

@@ -1,11 +1,21 @@
-import { useLocation } from "react-router-dom";
-import LogoSection from "../components/AuthComponents/LogoSection";
-import SignupForm from "../components/AuthComponents/SignupForm";
+import { useLocation } from 'react-router-dom'
+import LogoSection from '../components/AuthComponents/LogoSection'
+import SignupForm from '../components/AuthComponents/SignupForm'
+import { useContext, useEffect } from 'react'
+import { AppContext } from '../context/AppContext'
 
 function Signup() {
-  const location = useLocation();
-  const initialEmail = location.state?.email;
-  const initialRole = location.state?.role;
+  const location = useLocation()
+  const initialEmail = location.state?.email
+  const initialRole = location.state?.role
+  const appContext = useContext(AppContext)
+
+  useEffect(() => {
+    appContext.setVerificationOperation?.('null')
+    localStorage.setItem('verificationOperation', 'null')
+    localStorage.setItem('remainingTime', '60')
+    localStorage.setItem('isOTPSent', 'false')
+  }, [])
 
   return (
     <div className="sm:bg-radial-gradient min-h-screen flex flex-col justify-center items-center p-8 sm:p-16 lg:px-18 xl:px-32 2xl:px-72">
@@ -23,7 +33,7 @@ function Signup() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Signup;
+export default Signup

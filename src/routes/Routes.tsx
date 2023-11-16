@@ -69,7 +69,10 @@ export const getRoutes = (
           </div>
         )
       } else {
-        if (userRoutes.includes(Component) && userRole !== 'USER') {
+        if (
+          userRoutes.includes(Component) &&
+          (userRole === 'SHELTER' || userRole === 'ADMIN')
+        ) {
           return <NotFoundPage />
         } else {
           return (
