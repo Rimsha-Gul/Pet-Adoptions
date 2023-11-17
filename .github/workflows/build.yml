@@ -1,30 +1,85 @@
-name: Lint and build app
+name: Lint, Test and Build App
 
 on:
   pull_request:
+
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [lts/*]
-    
+
+    env:
+      MONGO_URI_TEST: ${{ secrets.MONGO_URI_TEST }}
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: npm
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run linters
-      run: npm run lint
-      
-    - name: Build app
-      run: npm run build
+      - name: Checkout Frontend code
+        uses: actions/checkout@v3
+
+      - name: Checkout Backend code
+        uses: actions/checkout@v3
+        with:
+          repository: 'Tetrahex/purrfect-adoptions'
+          path: 'backend'
+          ref: 'production'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Backend setup
+      - name: Install Backend dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Start Backend server
+        run: |
+          cd backend
+          npm start &
+        env:
+          NODE_ENV: cypress_test
+          PORT: 8080
+          WEB_APP_URL: "http://localhost:5173"
+          SERVER_URL: "http://localhost"
+          ACCESS_TOKEN_SECRET: 'test_access_token_secret'
+          REFRESH_TOKEN_SECRET: 'test_refresh_token_secret'
+          SESSION_SECRET: 'test_session_secret'
+          VERIFICATION_SECRET: 'test_verification_secret'
+          INVITATION_TOKEN_SECRET: 'test_invitation_token_secret'
+          RESET_TOKEN_SECRET: 'test_reset_token_secret'
+          NODEMAILER_USER: ${{ secrets.NODEMAILER_USER }}
+          NODEMAILER_PASS: ${{ secrets.NODEMAILER_PASS }}
+          DRIVE_PARENT_FOLDER_ID: ${{ secrets.DRIVE_PARENT_FOLDER_ID }}
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+
+      # Frontend setup
+      - name: Install Frontend dependencies
+        run: npm ci
+
+      - name: Run Frontend linters
+        run: npm run lint
+
+      - name: Build Frontend app
+        run: npm run build
+
+      - name: Start Frontend server
+        run: npm run dev &
+        env:
+          VITE_SERVER_URL: "http://localhost:8080"
+
+      # Wait for servers to be responsive
+      - name: Install wait-on
+        run: npm install wait-on
+
+      - name: Wait for Backend and Frontend servers
+        run: npx wait-on http://localhost:5173 http://localhost:8080
+
+      - name: Run Cypress tests
+        run: npm run cypress:run
+        env:
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
