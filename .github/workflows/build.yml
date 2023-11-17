@@ -21,7 +21,7 @@ jobs:
       - name: Checkout Backend code
         uses: actions/checkout@v3
         with:
-          repository: 'Tetrahex/purrfect-adoptions'
+          repository: 'Tetrahex/purrfect-adoptions-server'
           path: 'backend'
           ref: 'production'
 
