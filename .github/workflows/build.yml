@@ -78,8 +78,11 @@ jobs:
       - name: Install wait-on
         run: npm install wait-on
 
-      - name: Wait for Backend and Frontend servers
-        run: npx wait-on http://localhost:5173 http://localhost:8080
+      - name: Wait for Backend server
+        run: npx wait-on --verbose http://localhost:8080
+
+      - name: Wait for Frontend server
+        run: npx wait-on --verbose http://localhost:5173
 
       - name: Run Cypress tests
         run: npm run cypress:run
