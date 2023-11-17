@@ -24,6 +24,7 @@ jobs:
           repository: 'Tetrahex/purrfect-adoptions-server'
           path: 'backend'
           ref: 'production'
+          token: ${{ secrets.GH_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
