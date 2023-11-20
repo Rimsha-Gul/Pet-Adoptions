@@ -76,7 +76,7 @@ jobs:
 
       - name: Diagnose Frontend server response
         run: |
-          sleep 10
+          sleep 20
           curl -v http://localhost:5173/
 
       # Wait for servers to be responsive
