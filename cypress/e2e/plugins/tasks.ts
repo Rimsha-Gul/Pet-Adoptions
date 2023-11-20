@@ -194,21 +194,57 @@ export const plugins = async (on: any) => {
     },
 
     async login({ email }: { email: string }): Promise<LoginResponse> {
-      const response = await axios.post(
-        `${process.env.API_BASE_URL}/auth/login`,
-        {
-          email: email,
-          password: '123456'
-        }
-      )
+      console.log(`Attempting to log in with email: ${email}`)
+      try {
+        const response = await axios.post(
+          `${process.env.API_BASE_URL}/auth/login`,
+          {
+            email: email,
+            password: '123456'
+          }
+        )
+        console.log('Login response:', response.data)
 
-      if (response.status !== 200) {
-        throw new Error('Failed to log in')
+        if (response.status !== 200) {
+          throw new Error(`Failed to log in, status code: ${response.status}`)
+        }
+
+        const { accessToken, refreshToken } = response.data.tokens
+        return { accessToken, refreshToken }
+      } catch (error: any) {
+        console.error('Error during login:', error.message)
+        // Log the detailed request config and response for debugging
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error('Error response data:', error.response.data)
+          console.error('Error response status:', error.response.status)
+          console.error('Error response headers:', error.response.headers)
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('Error request:', error.request)
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error message:', error.message)
+        }
+        throw error // Rethrow the error so Cypress knows the task failed
       }
 
-      const { accessToken, refreshToken } = response.data.tokens
+      // const response = await axios.post(
+      //   `${process.env.API_BASE_URL}/auth/login`,
+      //   {
+      //     email: email,
+      //     password: '123456'
+      //   }
+      // )
 
-      return { accessToken, refreshToken }
+      // if (response.status !== 200) {
+      //   throw new Error('Failed to log in')
+      // }
+
+      // const { accessToken, refreshToken } = response.data.tokens
+
+      // return { accessToken, refreshToken }
     },
 
     async deleteMany({ collection, params }: DeleteManyProps) {
