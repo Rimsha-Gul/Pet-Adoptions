@@ -74,6 +74,11 @@ jobs:
         env:
           VITE_SERVER_URL: "http://localhost:8080"
 
+      - name: Diagnose Frontend server response
+        run: |
+          sleep 10
+          curl -v http://localhost:5173/
+
       # Wait for servers to be responsive
       - name: Install wait-on
         run: npm install wait-on
