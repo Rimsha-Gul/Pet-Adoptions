@@ -100,8 +100,8 @@ describe('Successfully add pet', () => {
     cy.get('button[type="submit"]').click()
     cy.wait('@petApiCall').then((interception) => {
       // Log the request and response to the Cypress output
-      console.log('Request:', interception.request)
-      console.log('Response:', interception.response)
+      cy.log('Request:', interception.request)
+      cy.log('Response:', interception.response)
     })
 
     cy.get('.swal2-title').should('have.text', 'Success!')
