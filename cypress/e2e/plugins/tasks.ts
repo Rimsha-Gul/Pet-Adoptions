@@ -194,6 +194,7 @@ export const plugins = async (on: any) => {
     },
 
     async login({ email }: { email: string }): Promise<LoginResponse> {
+      console.log(`API Base URL: ${process.env.API_BASE_URL}`)
       console.log(`Attempting to log in with email: ${email}`)
       try {
         const response = await axios.post(

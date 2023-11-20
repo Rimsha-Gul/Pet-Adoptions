@@ -42,7 +42,7 @@ jobs:
         run: |
           cd backend
           npm start &
-          sleep 60
+          sleep 40
         env:
           NODE_ENV: cypress_test
           PORT: 8080
