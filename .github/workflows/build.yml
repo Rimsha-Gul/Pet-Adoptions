@@ -70,7 +70,7 @@ jobs:
         run: npm run build
 
       - name: Start Frontend server
-        run: npm run dev &
+        run: nohup npm run dev > server.log 2>&1 &
         env:
           VITE_SERVER_URL: "http://localhost:8080"
 
@@ -78,6 +78,9 @@ jobs:
         run: |
           sleep 20
           curl -v http://localhost:5173/
+          
+      - name: Output server logs
+        run: cat server.log
 
       # Wait for servers to be responsive
       - name: Install wait-on
