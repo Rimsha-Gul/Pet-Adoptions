@@ -46,7 +46,7 @@ jobs:
         env:
           NODE_ENV: cypress_test
           PORT: 8080
-          WEB_APP_URL: "http://localhost:5173"
+          WEB_APP_URL: "http://127.0.0.1:5173"
           SERVER_URL: "http://localhost"
           ACCESS_TOKEN_SECRET: 'test_access_token_secret'
           REFRESH_TOKEN_SECRET: 'test_refresh_token_secret'
@@ -77,7 +77,7 @@ jobs:
       - name: Diagnose Frontend server response
         run: |
           sleep 20
-          curl -v http://localhost:5173/
+          curl -v http://127.0.0.1:5173/
           
       - name: Output server logs
         run: cat server.log
@@ -90,7 +90,7 @@ jobs:
         run: npx wait-on --verbose http://localhost:8080
 
       - name: Wait for Frontend server
-        run: npx wait-on --verbose http://localhost:5173
+        run: npx wait-on --verbose http://127.0.0.1:5173
 
       - name: Run Cypress tests
         run: npm run cypress:run
