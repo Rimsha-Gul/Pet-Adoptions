@@ -90,7 +90,7 @@ jobs:
         run: npx wait-on --verbose http://localhost:8080
 
       - name: Wait for Frontend server
-        run: npx wait-on --verbose http://127.0.0.1:5173
+        run: npx wait-on --verbose http://127.0.0.1:5173/
 
       - name: Run Cypress tests
         run: npm run cypress:run
