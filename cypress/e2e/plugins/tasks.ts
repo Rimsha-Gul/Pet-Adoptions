@@ -194,58 +194,21 @@ export const plugins = async (on: any) => {
     },
 
     async login({ email }: { email: string }): Promise<LoginResponse> {
-      console.log(`API Base URL: ${process.env.API_BASE_URL}`)
-      console.log(`Attempting to log in with email: ${email}`)
-      try {
-        const response = await axios.post(
-          `${process.env.API_BASE_URL}/auth/login`,
-          {
-            email: email,
-            password: '123456'
-          }
-        )
-        console.log('Login response:', response.data)
-
-        if (response.status !== 200) {
-          throw new Error(`Failed to log in, status code: ${response.status}`)
+      const response = await axios.post(
+        `${process.env.API_BASE_URL}/auth/login`,
+        {
+          email: email,
+          password: '123456'
         }
+      )
 
-        const { accessToken, refreshToken } = response.data.tokens
-        return { accessToken, refreshToken }
-      } catch (error: any) {
-        console.error('Error during login:', error.message)
-        // Log the detailed request config and response for debugging
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          // that falls out of the range of 2xx
-          console.error('Error response data:', error.response.data)
-          console.error('Error response status:', error.response.status)
-          console.error('Error response headers:', error.response.headers)
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error('Error request:', error.request)
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Error message:', error.message)
-        }
-        throw error // Rethrow the error so Cypress knows the task failed
+      if (response.status !== 200) {
+        throw new Error('Failed to log in')
       }
 
-      // const response = await axios.post(
-      //   `${process.env.API_BASE_URL}/auth/login`,
-      //   {
-      //     email: email,
-      //     password: '123456'
-      //   }
-      // )
+      const { accessToken, refreshToken } = response.data.tokens
 
-      // if (response.status !== 200) {
-      //   throw new Error('Failed to log in')
-      // }
-
-      // const { accessToken, refreshToken } = response.data.tokens
-
-      // return { accessToken, refreshToken }
+      return { accessToken, refreshToken }
     },
 
     async deleteMany({ collection, params }: DeleteManyProps) {
@@ -254,27 +217,31 @@ export const plugins = async (on: any) => {
     },
 
     async addPet({ accessToken, petData }: AddPetProps) {
-      const form = new FormData()
-      for (const [key, value] of Object.entries(petData)) {
-        form.append(key, value)
-      }
-
-      const stream = fs.createReadStream(
-        './cypress/fixtures/addingPet/snowball-1.jpg'
-      )
-      form.append('images', stream)
-
-      const response = await axios.post(
-        `${process.env.API_BASE_URL}/pets`,
-        form,
-        {
-          headers: {
-            ...form.getHeaders(),
-            Authorization: `Bearer ${accessToken}`
-          }
+      try {
+        const form = new FormData()
+        for (const [key, value] of Object.entries(petData)) {
+          form.append(key, value)
         }
-      )
-      return response.data
+
+        const stream = fs.createReadStream(
+          './cypress/fixtures/addingPet/snowball-1.jpg'
+        )
+        form.append('images', stream)
+
+        const response = await axios.post(
+          `${process.env.API_BASE_URL}/pets`,
+          form,
+          {
+            headers: {
+              ...form.getHeaders(),
+              Authorization: `Bearer ${accessToken}`
+            }
+          }
+        )
+        return response.data
+      } catch (error) {
+        console.error('Error adding pet:', error)
+      }
     },
 
     async setVisitDateToPast({
