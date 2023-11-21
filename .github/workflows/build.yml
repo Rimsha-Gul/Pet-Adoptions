@@ -90,7 +90,7 @@ jobs:
         run: npx wait-on --verbose http://localhost:8080
 
       - name: Run Cypress tests
-        run: DEBUG=cypress:* npm run cypress:run
+        run: npm run cypress:run
         env:
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
 
