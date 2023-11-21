@@ -252,6 +252,7 @@ const AddPet = () => {
       }
     } catch (error: any) {
       if (error.response.status === 400) {
+        console.log(error.response)
         showErrorAlert(error.response.data)
 
         if (error.response.data === 'Invalid shelter ID.') {
