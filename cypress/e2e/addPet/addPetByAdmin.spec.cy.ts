@@ -28,7 +28,7 @@ describe('Successfully add pet', () => {
   })
 
   it('login admin and add a pet for a shelter', () => {
-    cy.intercept('POST', '/pets').as('petApiCall')
+    cy.intercept('POST', '/pets').as('addPet')
     cy.task('login', { email: 'admin-user@example.com' }).then((response) => {
       const { accessToken, refreshToken } = response as LoginResponse
       cy.setLocalStorage('accessToken', accessToken)
@@ -43,42 +43,69 @@ describe('Successfully add pet', () => {
 
     cy.get('#shelter').click()
     cy.get('[id="react-select-5-listbox"]').contains('Test Shelter').click()
+    cy.get('.css-1dimb5e-singleValue').should('contain', 'Test Shelter')
 
     cy.get('#category').click()
     cy.get('[id="react-select-7-listbox"]').contains('Rabbit').click()
+    // cy.get('[id="react-select-7-listbox"]').should('have.value', 'Rabbit')
 
     cy.get('input[data-cy=microchipID]').type('A123456789')
+    cy.get('input[data-cy=microchipID]').should('have.value', 'A123456789')
 
     cy.get('input[data-cy=petName]').type('Snowball')
+    cy.get('input[data-cy=petName]').should('have.value', 'Snowball')
 
     cy.get('#gender').click()
     cy.get('[id="react-select-9-listbox"]').contains('Male').click()
+    // cy.get('[id="react-select-9-listbox"]').should('have.value', 'Male')
 
     cy.get('[placeholder=YYYY-MM-DD]').click().type('2020-02-20')
+    cy.get('[placeholder=YYYY-MM-DD]').should('have.value', '2020-02-20')
     cy.get('body').click(0, 0)
 
     cy.get('input[data-cy=breed]').type('Mini Rex')
+    cy.get('input[data-cy=breed]').should('have.value', 'Mini Rex')
 
     cy.get('input[data-cy=color]').type('White')
+    cy.get('input[data-cy=color]').should('have.value', 'White')
 
     cy.get('#activityNeeds').click()
     cy.get('[id="react-select-11-listbox"]').contains('Very Low').click()
+    // cy.get('[id="react-select-11-listbox"]').should('have.value', 'Very Low')
 
     cy.get('#levelOfGrooming').click()
     cy.get('[id="react-select-13-listbox"]').contains('Medium').click()
+    // cy.get('[id="react-select-13-listbox"]').should('have.value', 'Medium')
 
     cy.get('[data-cy=isHouseTrained-div]').find('.react-switch-handle').click()
+    // cy.get('[data-cy=isHouseTrained-div]')
+    //.find('.react-switch-checked')
+    //.should('exist')
     cy.get('[data-cy=healthCheck-div]').find('.react-switch-handle').click()
+    // cy.get('[data-cy=healthCheck-div]')
+    // .find('.react-switch-checked')
+    // .should('exist')
     cy.get('[data-cy=wormed-div]').find('.react-switch-handle').click()
+    // cy.get('[data-cy=wormed-div]').find('.react-switch-checked').should('exist')
     cy.get('[data-cy=vaccinated-div]').find('.react-switch-handle').click()
+    //cy.get('[data-cy=vaccinated-div]')
+    //.find('.react-switch-checked')
+    // .should('exist')
 
     cy.get('input[data-cy=traits]').type('Playful, Social')
+    cy.get('input[data-cy=traits]').should('have.value', 'Playful, Social')
 
     cy.get('input[data-cy=adoptionFee]').type('100')
+    cy.get('input[data-cy=adoptionFee]').should('have.value', '100')
     cy.get('#currency').click()
     cy.get('[id="react-select-15-listbox"]').contains('USD').click()
+    // cy.get('[id="react-select-15-listbox"]').should('have.value', 'USD')
 
     cy.get('textarea[data-cy=bio]').type(
+      'Snowball, an alluring male Mini Lop rabbit, boasts a pristine white coat that perfectly mirrors his name. Born in 2020, his vibrant curiosity and playful energy are well-balanced by a gentle, sociable nature, which is a hallmark of his breed. His dark, expressive eyes add to his endearing charm.'
+    )
+    cy.get('textarea[data-cy=bio]').should(
+      'have.value',
       'Snowball, an alluring male Mini Lop rabbit, boasts a pristine white coat that perfectly mirrors his name. Born in 2020, his vibrant curiosity and playful energy are well-balanced by a gentle, sociable nature, which is a hallmark of his breed. His dark, expressive eyes add to his endearing charm.'
     )
 
@@ -97,11 +124,13 @@ describe('Successfully add pet', () => {
         inputElement.dispatchEvent(new Event('change', { bubbles: true }))
       })
     })
+
     cy.get('button[type="submit"]').click()
-    cy.wait('@petApiCall').then((interception) => {
-      // Log the request and response to the Cypress output
-      cy.log('Request:', interception.request)
-      cy.log('Response:', interception.response)
+
+    cy.wait('@addPet').then((interception) => {
+      console.log('Request:', interception.request)
+      console.log('Response:', interception.response)
+      console.log('Error:', interception.error)
     })
 
     cy.get('.swal2-title').should('have.text', 'Success!')
