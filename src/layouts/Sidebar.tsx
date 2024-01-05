@@ -184,6 +184,7 @@ const Sidebar = ({ handleLogout }: { handleLogout: () => void }) => {
                                   to={option.to}
                                   className={`block px-6 py-3 text-md font-medium ${
                                     option.to === location.pathname ||
+                                    option.has === location.pathname ||
                                     option.to ===
                                       location.pathname.substring(1) ||
                                     selectedOption === link.to

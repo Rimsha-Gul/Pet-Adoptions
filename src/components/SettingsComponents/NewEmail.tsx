@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import loadingIcon from '../../assets/loading.gif'
 import api from '../../api'
 import { AppContext } from '../../context/AppContext'
@@ -8,7 +8,13 @@ const NewEmailForm = () => {
   const [userNewEmail, setuserNewEmail] = useState<string>('')
   const appContext = useContext(AppContext)
   appContext.setNewEmail?.(userNewEmail)
-  appContext.setVerificationOperation?.('changedEmail')
+
+  useEffect(() => {
+    localStorage.setItem('remainingTime', '60')
+    localStorage.setItem('isOTPSent', 'false')
+    appContext.setVerificationOperation?.('changedEmail')
+    localStorage.setItem('verificationOperation', 'changedEmail')
+  }, [])
   const navigate = useNavigate()
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
