@@ -21,3 +21,9 @@ Run cypress tests
 ```bash
     npm run cypress:run
 ```
+
+Run unit tests
+
+```bash
+    npm run test
+```
