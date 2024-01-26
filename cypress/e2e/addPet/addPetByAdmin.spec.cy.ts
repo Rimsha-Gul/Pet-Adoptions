@@ -59,8 +59,8 @@ describe('Successfully add pet', () => {
     cy.get('[id="react-select-9-listbox"]').contains('Male').click()
     // cy.get('[id="react-select-9-listbox"]').should('have.value', 'Male')
 
-    cy.get('[placeholder=YYYY-MM-DD]').click().type('2020-02-20')
-    cy.get('[placeholder=YYYY-MM-DD]').should('have.value', '2020-02-20')
+    cy.get('[placeholder=YYYY-MM-DD]').click().type('2024-02-20')
+    cy.get('[placeholder=YYYY-MM-DD]').should('have.value', '2024-02-20')
     cy.get('body').click(0, 0)
 
     cy.get('input[data-cy=breed]').type('Mini Rex')

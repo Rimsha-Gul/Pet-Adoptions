@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
-import logo from "../../assets/logo.svg";
+import { Link } from 'react-router-dom'
+import logo from '../../assets/logo.svg'
 
 interface HeaderProps {
-  paragraph?: string;
-  linkName?: string;
-  linkUrl?: string;
+  paragraph?: string
+  linkName?: string
+  linkUrl?: string
 }
 
 const LogoSection = ({ paragraph, linkName, linkUrl }: HeaderProps) => {
@@ -28,6 +28,7 @@ const LogoSection = ({ paragraph, linkName, linkUrl }: HeaderProps) => {
             <Link
               to={linkUrl}
               className="font-medium text-primary hover:text-secondary"
+              data-testid="logo-section-link"
             >
               {linkName}
             </Link>
@@ -35,7 +36,7 @@ const LogoSection = ({ paragraph, linkName, linkUrl }: HeaderProps) => {
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default LogoSection;
+export default LogoSection

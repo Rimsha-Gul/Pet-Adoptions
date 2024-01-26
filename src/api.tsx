@@ -1,7 +1,10 @@
 import axios from 'axios'
+import getEnv from './envConfig'
+
+const { serverUrl } = getEnv()
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL || 'http://default-url.com',
+  baseURL: serverUrl || 'http://default-url.com',
   headers: {
     'Content-Type': 'application/json'
   }

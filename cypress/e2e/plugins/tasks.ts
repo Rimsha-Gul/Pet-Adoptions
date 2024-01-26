@@ -241,6 +241,7 @@ export const plugins = async (on: any) => {
         return response.data
       } catch (error) {
         console.error('Error adding pet:', error)
+        throw error
       }
     },
 
