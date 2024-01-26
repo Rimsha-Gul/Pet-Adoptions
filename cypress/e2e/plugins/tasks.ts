@@ -63,7 +63,7 @@ interface SetVisitDateToPastProps {
 const connectDB = async () => {
   if (!client) {
     client = await MongoClient.connect(process.env.MONGO_URI_TEST || '')
-    db = client.db('test')
+    db = client.db()
   }
 }
 
@@ -72,6 +72,8 @@ export const plugins = async (on: any) => {
 
   on('task', {
     async addAdmin() {
+      await db.collection('users').deleteMany({})
+
       const existingAdmin = await db
         .collection('users')
         .findOne({ role: 'ADMIN', email: 'admin-user@example.com' })
@@ -215,27 +217,32 @@ export const plugins = async (on: any) => {
     },
 
     async addPet({ accessToken, petData }: AddPetProps) {
-      const form = new FormData()
-      for (const [key, value] of Object.entries(petData)) {
-        form.append(key, value)
-      }
-
-      const stream = fs.createReadStream(
-        './cypress/fixtures/addingPet/snowball-1.jpg'
-      )
-      form.append('images', stream)
-
-      const response = await axios.post(
-        `${process.env.API_BASE_URL}/pets`,
-        form,
-        {
-          headers: {
-            ...form.getHeaders(),
-            Authorization: `Bearer ${accessToken}`
-          }
+      try {
+        const form = new FormData()
+        for (const [key, value] of Object.entries(petData)) {
+          form.append(key, value)
         }
-      )
-      return response.data
+
+        const stream = fs.createReadStream(
+          './cypress/fixtures/addingPet/snowball-1.jpg'
+        )
+        form.append('images', stream)
+
+        const response = await axios.post(
+          `${process.env.API_BASE_URL}/pets`,
+          form,
+          {
+            headers: {
+              ...form.getHeaders(),
+              Authorization: `Bearer ${accessToken}`
+            }
+          }
+        )
+        return response.data
+      } catch (error) {
+        console.error('Error adding pet:', error)
+        throw error
+      }
     },
 
     async setVisitDateToPast({

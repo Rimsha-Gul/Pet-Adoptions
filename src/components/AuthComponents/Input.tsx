@@ -26,9 +26,6 @@ interface InputProps {
 const fixedInputClass =
   'rounded-md appearance-none relative block w-full mt-2 px-3 py-4 border border-gray-300 placeholder-gray-500 text-gray-900 hover:outline-none hover:ring-primary hover:border-primary hover:z-10 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm'
 
-const fixedRadioClass =
-  'form-radio h-4 mt-2 mr-2 w-4 text-secondary border-gray-300 focus:ring-primary hover:ring-primary'
-
 const fixedSelectClass =
   'rounded-md appearance-none relative block w-full py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-secondary focus:border-secondary focus:z-10 sm:text-sm'
 
@@ -136,33 +133,6 @@ const Input = ({
     )
   }
 
-  if (type === 'radio') {
-    const radioOptions = options as string[]
-    return (
-      <div className="flex flex-col my-10">
-        <label className={` ${labelClassName}`}>{labelText}</label>
-        <div className="flex flex-row gap-12 items-center">
-          {radioOptions?.map((option) => (
-            <label key={option} className="items-start">
-              <input
-                type="radio"
-                id={id}
-                name={name}
-                value={option}
-                onChange={handleChange}
-                checked={value === option}
-                className={`${fixedRadioClass} ${customClass} ${
-                  validationError && isTouched ? 'border-red-500' : ''
-                }`}
-              />
-              {option}
-            </label>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
   if (type === 'select') {
     const selectOptions = options as { label: string; value: string }[]
 
@@ -180,11 +150,14 @@ const Input = ({
           isSearchable
           menuPlacement="auto"
           maxMenuHeight={200}
-          onChange={(selectedOption) =>
+          onChange={(selectedOption) => {
+            console.log(
+              'handle change calledddddddddddddddddddddddddddddddddddddddddddddddddddddddddd'
+            )
             handleChange({
               target: { id: id, value: selectedOption?.value || '' }
             })
-          }
+          }}
           value={selectOptions.find((option) => option.value === value)}
         />
       </div>

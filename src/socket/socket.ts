@@ -1,6 +1,4 @@
 import io from 'socket.io-client'
 
-const socket = io(
-  'https://purrfect-adoptions-server-rimsha-gul-dev.apps.sandbox-m4.g2pi.p1.openshiftapps.com/'
-)
+const socket = io(import.meta.env.VITE_SERVER_URL)
 export default socket

@@ -204,7 +204,10 @@ describe('Successfully write review of shelter', () => {
 
     cy.get('[data-cy=pet-grid]').find('[data-cy=pet-card]').click()
     cy.get('[data-cy=shelter-link]').invoke('removeAttr', 'target').click()
-    cy.get('[data-cy=review-button]').click()
+    cy.get('[data-cy=review-button]')
+      .should('exist')
+      .should('be.visible')
+      .click()
     cy.get('.star-container:nth-child(6)').click()
     cy.get('textarea[data-cy=reviewText]').type(
       'This shelter provided an incredibly positive adoption experience. The staff were knowledgeable, the facility was clean, and they genuinely cared for the well-being of all animals. Highly recommended for anyone looking to adopt a pet.'
@@ -230,7 +233,7 @@ describe('Successfully write review of shelter', () => {
         "The adoption process at this shelter was truly exceptional. The team was well-informed, the environment was spotless, and it's evident that they deeply care about the animals' welfare. If you're considering adopting a pet, this place is top-notch."
       )
 
-    cy.get('[data-cy=review-button]').click()
+    cy.get('[data-cy=submit-review-button]').click()
     cy.get('.swal2-confirm').click()
     cy.reload()
 
