@@ -13,3 +13,11 @@ Remember to provide environment variables.
 ### Production
 
 Commits to production branch automatically deploy the application
+
+### Testing
+
+Run cypress tests
+
+```bash
+    npm run cypress:run
+```
